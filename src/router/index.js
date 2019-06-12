@@ -42,9 +42,54 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-
   {
     path: '/',
+    component: Layout,
+    redirect: '/home',
+    children: [{
+      path: 'home',
+      name: '首页',
+      component: () => import('@/views/home/index'),
+      meta: { title: '首页', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: '/operateManagement',
+    component: Layout,
+    name: '运营管理',
+    meta: { title: '运营管理', icon: 'example' },
+    children: [{
+      path: 'tag',
+      name: '标签管理',
+      component: () => import('@/views/operateManagement/tag'),
+      meta: { title: '标签管理', icon: 'dashboard' }
+    },
+    {
+      path: 'circle',
+      name: '圈子管理',
+      component: () => import('@/views/operateManagement/circle'),
+      meta: { title: '圈子管理', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: '/userManagement',
+    component: Layout,
+    name: '用户管理',
+    meta: { title: '运营管理', icon: 'example' },
+    children: [{
+      path: 'medicalUser',
+      name: '医护用户信息',
+      component: () => import('@/views/userManagement/medicalUser'),
+      meta: { title: '医护用户信息', icon: 'dashboard' }
+    }, {
+      path: 'authentication',
+      name: '认证审核',
+      component: () => import('@/views/userManagement/authentication'),
+      meta: { title: '认证审核', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: '/dashboard',
     component: Layout,
     redirect: '/dashboard',
     children: [{
