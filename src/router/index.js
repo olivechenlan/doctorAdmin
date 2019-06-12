@@ -45,61 +45,48 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/home',
     children: [{
       path: 'home',
       name: '首页',
       component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'el-icon-s-home' }
     }]
   },
   {
     path: '/operateManagement',
     component: Layout,
     name: '运营管理',
-    meta: { title: '运营管理', icon: 'example' },
+    meta: { title: '运营管理', icon: 'el-icon-s-fold' },
     children: [{
       path: 'tag',
       name: '标签管理',
       component: () => import('@/views/operateManagement/tag'),
-      meta: { title: '标签管理', icon: 'dashboard' }
+      meta: { title: '标签管理' }
     },
     {
       path: 'circle',
       name: '圈子管理',
       component: () => import('@/views/operateManagement/circle'),
-      meta: { title: '圈子管理', icon: 'dashboard' }
+      meta: { title: '圈子管理' }
     }]
   },
   {
     path: '/userManagement',
     component: Layout,
     name: '用户管理',
-    meta: { title: '运营管理', icon: 'example' },
+    meta: { title: '用户管理', icon: 'el-icon-s-fold' },
     children: [{
       path: 'medicalUser',
       name: '医护用户信息',
       component: () => import('@/views/userManagement/medicalUser'),
-      meta: { title: '医护用户信息', icon: 'dashboard' }
+      meta: { title: '医护用户信息' }
     }, {
       path: 'authentication',
       name: '认证审核',
       component: () => import('@/views/userManagement/authentication'),
-      meta: { title: '认证审核', icon: 'dashboard' }
+      meta: { title: '认证审核' }
     }]
   },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
-  },
-
   {
     path: '/example',
     component: Layout,
