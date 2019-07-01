@@ -1,57 +1,60 @@
 import router from './router'
-import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
+import doctorApi from '@/network/api/doctorApi'
+import store from 'store2'
+import dayjs from 'dayjs'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login'] // no redirect whitelist
 
+const isTokenValid = async() => {
+  const tokens = store.session('tokens')
+  let isValid = ''
+  if (!tokens) {
+    isValid = false
+  } else {
+    if (dayjs().diff(tokens.time, 'hour') >= 3) {
+      await doctorApi.refreshToken({
+        refreshToken: tokens.refreshToken
+      }).then(data => {
+        if (data.responseFlag = '1') {
+          store.session.set('tokens', Object.assign(tokens, { accessToken: data.data.accessToken, time: dayjs() }))
+          isValid = true
+        } else {
+          isValid = false
+        }
+      }).catch(err => {
+        isValid = false
+      })
+    } else {
+      isValid = true
+    }
+  }
+  return isValid
+}
+
 router.beforeEach(async(to, from, next) => {
-  // start progress bar
   NProgress.start()
 
-  // set page title
   document.title = getPageTitle(to.meta.title)
 
-  // determine whether the user has logged in
-  const hasToken = getToken()
-
-  if (hasToken) {
+  const isValid = await isTokenValid()
+  if (isValid) {
     if (to.path === '/login') {
-      // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
-        next()
-      } else {
-        try {
-          // get user info
-          await store.dispatch('user/getInfo')
-
-          next()
-        } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
-        }
-      }
+      next()
     }
   } else {
-    /* has no token*/
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()
     } else {
-      // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)
       NProgress.done()
     }
@@ -59,6 +62,5 @@ router.beforeEach(async(to, from, next) => {
 })
 
 router.afterEach(() => {
-  // finish progress bar
   NProgress.done()
 })

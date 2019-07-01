@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: '医生端后台管理平台',
 
   /**
    * @type {boolean} true | false
@@ -12,5 +12,11 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: false
+  sidebarLogo: false,
+
+  /**
+   * @type {boolean} true | false
+   * @description Whether need tagsView
+   */
+  tagsView: true
 }

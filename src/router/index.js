@@ -45,148 +45,106 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
+    redirect: '/home',
     children: [{
       path: 'home',
       name: '首页',
       component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'el-icon-s-home' }
+      meta: { title: '首页', icon: 'list' }
     }]
   },
   {
-    path: '/operateManagement',
+    path: '/operateTools',
     component: Layout,
     name: '运营管理',
-    meta: { title: '运营管理', icon: 'el-icon-s-fold' },
-    children: [{
-      path: 'tag',
-      name: '标签管理',
-      component: () => import('@/views/operateManagement/tag'),
-      meta: { title: '标签管理' }
-    },
-    {
-      path: 'circle',
-      name: '圈子管理',
-      component: () => import('@/views/operateManagement/circle'),
-      meta: { title: '圈子管理' }
-    }]
+    meta: { title: '运营管理', icon: 'list' },
+    children: [
+      {
+        path: 'indexBanner',
+        component: () => import('@/views/operateTools/indexBanner'),
+        name: '首页轮播图',
+        meta: { title: '首页轮播图' }
+      },
+      {
+        path: 'workbenchBanner',
+        component: () => import('@/views/operateTools/workbenchBanner'),
+        name: '工作台轮播图',
+        meta: { title: '工作台轮播图' }
+      },
+      {
+        path: 'tag',
+        component: () => import('@/views/operateTools/tag'),
+        name: '标签管理',
+        meta: { title: '标签管理' }
+      }, {
+        path: 'circle',
+        component: () => import('@/views/operateTools/circle'),
+        name: '圈子管理',
+        meta: { title: '圈子管理' }
+      }
+    ]
   },
   {
-    path: '/userManagement',
+    path: '/userManage',
     component: Layout,
     name: '用户管理',
-    meta: { title: '用户管理', icon: 'el-icon-s-fold' },
-    children: [{
-      path: 'medicalUser',
-      name: '医护用户信息',
-      component: () => import('@/views/userManagement/medicalUser'),
-      meta: { title: '医护用户信息' }
-    }, {
-      path: 'authentication',
-      name: '认证审核',
-      component: () => import('@/views/userManagement/authentication'),
-      meta: { title: '认证审核' }
-    }]
-  },
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    meta: { title: '用户管理', icon: 'list' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'medicalUser',
+        component: () => import('@/views/userManage/medicalUser'),
+        name: '医护用户信息',
+        meta: { title: '医护用户信息' }
+      }, {
+        path: 'authentication',
+        component: () => import('@/views/userManage/authentication'),
+        name: '认证审核',
+        meta: { title: '认证审核' }
+      }
+    ]
+  },
+  {
+    path: '/infoManage',
+    component: Layout,
+    name: '资讯管理',
+    meta: { title: '资讯管理', icon: 'list' },
+    children: [
+      {
+        path: 'infoList',
+        component: () => import('@/views/infoManage/infoList'),
+        name: '资讯列表',
+        meta: { title: '资讯列表' }
+      }, {
+        path: 'topicType',
+        component: () => import('@/views/infoManage/topicType'),
+        name: '栏目分类',
+        meta: { title: '栏目分类' }
+      }
+    ]
+  },
+  {
+    path: '/medicalInfoManage',
+    component: Layout,
+    name: '医疗信息管理',
+    meta: { title: '医疗信息管理', icon: 'list' },
+    children: [
+      {
+        path: 'organList',
+        component: () => import('@/views/medicalInfoManage/organList'),
+        name: '医疗机构列表',
+        meta: { title: '医疗机构列表' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: 'departmentManage',
+        component: () => import('@/views/medicalInfoManage/departmentManage'),
+        name: '科室管理',
+        meta: { title: '科室管理' }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'titleManage',
+        component: () => import('@/views/medicalInfoManage/titleManage'),
+        name: '职称管理',
+        meta: { title: '职称管理' }
       }
     ]
   },
