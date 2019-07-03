@@ -30,7 +30,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="500px" top="3%" custom-class="dialog-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="500px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
         <el-row class="row-bg">
           <el-col :span="24">
@@ -51,7 +51,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" >
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -165,7 +165,7 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    async updateData() {
+    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.circleEdit()

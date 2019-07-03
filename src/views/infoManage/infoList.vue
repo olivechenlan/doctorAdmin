@@ -7,7 +7,7 @@
           <el-select v-model="listQuery.type" placeholder="请选择栏目" clearable class="filter-item filter-item-option">
             <el-option v-for="item in topicOptions" :key="item.type" :label="item.name" :value="item.type" />
           </el-select>
-          <el-select v-model="listQuery.adStatus" placeholder="请选择状态" clearable class="filter-item filter-item-option">
+          <el-select v-model="listQuery.status" placeholder="请选择状态" clearable class="filter-item filter-item-option">
             <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-col>
@@ -66,7 +66,7 @@
 
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
 
-    <el-dialog fullscreen :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="dialog-container">
+    <el-dialog fullscreen :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="11">
@@ -81,8 +81,8 @@
             <el-form-item label="上架时间" prop="startTime">
               <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" @change="startTimeChange" />
             </el-form-item>
-            <el-form-item label="状态" prop="adStatus">
-              <el-select v-model="temp.adStatus" placeholder="请选择状态">
+            <el-form-item label="状态" prop="status">
+              <el-select v-model="temp.status" placeholder="请选择状态">
                 <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
               </el-select>
             </el-form-item>
@@ -111,11 +111,11 @@
           </el-col>
         </el-row>
         <el-form-item label="内容">
-          <Tinymce ref="editor" v-model="temp.content" :height="400" />
+          <Tinymce ref="editor" v-model="temp.content" :temp="temp" :height="400" @getTemp="getTemp" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer text-left">
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+      <div slot="footer" class="text-left">
+        <el-button type="primary" @click="updateData">
           提交
         </el-button>
         <el-button plain @click="dialogFormVisible = false">
@@ -175,13 +175,21 @@ export default {
         create: '新增资讯'
       },
       temp: {
-        id: undefined,
-        importance: 1,
-        remarks: '',
-        timestamp: new Date(),
+        headInfoId: '',
         title: '',
+        content: '',
+        listImg: '',
+        fromUser: '',
+        fromSource: '',
+        fileUrl: '',
         type: '',
-        status: 'published'
+        intoType: '',
+        intoUrl: [],
+        typeCode: '3310',
+        status: '',
+        startTime: '',
+        endTime: '',
+        weight: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -196,7 +204,7 @@ export default {
         type: [{ required: true, message: '请选择资讯栏目', trigger: 'change' }],
         startTime: [{ required: true, message: '请选择上架时间', trigger: 'change' }],
         endTime: [{ required: true, validator: timeRangeValidate, trigger: 'change' }],
-        adStatus: [{ required: true, message: '请选择状态', trigger: 'change' }]
+        status: [{ required: true, message: '请选择状态', trigger: 'change' }]
       }
     }
   },
@@ -227,6 +235,9 @@ export default {
     }
   },
   methods: {
+    getTemp(value) {
+      this.temp = value
+    },
     getList() {
       this.listLoading = true
       this.api.doctorApi.getInfoList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
@@ -258,32 +269,67 @@ export default {
       !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
     },
     getImage(image) {
-      this.temp.file = image
-      this.temp.listImg = ''
+      this.temp.listImg = image
     },
     handleFilter() {
       this.listQuery.current = 1
       this.getList()
     },
     handleCreate() {
+      this.store.session.set('info', this.$options.data().temp)
+      this.$router.push({
+        path: '/infoManage/infoEdit'
+      })
+      return
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
     handleUpdate(row) {
+      this.store.session.set('info', row)
+      this.$router.push({
+        path: '/infoManage/infoEdit'
+      })
+      return
+      this.resetTemp()
       this.temp = Object.assign({}, row)
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
-    deleteInfo() {
-      this.$confirm('确定删除选中的资讯?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message.success('删除成功!')
-      }).catch(() => {
+    infoEdit() {
+      this.tools.$loading()
+      const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
+      let method = ''
+      if (this.dialogStatus === 'create') {
+        method = 'infoAdd'
+        delete params['headInfoId']
+        delete params['fromUser']
+      }
+      if (this.dialogStatus === 'update') method = 'infoEdit'
+      params.intoUrl = params.intoUrl.join(',')
+      params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
+      params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
+      params.weight = this.tools.isEmptyObject(params.weight) && '0'
+      console.log(params)
+      this.api.doctorApi[method](params).then(async(data) => {
+        this.tools.$loading().hide()
+        if (data.responseFlag === '1') {
+          this.dialogFormVisible = false
+          this.$message.success('操作成功')
+          this.listQuery = this.$options.data().listQuery
+          this.getList()
+        } else {
+          this.$message.warning(data.responseMessage)
+        }
+      }).catch(err => {
+        this.tools.$loading().hide()
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.infoEdit()
+        }
       })
     }
 

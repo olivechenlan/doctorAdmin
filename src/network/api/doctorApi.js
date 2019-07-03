@@ -133,6 +133,18 @@ const getInfoList = params => {
   return doctorPost('headLine/getHeadPage', params)
 }
 
+const infoAdd = params => {
+  return doctorPost('headLine/saveInfo', params)
+}
+
+const infoEdit = params => {
+  return doctorPost('headLine/updateInfo', params)
+}
+
+const getDictionary = query => {
+  return doctorGet('dict/type/' + query, {})
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -162,5 +174,8 @@ export default {
   topicAdd, // 新增栏目分类
   topicDelete, // 删除栏目分类
   refreshToken, // 刷新token
-  getInfoList // 获取资讯列表
+  getInfoList, // 获取资讯列表
+  infoAdd, // 新增资讯
+  infoEdit, // 编辑资讯
+  getDictionary // 获取字典
 }

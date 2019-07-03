@@ -42,7 +42,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="dialog-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="100px" :rules="rules">
         <el-row class="row-bg">
           <el-col :span="18">
@@ -70,7 +70,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" >
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>

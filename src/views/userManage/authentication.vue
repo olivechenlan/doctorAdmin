@@ -60,7 +60,7 @@
 
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
 
-    <el-dialog fullscreen :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="dialog-container">
+    <el-dialog fullscreen :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="11">
@@ -115,7 +115,7 @@
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer text-center">
+      <div slot="footer" class="text-center">
         <el-button v-show="dialogStatus==='update'" type="primary" @click="authenCheck('2')">
           同意
         </el-button>

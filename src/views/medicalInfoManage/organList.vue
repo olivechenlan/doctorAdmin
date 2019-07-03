@@ -72,7 +72,7 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
-    <el-dialog width="1000px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="dialog-container">
+    <el-dialog width="1000px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="11">
@@ -123,7 +123,7 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="dialog-footer text-left">
+      <div slot="footer" class="text-left">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -237,8 +237,7 @@ export default {
       })
     },
     getImage(image) {
-      this.temp.file = image
-      this.temp.orgIconUrl = ''
+      this.temp.orgIconUrl = image
     },
     changeAreaName(value) {
       this.temp.orgAreaName = this.areaOptions.find(item => item.code === value).name
@@ -263,6 +262,7 @@ export default {
       this.dialogFormVisible = true
     },
     hospitalEdit() {
+      this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       let method = ''
       if (this.dialogStatus === 'create') {
@@ -284,28 +284,10 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    uploadImage() {
-      return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file: this.temp.file }).then(data => {
-          if (data.code === '1') {
-            resolve(data.data.url)
-          } else {
-            this.tools.$loading().hide()
-            this.$message.warning(data.msg)
-          }
-        }).catch(err => {
-          this.tools.$loading().hide()
-        })
-      })
-    },
-    async updateData() {
-      this.tools.$loading()
-      if (this.temp.file) this.temp.orgIconUrl = await this.uploadImage()
+    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.hospitalEdit()
-        } else {
-          this.tools.$loading().hide()
         }
       })
     }

@@ -2,9 +2,6 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="请填写栏目关键字" clearable class="filter-item filter-item-option" />
-      <!--<el-select v-model="listQuery.state" placeholder="请选择状态" clearable class="filter-item filter-item-option">-->
-      <!--<el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />-->
-      <!--</el-select>-->
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -35,7 +32,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="dialog-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
         <el-form-item label="栏目名称" prop="name">
           <el-input v-model="temp.name" placeholder="请填写栏目名称" />
@@ -47,7 +44,7 @@
           <el-input v-model="temp.remarks" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" >
         <el-button plain @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -69,6 +66,7 @@ export default {
   data() {
     return {
       listQuery: {
+        name: '',
         code: '3310'
       },
       list: null,
@@ -174,7 +172,7 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    async updateData() {
+    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.circleEdit()

@@ -45,10 +45,26 @@ export default {
     handleChange(file, fileList) {
       const that = this
       const reader = new FileReader()
-      reader.onload = function(e) {
-        that.$emit('imageChange', file.raw)
+      reader.onload = async function(e) {
+        const imageSrc = await that.uploadImage(file.raw)
+        that.$emit('imageChange', imageSrc)
       }
       reader.readAsDataURL(file.raw)
+    },
+    uploadImage(file) {
+      this.tools.$loading()
+      return new Promise((resolve, reject) => {
+        this.api.uploadApi.uploadImage({ file }).then(data => {
+          this.tools.$loading().hide()
+          if (data.code === '1') {
+            resolve(data.data.url)
+          } else {
+            this.$message.warning(data.msg)
+          }
+        }).catch(err => {
+          this.tools.$loading().hide()
+        })
+      })
     }
 
   }

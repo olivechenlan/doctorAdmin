@@ -8,11 +8,7 @@
 </template>
 
 <script>
-/**
- * docs:
- * https://panjiachen.github.io/vue-element-admin-site/feature/component/rich-editor.html#tinymce
- */
-// import editorImage from './components/EditorImage'
+
 import plugins from './plugins'
 import toolbar from './toolbar'
 import load from './dynamicLoadScript'
@@ -22,6 +18,7 @@ const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymc
 
 export default {
   name: 'Tinymce',
+  // components: { editorImage },
   props: {
     id: {
       type: String,
@@ -33,12 +30,9 @@ export default {
       type: String,
       default: ''
     },
-    toolbar: {
-      type: Array,
-      required: false,
-      default() {
-        return []
-      }
+    temp: {
+      type: Object,
+      default: () => {}
     },
     height: {
       type: [Number, String],
@@ -53,6 +47,9 @@ export default {
   },
   data() {
     return {
+      mode: 'all',
+      menubar: 'file edit view format table',
+      toolbar: toolbar.toolbar,
       hasChange: false,
       hasInit: false,
       tinymceId: this.id,
@@ -75,10 +72,33 @@ export default {
     }
   },
   watch: {
-    value(val) {
+    value(nval, oval) {
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() =>
-          window.tinymce.get(this.tinymceId).setContent(val || ''))
+          window.tinymce.get(this.tinymceId).setContent(nval || ''))
+      }
+      if (!!nval && nval.indexOf('<video') >= 0) {
+        this.mode = 'video'
+      }
+      if (!!nval && nval.indexOf('<img') >= 0) {
+        this.mode = 'image'
+      }
+      if (!nval || (nval.indexOf('<video') < 0 && nval.indexOf('<img') < 0)) {
+        this.mode = 'all'
+        this.temp.intoUrl = []
+        this.temp.intoType = ''
+      }
+      const urlArray = []
+      // 内容删减的情况下计算intourl
+      if (!!oval && !!nval && oval.split('src=').length > nval.split('src=').length) {
+        const valArray = nval.split('src="')
+        valArray.forEach(item => {
+          if (item.indexOf('http') === 0) {
+            const endPath = item.indexOf('"')
+            urlArray.push(item.slice(0, endPath))
+          }
+        })
+        this.temp.intoUrl = urlArray
       }
     }
   },
@@ -130,31 +150,64 @@ export default {
         height: this.height,
         body_class: 'panel-body ',
         branding: false,
-        object_resizing: false,
-        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
-        menubar: false,
+        menubar: this.menubar,
+        toolbar: toolbar,
         plugins: plugins,
-        file_picker_types: 'media',
+        theme_advanced_disable: 'media',
+        file_picker_types: 'media image',
         file_picker_callback: function(callback, value, meta) {
-          console.log(meta)
+          const tinymce = window.tinymce.get(that.tinymceId)
+          const input = document.createElement('input')
+          input.setAttribute('type', 'file')
           if (meta.filetype === 'media') {
-            const input = document.createElement('input')
-            input.setAttribute('type', 'file')
             input.setAttribute('accept', 'video/*')
             input.onchange = async function() {
-              const file = this.files[0]
-              console.log(file)
-              await that.uploadImage(file)
+              if (that.mode === 'image') {
+                that.$message.warning('上传图片后无法上传视频')
+                return
+              }
+              if (!that.tools.isEmptyObject(that.temp.intoUrl)) {
+                that.$message.warning('最多上传一段视频')
+                return
+              }
+              const src = await that.uploadImage(this.files[0])
+              that.temp.intoType = '1'
+              that.temp.intoUrl.push(src)
+              tinymce.insertContent(`<video src="${src}" controls="controls" />`)
+              tinymce.windowManager.close()
+              that.$emit('getTemp', that.temp)
             }
-            input.click()
           }
+          if (meta.filetype === 'image') {
+            input.setAttribute('accept', 'image/*')
+            input.setAttribute('multiple', 'multiple')
+            input.onchange = async function() {
+              if (that.mode === 'video') {
+                that.$message.warning('上传视频后无法上传图片')
+                return
+              }
+              const intoUrlLength = that.tools.isEmptyObject(that.temp.intoUrl) ? 0 : that.temp.intoUrl.length
+              if (intoUrlLength + this.files.length > 9) {
+                that.$message.error(`您已上传${intoUrlLength}张图片,最多上传9张图片`)
+                return
+              }
+              for (let i = 0; i < this.files.length; i++) {
+                const src = await that.uploadImage(this.files[i])
+                that.temp.intoUrl.push(src)
+                tinymce.insertContent(`<img src="${src}" />`)
+              }
+              that.temp.intoType = '2'
+              tinymce.windowManager.close()
+              that.$emit('getTemp', that.temp)
+            }
+          }
+          input.click()
         },
         end_container_on_empty_block: true,
         code_dialog_height: 450,
         code_dialog_width: 1000,
         advlist_bullet_styles: 'square',
         advlist_number_styles: 'default',
-        default_link_target: '_blank',
         link_title: false,
         nonbreaking_force_tab: true,
         init_instance_callback: editor => {
@@ -163,18 +216,14 @@ export default {
           }
           that.hasInit = true
           editor.on('NodeChange Change KeyUp SetContent', () => {
-            this.hasChange = true
-            this.$emit('input', editor.getContent())
+            that.hasChange = true
+            that.$emit('input', editor.getContent())
           })
         },
         setup(editor) {
           editor.on('FullscreenStateChanged', (e) => {
             that.fullscreen = e.state
           })
-        },
-        images_upload_handler(blobInfo, success, failure, progress) {
-          progress(0)
-          console.log(blobInfo.blob())
         }
       })
     },
@@ -193,12 +242,6 @@ export default {
     },
     getContent() {
       window.tinymce.get(this.tinymceId).getContent()
-    },
-    imageSuccessCBK(arr) {
-      const that = this
-      arr.forEach(v => {
-        window.tinymce.get(that.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`)
-      })
     }
   }
 }

@@ -44,7 +44,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1000px" top="3%" custom-class="dialog-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1000px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
         <el-row type="flex" justify="space-between" class="row-bg" :gutter="20">
           <el-col :span="11">
@@ -80,7 +80,7 @@
           <el-input v-model="temp.remarks" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -203,8 +203,7 @@ export default {
       }
     },
     getImage(image) {
-      this.temp.file = image
-      this.temp.adImgUrl = ''
+      this.temp.adImgUrl = image
     },
     handleFilter() {
       this.getList()
@@ -224,21 +223,8 @@ export default {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
-    uploadImage() {
-      return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file: this.temp.file }).then(data => {
-          if (data.code === '1') {
-            resolve(data.data.url)
-          } else {
-            this.tools.$loading().hide()
-            this.$message.warning(data.msg)
-          }
-        }).catch(err => {
-          this.tools.$loading().hide()
-        })
-      })
-    },
     bannerEdit() {
+      this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
@@ -263,14 +249,10 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    async updateData() {
-      this.tools.$loading()
-      if (this.temp.file) this.temp.adImgUrl = await this.uploadImage()
+    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.bannerEdit()
-        } else {
-          this.tools.$loading().hide()
         }
       })
     }

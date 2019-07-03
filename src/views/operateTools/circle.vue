@@ -48,7 +48,7 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="dialog-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="100px" :rules="rules">
         <el-row class="row-bg">
           <el-col :span="18">
@@ -74,7 +74,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" >
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -200,8 +200,7 @@ export default {
       }).catch(err => {})
     },
     getImage(image) {
-      this.temp.file = image
-      this.temp.iconUrl = ''
+      this.temp.iconUrl = image
     },
     handleUpdate(row) {
       this.resetTemp()
@@ -216,7 +215,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.tools.$loading()
-        this.api.doctorApi.circleDelete(row.groupId.toString()).then(data => {
+        this.api.doctorApi.circleDelete(row.groupId).then(data => {
           this.tools.$loading().hide()
           if (data.responseFlag === '1') {
             this.$message.success('删除成功!')
@@ -232,6 +231,7 @@ export default {
       })
     },
     circleEdit() {
+      this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       if (this.dialogStatus === 'create') { delete params['groupId'] }
       this.api.doctorApi.circleEdit(params).then(data => {
@@ -248,23 +248,7 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    uploadImage() {
-      return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file: this.temp.file }).then(data => {
-          if (data.code === '1') {
-            resolve(data.data.url)
-          } else {
-            this.tools.$loading().hide()
-            this.$message.warning(data.msg)
-          }
-        }).catch(err => {
-          this.tools.$loading().hide()
-        })
-      })
-    },
-    async updateData() {
-      this.tools.$loading()
-      if (this.temp.file) this.temp.iconUrl = await this.uploadImage()
+    updateData() {
       if (!this.temp.fromId) {
         if (this.temp.type === '1') this.temp.fromId = '331099'
         if (this.temp.type === '3') this.temp.fromId = this.store.session('userInfo').accessToken
@@ -272,8 +256,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.circleEdit()
-        } else {
-          this.tools.$loading().hide()
         }
       })
     }

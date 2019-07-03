@@ -45,41 +45,31 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/home',
-    children: [{
-      path: 'home',
-      name: '首页',
-      component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'list' }
-    }]
-  },
-  {
-    path: '/operateTools',
-    component: Layout,
-    name: '运营管理',
+    name: 'operateTools',
+    redirect: '/operateTools/indexBanner',
     meta: { title: '运营管理', icon: 'list' },
     children: [
       {
-        path: 'indexBanner',
+        path: '/operateTools/indexBanner',
         component: () => import('@/views/operateTools/indexBanner'),
-        name: '首页轮播图',
+        name: 'indexBanner',
         meta: { title: '首页轮播图' }
       },
       {
-        path: 'workbenchBanner',
+        path: '/operateTools/workbenchBanner',
         component: () => import('@/views/operateTools/workbenchBanner'),
-        name: '工作台轮播图',
+        name: 'workbenchBanner',
         meta: { title: '工作台轮播图' }
       },
       {
-        path: 'tag',
+        path: '/operateTools/tag',
         component: () => import('@/views/operateTools/tag'),
-        name: '标签管理',
+        name: 'tag',
         meta: { title: '标签管理' }
       }, {
-        path: 'circle',
+        path: '/operateTools/circle',
         component: () => import('@/views/operateTools/circle'),
-        name: '圈子管理',
+        name: 'circle',
         meta: { title: '圈子管理' }
       }
     ]
@@ -87,18 +77,18 @@ export const constantRoutes = [
   {
     path: '/userManage',
     component: Layout,
-    name: '用户管理',
+    name: 'userManage',
     meta: { title: '用户管理', icon: 'list' },
     children: [
       {
         path: 'medicalUser',
         component: () => import('@/views/userManage/medicalUser'),
-        name: '医护用户信息',
+        name: 'medicalUser',
         meta: { title: '医护用户信息' }
       }, {
         path: 'authentication',
         component: () => import('@/views/userManage/authentication'),
-        name: '认证审核',
+        name: 'authentication',
         meta: { title: '认证审核' }
       }
     ]
@@ -106,44 +96,52 @@ export const constantRoutes = [
   {
     path: '/infoManage',
     component: Layout,
-    name: '资讯管理',
+    name: 'infoManage',
     meta: { title: '资讯管理', icon: 'list' },
     children: [
       {
         path: 'infoList',
         component: () => import('@/views/infoManage/infoList'),
-        name: '资讯列表',
+        name: 'infoList',
         meta: { title: '资讯列表' }
       }, {
         path: 'topicType',
         component: () => import('@/views/infoManage/topicType'),
-        name: '栏目分类',
+        name: 'topicType',
         meta: { title: '栏目分类' }
+      },
+      {
+        path: 'infoEdit',
+        component: () => import('@/views/infoManage/infoEdit'),
+        name: 'infoEdit',
+        meta: { title: '编辑资讯', breadcrumb: false },
+        hidden: true
+
       }
     ]
   },
   {
     path: '/medicalInfoManage',
     component: Layout,
-    name: '医疗信息管理',
+    name: 'medicalInfoManage',
     meta: { title: '医疗信息管理', icon: 'list' },
     children: [
       {
         path: 'organList',
         component: () => import('@/views/medicalInfoManage/organList'),
-        name: '医疗机构列表',
+        name: 'organList',
         meta: { title: '医疗机构列表' }
       },
       {
         path: 'departmentManage',
         component: () => import('@/views/medicalInfoManage/departmentManage'),
-        name: '科室管理',
+        name: 'departmentManage',
         meta: { title: '科室管理' }
       },
       {
         path: 'titleManage',
         component: () => import('@/views/medicalInfoManage/titleManage'),
-        name: '职称管理',
+        name: 'titleManage',
         meta: { title: '职称管理' }
       }
     ]

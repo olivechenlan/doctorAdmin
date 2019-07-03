@@ -57,7 +57,7 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1000px" top="3%" custom-class="dialog-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1000px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" :gutter="20">
           <el-col :span="6">
@@ -116,7 +116,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" >
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -239,8 +239,7 @@ export default {
       })
     },
     getImage(e, file) {
-      this.temp[file + 'File'] = e
-      this.temp[file] = ''
+      this.temp[file] = e
     },
     handleFilter() {
       this.listQuery.current = 1
@@ -262,21 +261,8 @@ export default {
       this.departmentModel = map.getDefaultFromDepartment(row.departmentId)
       this.titleModel = map.getDefaultFromTitle(row.zc)
     },
-    uploadImage(file) {
-      return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file: this.temp[file + 'File'] }).then(data => {
-          if (data.code === '1') {
-            resolve(data.data.url)
-          } else {
-            this.tools.$loading().hide()
-            this.$message.warning(data.msg)
-          }
-        }).catch(err => {
-          this.tools.$loading().hide()
-        })
-      })
-    },
     userInfoEdit() {
+      this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       this.api.doctorApi.userInfoEdit(params).then(data => {
         this.tools.$loading().hide()
@@ -292,17 +278,10 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    async updateData() {
-      this.tools.$loading()
-      const imageArray = ['headImg', 'workImgUrl', 'idImgUrl']
-      for (const i in imageArray) {
-        if (this.temp[imageArray[i] + 'File']) this.temp[imageArray[i]] = await this.uploadImage(imageArray[i])
-      }
+    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.userInfoEdit()
-        } else {
-          this.tools.$loading().hide()
         }
       })
     }

@@ -1,83 +1,104 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
-
 const state = {
-  token: getToken(),
-  name: '',
-  avatar: ''
+  accessToken: '',
+  refreshToken: '',
+  refreshTime: ''
 }
 
 const mutations = {
-  SET_TOKEN: (state, token) => {
-    state.token = token
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+
+  UPDATE_VISITED_VIEW: (state, view) => {
+    for (let v of state.visitedViews) {
+      if (v.path === view.path) {
+        v = Object.assign(v, view)
+        break
+      }
+    }
   }
 }
 
 const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  addView({ dispatch }, view) {
+    dispatch('addVisitedView', view)
+    dispatch('addCachedView', view)
+  },
+  addVisitedView({ commit }, view) {
+    commit('ADD_VISITED_VIEW', view)
+  },
+  addCachedView({ commit }, view) {
+    commit('ADD_CACHED_VIEW', view)
   },
 
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        removeToken()
-        resetRouter()
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // remove token
-  resetToken({ commit }) {
+  delView({ dispatch, state }, view) {
     return new Promise(resolve => {
-      commit('SET_TOKEN', '')
-      removeToken()
-      resolve()
+      dispatch('delVisitedView', view)
+      dispatch('delCachedView', view)
+      resolve({
+        visitedViews: [...state.visitedViews],
+        cachedViews: [...state.cachedViews]
+      })
     })
+  },
+  delVisitedView({ commit, state }, view) {
+    return new Promise(resolve => {
+      commit('DEL_VISITED_VIEW', view)
+      resolve([...state.visitedViews])
+    })
+  },
+  delCachedView({ commit, state }, view) {
+    return new Promise(resolve => {
+      commit('DEL_CACHED_VIEW', view)
+      resolve([...state.cachedViews])
+    })
+  },
+
+  delOthersViews({ dispatch, state }, view) {
+    return new Promise(resolve => {
+      dispatch('delOthersVisitedViews', view)
+      dispatch('delOthersCachedViews', view)
+      resolve({
+        visitedViews: [...state.visitedViews],
+        cachedViews: [...state.cachedViews]
+      })
+    })
+  },
+  delOthersVisitedViews({ commit, state }, view) {
+    return new Promise(resolve => {
+      commit('DEL_OTHERS_VISITED_VIEWS', view)
+      resolve([...state.visitedViews])
+    })
+  },
+  delOthersCachedViews({ commit, state }, view) {
+    return new Promise(resolve => {
+      commit('DEL_OTHERS_CACHED_VIEWS', view)
+      resolve([...state.cachedViews])
+    })
+  },
+
+  delAllViews({ dispatch, state }, view) {
+    return new Promise(resolve => {
+      dispatch('delAllVisitedViews', view)
+      dispatch('delAllCachedViews', view)
+      resolve({
+        visitedViews: [...state.visitedViews],
+        cachedViews: [...state.cachedViews]
+      })
+    })
+  },
+  delAllVisitedViews({ commit, state }) {
+    return new Promise(resolve => {
+      commit('DEL_ALL_VISITED_VIEWS')
+      resolve([...state.visitedViews])
+    })
+  },
+  delAllCachedViews({ commit, state }) {
+    return new Promise(resolve => {
+      commit('DEL_ALL_CACHED_VIEWS')
+      resolve([...state.cachedViews])
+    })
+  },
+
+  updateVisitedView({ commit }, view) {
+    commit('UPDATE_VISITED_VIEW', view)
   }
 }
 
@@ -87,4 +108,3 @@ export default {
   mutations,
   actions
 }
-
