@@ -23,6 +23,9 @@ axios.interceptors.response.use(
     if (error.message.includes('504')) {
       return Promise.reject('服务开小差了，请刷新重试')
     }
+    if (error.message.includes('401') || error.message.includes('403')) {
+      return Promise.reject('登录失效,请重新登录')
+    }
     return Promise.reject(error)
   }
 )

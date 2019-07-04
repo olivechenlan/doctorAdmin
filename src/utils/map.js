@@ -243,6 +243,17 @@ const getCheckStatus = [
   }
 ]
 
+const getFeedbackStatus = [
+  {
+    name: '未处理',
+    code: '0'
+  },
+  {
+    name: '已处理',
+    code: '1'
+  }
+]
+
 const getDepartment = async(isRefresh) => {
   if (tools.isEmptyObject(store.session('departmentList')) || isRefresh) {
     await doctorApi.getDepartmentList({}).then(data => {
@@ -340,5 +351,6 @@ export default {
   getCircleType, // 获取圈子类型
   getCheckStatus, // 获取审核状态
   getBannerStatus, // 获取轮播图状态
-  getTopic // 获取栏目分类
+  getTopic, // 获取栏目分类
+  getFeedbackStatus // 获取反馈状态
 }

@@ -99,7 +99,7 @@ export default {
           this.api.doctorApi.login(this.loginForm).then(data => {
             this.tools.$loading().hide()
             if (data.responseFlag === '1') {
-              this.store.session.set('tokens', Object.assign({}, data.data, { time: this.dayjs() }))
+              this.$store.dispatch('user/toggleUser', Object.assign({}, data.data, { refreshTime: this.dayjs() }))
               this.$router.replace({ path: this.redirect })
             } else {
               this.$message.warning(data.responseMessage)

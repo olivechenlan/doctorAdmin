@@ -45,7 +45,7 @@
         </el-col>
       </el-row>
       <el-form-item label="内容" prop="intoUrl">
-        <Tinymce ref="editor" v-model="temp.content" :temp="temp" :height="400" style="z-index: 100;" @getTemp="getTemp" />
+        <Tinymce ref="editor" v-model="temp.content" :temp="temp" :height="400" @getTemp="getTemp" />
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -163,7 +163,6 @@ export default {
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
       params.weight = this.tools.isEmptyObject(params.weight) && '0'
-      console.log('params', params)
       this.api.doctorApi[method](params).then(async(data) => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {

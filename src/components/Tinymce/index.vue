@@ -1,14 +1,14 @@
 <template>
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
-    <!--<div class="editor-custom-btn-container">-->
-    <!--<editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />-->
-    <!--</div>-->
+    <div class="editor-custom-btn-container">
+      <editorImage v-for="(item,index) in buttonGroup" :key="index" color="#1890ff" :disabled="mode!=='all' && mode!==item.mode" class="editor-upload-btn" :type="item.mode" :last-num="item.lastNum" @successCallback="successCallback" />
+    </div>
   </div>
 </template>
 
 <script>
-
+import editorImage from './components/EditorImage'
 import plugins from './plugins'
 import toolbar from './toolbar'
 import load from './dynamicLoadScript'
@@ -18,7 +18,7 @@ const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymc
 
 export default {
   name: 'Tinymce',
-  // components: { editorImage },
+  components: { editorImage },
   props: {
     id: {
       type: String,
@@ -49,7 +49,6 @@ export default {
     return {
       mode: 'all',
       menubar: 'file edit view format table',
-      toolbar: toolbar.toolbar,
       hasChange: false,
       hasInit: false,
       tinymceId: this.id,
@@ -59,7 +58,18 @@ export default {
         'zh': 'zh_CN',
         'es': 'es_MX',
         'ja': 'ja'
-      }
+      },
+      buttonGroup: [
+        {
+          mode: 'image',
+          lastNum: 9
+        },
+        {
+          mode: 'video',
+          lastNum: 1
+        }
+      ]
+
     }
   },
   computed: {
@@ -72,17 +82,18 @@ export default {
     }
   },
   watch: {
+    'temp.intoUrl'(val) {
+      this.buttonGroup[0].lastNum = 9 - val.length
+      this.buttonGroup[1].lastNum = 1 - val.length
+    },
     value(nval, oval) {
       if (!this.hasChange && this.hasInit) {
-        this.$nextTick(() =>
-          window.tinymce.get(this.tinymceId).setContent(nval || ''))
+        this.$nextTick(() => {
+          window.tinymce.get(this.tinymceId).setContent(nval || '')
+        })
       }
-      if (!!nval && nval.indexOf('<video') >= 0) {
-        this.mode = 'video'
-      }
-      if (!!nval && nval.indexOf('<img') >= 0) {
-        this.mode = 'image'
-      }
+      if (!!nval && nval.indexOf('<video') >= 0) this.mode = 'video'
+      if (!!nval && nval.indexOf('<img') >= 0) this.mode = 'image'
       if (!nval || (nval.indexOf('<video') < 0 && nval.indexOf('<img') < 0)) {
         this.mode = 'all'
         this.temp.intoUrl = []
@@ -153,56 +164,6 @@ export default {
         menubar: this.menubar,
         toolbar: toolbar,
         plugins: plugins,
-        theme_advanced_disable: 'media',
-        file_picker_types: 'media image',
-        file_picker_callback: function(callback, value, meta) {
-          const tinymce = window.tinymce.get(that.tinymceId)
-          const input = document.createElement('input')
-          input.setAttribute('type', 'file')
-          if (meta.filetype === 'media') {
-            input.setAttribute('accept', 'video/*')
-            input.onchange = async function() {
-              if (that.mode === 'image') {
-                that.$message.warning('上传图片后无法上传视频')
-                return
-              }
-              if (!that.tools.isEmptyObject(that.temp.intoUrl)) {
-                that.$message.warning('最多上传一段视频')
-                return
-              }
-              const src = await that.uploadImage(this.files[0])
-              that.temp.intoType = '1'
-              that.temp.intoUrl.push(src)
-              tinymce.insertContent(`<video src="${src}" controls="controls" />`)
-              tinymce.windowManager.close()
-              that.$emit('getTemp', that.temp)
-            }
-          }
-          if (meta.filetype === 'image') {
-            input.setAttribute('accept', 'image/*')
-            input.setAttribute('multiple', 'multiple')
-            input.onchange = async function() {
-              if (that.mode === 'video') {
-                that.$message.warning('上传视频后无法上传图片')
-                return
-              }
-              const intoUrlLength = that.tools.isEmptyObject(that.temp.intoUrl) ? 0 : that.temp.intoUrl.length
-              if (intoUrlLength + this.files.length > 9) {
-                that.$message.error(`您已上传${intoUrlLength}张图片,最多上传9张图片`)
-                return
-              }
-              for (let i = 0; i < this.files.length; i++) {
-                const src = await that.uploadImage(this.files[i])
-                that.temp.intoUrl.push(src)
-                tinymce.insertContent(`<img src="${src}" />`)
-              }
-              that.temp.intoType = '2'
-              tinymce.windowManager.close()
-              that.$emit('getTemp', that.temp)
-            }
-          }
-          input.click()
-        },
         end_container_on_empty_block: true,
         code_dialog_height: 450,
         code_dialog_width: 1000,
@@ -242,6 +203,23 @@ export default {
     },
     getContent() {
       window.tinymce.get(this.tinymceId).getContent()
+    },
+    successCallback(val) {
+      this.mode = val.mode
+      if (val.mode === 'image') {
+        this.temp.intoType = '2'
+        val.result.forEach(item => {
+          window.tinymce.get(this.tinymceId).insertContent(`<img src="${item}" />`)
+        })
+      }
+      if (val.mode === 'video') {
+        this.temp.intoType = '1'
+        val.result.forEach(item => {
+          window.tinymce.get(this.tinymceId).insertContent(`<video src="${item}" controls="controls" />`)
+        })
+      }
+      this.temp.intoUrl = this.temp.intoUrl.concat(val.result)
+      this.$emit('getTemp', this.temp)
     }
   }
 }
@@ -258,5 +236,19 @@ export default {
 .tinymce-textarea {
   visibility: hidden;
   z-index: -1;
+}
+.editor-custom-btn-container {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  /*z-index: 2005;*/
+}
+.fullscreen .editor-custom-btn-container {
+  z-index: 10000;
+  position: fixed;
+}
+.editor-upload-btn {
+  display: inline-block;
+  margin-left: 10px;
 }
 </style>

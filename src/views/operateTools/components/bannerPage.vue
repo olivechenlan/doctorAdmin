@@ -150,7 +150,8 @@ export default {
         adType: '',
         adStatus: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        remarks: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -159,8 +160,7 @@ export default {
         startTime: [{ required: true, message: '请选择上架时间', trigger: 'change' }],
         endTime: [{ required: true, validator: timeRangeValidate, trigger: 'change' }],
         adStatus: [{ required: true, message: '请选择状态', trigger: 'change' }],
-        adImgUrl: [{ required: true, message: '请上传图片', trigger: 'change' }],
-        adWeight: [{ required: true, message: '请填写排序', trigger: 'blur' }]
+        adImgUrl: [{ required: true, message: '请上传图片', trigger: 'change' }]
       },
       startTimeOptions: {},
       endTimeOptions: {}
@@ -228,10 +228,11 @@ export default {
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
-      params.adType = this.adType
+      params.adWeight = this.tools.isEmptyObject(params.adWeight) && '0'
       let method = ''
       if (this.dialogStatus === 'create') {
         method = 'bannerAdd'
+        params.adType = this.adType
         delete params['rotationChartId']
       }
       if (this.dialogStatus === 'update') method = 'bannerEdit'

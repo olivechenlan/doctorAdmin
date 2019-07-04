@@ -1,5 +1,5 @@
 import network from '../base/axiosHandle'
-import store from 'store2'
+import store from '@/store'
 
 const promiseAjaxGet = network.promiseAjaxGet
 const promiseAjaxPost = network.promiseAjaxPost
@@ -7,10 +7,21 @@ const host = `${process.env.VUE_APP_BASE_API}/`
 
 const doctorPost = (api, params, type = 'Json') => {
   let headers = {}
-  if (store.session('tokens')) {
-    headers = { token: store.session('tokens').accessToken }
+  if (store.state.accessToken) {
+    headers = { token: store.state.accessToken }
   }
-  return promiseAjaxPost(host + api, params, type, headers)
+  // return promiseAjaxPost(host + api, params, type, headers)
+  return new Promise((resolve, reject) => {
+    promiseAjaxPost(host + api, params, type, headers).then(data => {
+      resolve(data)
+    }).catch(err => {
+      if (typeof err === 'string' && err.indexOf('登录失效') === 0) {
+        setTimeout(() => {
+          window.$vue.$router.go(0)
+        }, 800)
+      }
+    })
+  })
 }
 
 const doctorGet = (api, params) => {
@@ -145,6 +156,18 @@ const getDictionary = query => {
   return doctorGet('dict/type/' + query, {})
 }
 
+const getFeedbackList = params => {
+  return doctorPost('userFeedback/list', params)
+}
+
+const feedbackEdit = params => {
+  return doctorPost('userFeedback/check', params)
+}
+
+const getAppVersion = params => {
+  return doctorPost('userFeedback/getAppVersionList', params)
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -177,5 +200,8 @@ export default {
   getInfoList, // 获取资讯列表
   infoAdd, // 新增资讯
   infoEdit, // 编辑资讯
-  getDictionary // 获取字典
+  getDictionary, // 获取字典
+  getFeedbackList, // 获取反馈列表
+  feedbackEdit, // 反馈
+  getAppVersion // 获取app版本
 }

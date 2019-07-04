@@ -1,10 +1,9 @@
 import router from './router'
-import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/get-page-title'
 import doctorApi from '@/network/api/doctorApi'
-import store from 'store2'
+import store from '@/store'
 import dayjs from 'dayjs'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -12,17 +11,18 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 const whiteList = ['/login'] // no redirect whitelist
 
 const isTokenValid = async() => {
-  const tokens = store.session('tokens')
+  const user = store.state.user
   let isValid = ''
-  if (!tokens) {
+  if (!(user.accessToken)) {
     isValid = false
   } else {
-    if (dayjs().diff(tokens.time, 'hour') >= 3) {
+    if (dayjs().diff(user.refreshTime, 'hour') >= 3 || !user.refreshTime) {
       await doctorApi.refreshToken({
-        refreshToken: tokens.refreshToken
+        refreshToken: user.refreshToken
       }).then(data => {
         if (data.responseFlag = '1') {
-          store.session.set('tokens', Object.assign(tokens, { accessToken: data.data.accessToken, time: dayjs() }))
+          store.commit('setAccessToken', data.data.accessToken)
+          store.commit('setRefreshTime', dayjs())
           isValid = true
         } else {
           isValid = false

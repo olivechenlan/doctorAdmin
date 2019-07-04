@@ -74,7 +74,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" >
+      <div slot="footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -251,7 +251,7 @@ export default {
     updateData() {
       if (!this.temp.fromId) {
         if (this.temp.type === '1') this.temp.fromId = '331099'
-        if (this.temp.type === '3') this.temp.fromId = this.store.session('userInfo').accessToken
+        if (this.temp.type === '3') this.temp.fromId = this.$store.state.user.accessToken
       }
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

@@ -17,7 +17,6 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
       <li v-if="!(selectedTag.meta&&selectedTag.meta.affix)" @click="closeSelectedTag(selectedTag)">关闭</li>
       <li @click="closeOthersTags">关闭其他</li>
       <li @click="closeAllTags(selectedTag)">关闭所有</li>
@@ -121,16 +120,6 @@ export default {
         }
       })
     },
-    refreshSelectedTag(view) {
-      this.$store.dispatch('tagsView/delCachedView', view).then(() => {
-        const { fullPath } = view
-        this.$nextTick(() => {
-          this.$router.replace({
-            path: '/redirect' + fullPath
-          })
-        })
-      })
-    },
     closeSelectedTag(view) {
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
@@ -157,14 +146,7 @@ export default {
       if (latestView) {
         this.$router.push(latestView)
       } else {
-        // now the default is to redirect to the home page if there is no tags-view,
-        // you can adjust it according to your needs.
-        if (view.name === 'Dashboard') {
-          // to reload home page
-          this.$router.replace({ path: '/redirect' + view.fullPath })
-        } else {
-          this.$router.push('/')
-        }
+        this.$router.push('/')
       }
     },
     openMenu(tag, e) {

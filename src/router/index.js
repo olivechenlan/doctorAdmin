@@ -146,6 +146,20 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/feedback',
+    component: Layout,
+    name: 'feedback',
+    meta: { title: '反馈举报', icon: 'list' },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/feedback/index'),
+        name: 'index',
+        meta: { title: '用户反馈' }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

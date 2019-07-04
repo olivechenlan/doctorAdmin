@@ -19,19 +19,6 @@ import tools from '@/utils/tools'
 import store2 from 'store2'
 import dayjs from 'dayjs'
 
-/**
- * If you don't want to use mock-server
- * you want to use MockJs for mock api
- * you can execute: mockXHR()
- *
- * Currently MockJs will be used in the production environment,
- * please remove it before going online! ! !
- */
-import { mockXHR } from '../mock'
-if (process.env.NODE_ENV === 'production') {
-  mockXHR()
-}
-
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 
@@ -40,7 +27,7 @@ Vue.prototype.tools = tools
 Vue.prototype.store = store2
 Vue.prototype.dayjs = dayjs
 
-new Vue({
+window.$vue = new Vue({
   el: '#app',
   router,
   store,

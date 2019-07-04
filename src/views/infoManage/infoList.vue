@@ -310,7 +310,6 @@ export default {
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
       params.weight = this.tools.isEmptyObject(params.weight) && '0'
-      console.log(params)
       this.api.doctorApi[method](params).then(async(data) => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {

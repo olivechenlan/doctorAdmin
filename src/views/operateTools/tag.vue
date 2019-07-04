@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="listQuery.label" placeholder="请填写标签名称" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.type" placeholder="请选择标签种类" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-    </div>
+    <!--<div class="filter-container">-->
+    <!--<el-input v-model="listQuery.label" placeholder="请填写标签名称" clearable class="filter-item filter-item-option" />-->
+    <!--<el-select v-model="listQuery.type" placeholder="请选择标签种类" clearable class="filter-item filter-item-option">-->
+    <!--<el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />-->
+    <!--</el-select>-->
+    <!--<el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
+    <!--搜索-->
+    <!--</el-button>-->
+    <!--</div>-->
     <headline list-title="标签列表" button-name="新增标签" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"
@@ -20,7 +20,6 @@
       style="width: 100%;"
     >
       <el-table-column label="标签" prop="label" min-width="150" align="center" />
-      <!--<el-table-column label="种类" prop="createTime" min-width="160" align="center" />-->
       <el-table-column label="描述" prop="remarks" min-width="200" align="center" />
       <el-table-column label="操作" width="148" fixed="right" align="center">
         <template slot-scope="{row}">
@@ -45,13 +44,13 @@
             <el-form-item label="排序" prop="wegith">
               <el-input v-model="temp.wegith" type="number" placeholder="请填写排序" />
             </el-form-item>
-            <el-form-item label="标签描述" prop="groupInfo">
+            <el-form-item label="标签描述" prop="remarks">
               <el-input v-model="temp.remarks" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" >
+      <div slot="footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -96,7 +95,8 @@ export default {
       temp: {
         id: '',
         label: '',
-        wegith: ''
+        wegith: '',
+        remarks: ''
       },
       rules: {
         label: [{ required: true, message: '请输入标签名称', trigger: 'blur' }]

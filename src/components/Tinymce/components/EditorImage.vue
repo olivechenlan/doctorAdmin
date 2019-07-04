@@ -1,30 +1,30 @@
 <template>
   <div class="upload-container">
-    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
-      添加本地图片/视频
+    <el-button :disabled="disabled" :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
+      添加{{ typeName }}
     </el-button>
     <el-dialog :visible.sync="dialogVisible" append-to-body>
       <el-upload
         :multiple="isMultiple"
+        :accept="accept"
         :file-list="fileList"
         :show-file-list="true"
         :on-remove="handleRemove"
-        :on-success="handleSuccess"
-        :before-upload="beforeUpload"
+        :on-change="handleChange"
         class="editor-slide-upload"
         action="https://httpbin.org/post"
         list-type="picture-card"
         :auto-upload="false"
       >
         <el-button size="small" type="primary">
-          点击上传
+          添加{{ typeName }}
         </el-button>
       </el-upload>
       <el-button @click="dialogVisible = false">
         取消
       </el-button>
       <el-button type="primary" @click="handleSubmit">
-        确定
+        上传
       </el-button>
     </el-dialog>
   </div>
@@ -35,67 +35,95 @@
 export default {
   name: 'EditorSlideUpload',
   props: {
+    lastNum: {
+      type: Number,
+      default: -1
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: ''
+    },
     color: {
       type: String,
       default: '#1890ff'
+    },
+    intoUrl: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     return {
       isMultiple: true,
+      accept: 'image/*',
+      typeName: '',
       dialogVisible: false,
-      listObj: {},
-      fileList: []
+      fileList: [],
+      file: []
+    }
+  },
+  computed: {
+
+  },
+  watch: {
+  },
+
+  created() {
+    if (this.type === 'image') {
+      this.isMultiple = true
+      this.accept = 'image/*'
+      this.typeName = '图片'
+    }
+    if (this.type === 'video') {
+      this.isMultiple = false
+      this.accept = 'video/*'
+      this.typeName = '视频'
     }
   },
   methods: {
-    checkAllSuccess() {
-      return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
-    },
-    handleSubmit() {
-      const arr = Object.keys(this.listObj).map(v => this.listObj[v])
-      if (!this.checkAllSuccess()) {
-        this.$message('Please wait for all images to be uploaded successfully. If there is a network problem, please refresh the page and upload again!')
+    async handleSubmit() {
+      if (this.file.length > this.lastNum) {
+        if (this.type === 'image') this.$message.error(`最多只能再上传${this.lastNum}张图片，请重试`)
+        if (this.type === 'video') this.$message.error(`最多只能再上传${this.lastNum}段视频，请重试`)
         return
       }
-      this.$emit('successCBK', arr)
-      this.listObj = {}
+      this.tools.$loading()
+      const result = []
+      for (const i in this.file) {
+        const src = await this.uploadImage(this.file[i].raw)
+        result.push(src)
+      }
+      const callback = {
+        result,
+        mode: this.type
+      }
+      this.$emit('successCallback', callback)
+      this.tools.$loading().hide()
       this.fileList = []
       this.dialogVisible = false
     },
-    handleSuccess(response, file) {
-      const uid = file.uid
-      const objKeyArr = Object.keys(this.listObj)
-      for (let i = 0, len = objKeyArr.length; i < len; i++) {
-        if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
-          this.listObj[objKeyArr[i]].hasSuccess = true
-          return
-        }
-      }
+    handleRemove(file, fileList) {
+      this.file = fileList
     },
-    handleRemove(file) {
-      const uid = file.uid
-      const objKeyArr = Object.keys(this.listObj)
-      for (let i = 0, len = objKeyArr.length; i < len; i++) {
-        if (this.listObj[objKeyArr[i]].uid === uid) {
-          delete this.listObj[objKeyArr[i]]
-          return
-        }
-      }
+    handleChange(file, fileList) {
+      this.file = fileList
     },
-    beforeUpload(file) {
-      const _self = this
-      const _URL = window.URL || window.webkitURL
-      const fileName = file.uid
-      this.listObj[fileName] = {}
+    uploadImage(file) {
       return new Promise((resolve, reject) => {
-        const img = new Image()
-        img.src = _URL.createObjectURL(file)
-        img.onload = function() {
-          _self.listObj[fileName] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
-        }
-        resolve(true)
+        this.api.uploadApi.uploadImage({ file }).then(data => {
+          if (data.code === '1') {
+            resolve(data.data.url)
+          } else {
+            this.tools.$loading().hide()
+            this.$message.warning(data.msg)
+          }
+        }).catch(err => {
+          this.tools.$loading().hide()
+        })
       })
     }
   }
@@ -103,6 +131,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .el-button--primary.is-disabled{
+    background-color: #a0cfff;
+    border-color: #a0cfff;
+  }
 .editor-slide-upload {
   margin-bottom: 20px;
   /deep/ .el-upload--picture-card {
