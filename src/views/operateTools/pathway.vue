@@ -1,15 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请填写圈子名称" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.type" placeholder="请选择圈子类型" clearable class="filter-item filter-item-option">
+      <el-input v-model="listQuery.name" placeholder="请填写症状名称" clearable class="filter-item filter-item-option" />
+      <el-select v-model="listQuery.major" placeholder="请选择所属专业" clearable class="filter-item filter-item-option">
+        <el-option v-for="item in majorOptions" :key="item.code" :label="item.name" :value="item.code" />
+      </el-select>
+      <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item filter-item-option">
         <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
       </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
     </div>
-    <headline list-title="圈子列表" button-name="新增圈子" @handleAction="handleCreate" />
+    <headline list-title="路径列表" button-name="新增路径" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -18,56 +21,50 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="圈子名称" prop="name" width="150" align="center" />
-      <el-table-column label="主图" width="160" align="center">
-        <template slot-scope="{row}">
-          <div class="image-column">
-            <img :src="row.iconUrl" alt="">
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="类型" width="120" align="center">
+      <el-table-column label="所属专业" prop="name" min-width="150" align="center" />
+      <el-table-column label="症状名称" min-width="160" align="center">
         <template slot-scope="{row}">
           <span>{{ row.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关注人数" prop="follows" width="90" align="center" />
-      <el-table-column label="简介" prop="groupInfo" min-width="150" align="center" />
-      <el-table-column label="创建人" prop="fromName" width="120" align="center" />
-      <el-table-column label="创建时间" prop="createTime" width="160" align="center" />
-      <el-table-column label="操作" width="148" fixed="right">
+      <el-table-column label="适用类型" width="120" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.typeName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="220" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.type==='3'" type="danger" size="mini" @click="handleDelete(row)">
+          <el-button type="danger" size="mini" @click="handleDelete(row)">
             删除
+          </el-button>
+          <el-button size="mini" @click="handlePreview(row)">
+            预览
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
-      <el-form ref="dataForm" :model="temp" label-width="100px" :rules="rules">
-            <el-form-item label="圈子名称" prop="name">
-              <el-input v-model="temp.name" placeholder="请填写圈子名称" />
-            </el-form-item>
-            <el-form-item label="圈子类别" prop="type">
-              <el-select v-model="temp.type" placeholder="请选择圈子类别" clearable>
-                <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-            <el-form-item v-show="temp.type==='2'" label="所属医院" prop="fromId">
-              <el-select v-model="temp.fromId" placeholder="请选择所属医院" clearable>
-                <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="圈子主图" prop="iconUrl">
-              <upload-image :src="temp.iconUrl" @getChange="getImage" />
-            </el-form-item>
-            <el-form-item label="简介" prop="groupInfo">
-              <el-input v-model="temp.groupInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
-            </el-form-item>
+      <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
+        <el-form-item label="症状名称" prop="name">
+          <el-input v-model="temp.name" placeholder="请填写症状名称" />
+        </el-form-item>
+        <el-form-item label="所属专业" prop="major">
+          <el-select v-model="temp.major" placeholder="请选择所属专业" clearable>
+            <el-option v-for="item in majorOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="适用类型" prop="type">
+          <el-select v-model="temp.type" placeholder="请选择适用类型" clearable>
+            <el-option v-for="item in typeOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="上传附件" prop="pdf">
+          <uploadPdf :src="temp.pdf" @getChange="getImage" />
+        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">
@@ -86,53 +83,48 @@
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
-import uploadImage from '@/components/uploadFile/uploadImage'
+import uploadPdf from '@/components/uploadFile/uploadPdf'
 export default {
   filters: {},
   components: {
-    headline, uploadImage, Pagination
+    headline, uploadPdf, Pagination
   },
   data() {
     return {
       listQuery: {
         name: '',
+        major: '',
         type: '',
         current: 1,
         size: 15
       },
       typeOptions: map.getCircleType,
+      majorOptions: [],
       hospitalOptions: [],
       textMap: {
-        update: '编辑圈子',
-        create: '新增圈子'
+        update: '编辑临床路径',
+        create: '新增临床路径'
       },
       list: null,
       total: 0,
       listLoading: true,
       temp: {
-        groupId: '',
         name: '',
+        major: '',
         type: '',
-        fromId: '',
-        iconUrl: '',
-        groupInfo: ''
+        pdf: ''
       },
       rules: {
-        name: [{ required: true, message: '请输入圈子名称', trigger: 'blur' }],
-        type: [{ required: true, message: '请选择圈子类型', trigger: 'change' }],
-        fromId: [{ required: true, message: '请选择所属医院', trigger: 'change' }]
+        name: [{ required: true, message: '请输入症状名称', trigger: 'blur' }],
+        major: [{ required: true, message: '请选择所属专业', trigger: 'change' }],
+        type: [{ required: true, message: '请选择适用类型', trigger: 'change' }],
+        pdf: [{ required: true, message: '请上传附件', trigger: 'change' }]
       },
       dialogFormVisible: false,
       dialogStatus: ''
     }
   },
-  watch: {
-    'dialogFormVisible'(vnew, vold) {
-      if (vnew) {
-        this.getNotAddedHospital()
-      }
-    }
-  },
+  watch: {},
   created() {},
   mounted() {
     this.getList()
@@ -143,12 +135,12 @@ export default {
       this.api.doctorApi.getCircleList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
-          data.data.records.forEach(item => {
-            item.createTime = this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-            item.typeName = this.typeOptions.find(it => it.code === item.type).name
-          })
           this.list = data.data.records
           this.total = data.data.total
+          this.list.forEach(item => {
+            item.createTime = this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+            item.typeName = item.type ? this.typeOptions.find(item => item.code === item.type).name : ''
+          })
         }
       }).catch(err => {
         this.listLoading = false
@@ -167,25 +159,6 @@ export default {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
-    getNotAddedHospital() {
-      this.hospitalOptions = []
-      if (this.dialogStatus === 'update') {
-        this.hospitalOptions.push({
-          hospitalId: this.temp.fromId,
-          hospitalName: this.temp.fromName
-        })
-      }
-      this.api.doctorApi.getNotAddedHospital({}).then(data => {
-        if (data.responseFlag === '1') {
-          data.data.forEach(item => {
-            this.hospitalOptions.push({
-              hospitalId: item.hospitalId,
-              hospitalName: item.hospitalName
-            })
-          })
-        }
-      }).catch(err => {})
-    },
     getImage(image) {
       this.temp.iconUrl = image
     },
@@ -196,7 +169,7 @@ export default {
       this.dialogFormVisible = true
     },
     handleDelete(row) {
-      this.$confirm('确定删除该圈子?', '提示', {
+      this.$confirm('确定删除该临时路径?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -236,14 +209,6 @@ export default {
       })
     },
     updateData() {
-      if (this.dialogStatus === 'create' && this.temp.type === '1') {
-        const ifCityExist = !!(this.list.find(item => item.fromId === '3310'))
-        if (ifCityExist) {
-          this.$message.error('市级圈子无法重复创建！')
-          return
-        }
-        this.temp.fromId = '3310'
-      }
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.circleEdit()

@@ -190,7 +190,7 @@ const getTitleType = [
   }
 ]
 
-const getDepartmentStatus = [
+const getDepartmentState = [
   {
     name: '已使用',
     code: '0'
@@ -200,7 +200,7 @@ const getDepartmentStatus = [
     code: '1'
   }
 ]
-const getTitleStatus = getDepartmentStatus
+const getTitleState = getDepartmentState
 
 const getBannerStatus = [
   {
@@ -345,8 +345,8 @@ export default {
   getHospitalType, // 获取医院类型
   getHospitalLevel, // 获取医院等级
   getDepartmentType, // 获取科室类别
-  getDepartmentStatus, // 获取科室状态
-  getTitleStatus, // 获取职称状态
+  getDepartmentState, // 获取科室状态
+  getTitleState, // 获取职称状态
   getTitleType, // 获取职称类别
   getCircleType, // 获取圈子类型
   getCheckStatus, // 获取审核状态

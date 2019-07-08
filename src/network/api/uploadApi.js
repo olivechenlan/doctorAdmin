@@ -20,7 +20,7 @@ const uploadPost = (api, params = {}) => {
   return promiseAjaxPost('upload-api/' + api, formData, 'File')
 }
 
-const uploadImage = (params) => {
+const uploadFile = (params) => {
   const timestamp = dayjs().format('YYYYMMDDHHmmss')
   const env = 'DOCTOR_ENV'
   const appKey = '20190605034519074DB3'
@@ -30,5 +30,5 @@ const uploadImage = (params) => {
 }
 
 export default {
-  uploadImage // 上传本地图片
+  uploadFile // 上传
 }

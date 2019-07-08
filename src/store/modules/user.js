@@ -18,7 +18,7 @@ const mutations = {
 }
 
 const actions = {
-  toggleUser({ commit }, object) {
+  toggleUserInfo({ commit }, object) {
     commit('setAccessToken', object.accessToken)
     commit('setRefreshToken', object.refreshToken)
     commit('setRefreshTime', object.refreshTime)

@@ -60,17 +60,17 @@
 
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
 
-    <el-dialog fullscreen :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
+    <el-dialog width="1000px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="11">
             <el-form-item label="认证图片" required>
-              <enlarge :dialog-image-url="temp.workImgUrl" />
+              <upload-image :src="temp.workImgUrl" :is-disabled="true" />
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="身份证正面" required label-width="100px">
-              <enlarge :dialog-image-url="temp.idImgUrl" />
+              <upload-image :src="temp.idImgUrl" :is-disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -115,15 +115,12 @@
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="text-center">
-        <el-button v-show="dialogStatus==='update'" type="primary" @click="authenCheck('2')">
+      <div v-show="dialogStatus==='update'" slot="footer">
+        <el-button type="primary" @click="authenCheck('2')">
           同意
         </el-button>
-        <el-button v-show="dialogStatus==='update'" type="primary" plain @click="authenCheck('3')">
+        <el-button type="primary" plain @click="authenCheck('3')">
           驳回
-        </el-button>
-        <el-button plain @click="dialogFormVisible = false">
-          返回
         </el-button>
       </div>
     </el-dialog>
@@ -134,10 +131,10 @@
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
-import enlarge from '@/components/handleImage/enlarge'
+import uploadImage from '@/components/uploadFile/uploadImage'
 
 export default {
-  components: { Pagination, enlarge, headline },
+  components: { Pagination, uploadImage, headline },
   filters: {
     formatToState(state) {
       let result = { name: '' }
@@ -200,13 +197,15 @@ export default {
     }
   },
   async created() {
-    this.getList()
     await map.getDepartment()
     await map.getTitle()
     await map.getHospital()
     this.departmentOptions = this.store.session('departmentList')
     this.titleOptions = this.store.session('titleList')
     this.hospitalOptions = this.store.session('hospitalList')
+  },
+  mounted() {
+    this.getList()
   },
   methods: {
     getList() {

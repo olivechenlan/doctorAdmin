@@ -10,7 +10,7 @@ const doctorPost = (api, params, type = 'Json') => {
   if (store.state.accessToken) {
     headers = { token: store.state.accessToken }
   }
-  // return promiseAjaxPost(host + api, params, type, headers)
+
   return new Promise((resolve, reject) => {
     promiseAjaxPost(host + api, params, type, headers).then(data => {
       resolve(data)
@@ -168,6 +168,10 @@ const getAppVersion = params => {
   return doctorPost('userFeedback/getAppVersionList', params)
 }
 
+const getNewDetail = params => {
+  return doctorGet('headLine/selectInfoById', params)
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -203,5 +207,6 @@ export default {
   getDictionary, // 获取字典
   getFeedbackList, // 获取反馈列表
   feedbackEdit, // 反馈
-  getAppVersion // 获取app版本
+  getAppVersion, // 获取app版本
+  getNewDetail
 }

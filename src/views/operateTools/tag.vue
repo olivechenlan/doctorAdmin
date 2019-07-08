@@ -1,14 +1,5 @@
 <template>
   <div class="app-container">
-    <!--<div class="filter-container">-->
-    <!--<el-input v-model="listQuery.label" placeholder="请填写标签名称" clearable class="filter-item filter-item-option" />-->
-    <!--<el-select v-model="listQuery.type" placeholder="请选择标签种类" clearable class="filter-item filter-item-option">-->
-    <!--<el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />-->
-    <!--</el-select>-->
-    <!--<el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
-    <!--搜索-->
-    <!--</el-button>-->
-    <!--</div>-->
     <headline list-title="标签列表" button-name="新增标签" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"
@@ -16,7 +7,6 @@
       border
       fit
       highlight-current-row
-      row-key="id"
       style="width: 100%;"
     >
       <el-table-column label="标签" prop="label" min-width="150" align="center" />
@@ -36,11 +26,6 @@
             <el-form-item label="标签名称" prop="label">
               <el-input v-model="temp.label" placeholder="请填写标签名称" />
             </el-form-item>
-            <!--<el-form-item label="标签种类" prop="type">-->
-            <!--<el-select v-model="temp.type" placeholder="请选择标签种类" clearable>-->
-            <!--<el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />-->
-            <!--</el-select>-->
-            <!--</el-form-item>-->
             <el-form-item label="排序" prop="wegith">
               <el-input v-model="temp.wegith" type="number" placeholder="请填写排序" />
             </el-form-item>
@@ -67,13 +52,6 @@
 import headline from '@/components/headline'
 import map from '@/utils/map'
 export default {
-  filters: {
-    formatToType(state) {
-      let result = { name: '' }
-      result = !!state && (map.getCircleType.find(item => item.code === state))
-      return result.name
-    }
-  },
   components: {
     headline
   },
@@ -105,11 +83,9 @@ export default {
       dialogStatus: ''
     }
   },
-  async created() {
-    this.getList()
-  },
+  created() {},
   mounted() {
-
+    this.getList()
   },
   methods: {
     getList() {

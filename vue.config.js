@@ -47,13 +47,6 @@ module.exports = {
         pathRewrite: {
           '^/upload-api': ''
         }
-      },
-      'test-api': {
-        target: 'https://mod.jktz.gov.cn/easemobApi/management',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/test-api': ''
-        }
       }
     }
   },

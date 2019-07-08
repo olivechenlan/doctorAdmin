@@ -44,7 +44,7 @@
           <el-input v-model="temp.remarks" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
-      <div slot="footer" >
+      <div slot="footer">
         <el-button plain @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -80,22 +80,19 @@ export default {
         type: '',
         name: '',
         typeLevel: '1',
-        code: '3310'
-
+        code: '3310',
+        weight: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
       rules: {
         name: [{ required: true, message: '请输入栏目名称', trigger: 'blur' }]
-      },
-      isOpened: 1
-
+      }
     }
   },
-  created() {
-    this.getList()
-  },
+  created() {},
   mounted() {
+    this.getList()
   },
   methods: {
     getList() {
@@ -152,6 +149,7 @@ export default {
     circleEdit() {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
+      if (!params.weight) { params.weight = 0 }
       let method = ''
       if (this.dialogStatus === 'update') method = 'topicEdit'
       if (this.dialogStatus === 'create') {

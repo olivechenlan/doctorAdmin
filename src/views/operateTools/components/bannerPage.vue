@@ -74,7 +74,7 @@
           </el-col>
         </el-row>
         <el-form-item label="图片" prop="adImgUrl">
-          <upload-image :file-list="temp.fileList" @imageChange="getImage" />
+          <upload-image :src="temp.adImgUrl" @getChange="getImage" />
         </el-form-item>
         <el-form-item label="描述" prop="remarks">
           <el-input v-model="temp.remarks" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
@@ -94,7 +94,7 @@
 
 <script>
 import headline from '@/components/headline'
-import uploadImage from '@/components/handleImage/upload'
+import uploadImage from '@/components/uploadFile/uploadImage'
 import map from '@/utils/map'
 import dayjs from 'dayjs'
 
@@ -166,9 +166,7 @@ export default {
       endTimeOptions: {}
     }
   },
-  created() {
-
-  },
+  created() {},
   mounted() {
     this.getList()
     this.startTimeOptions = {
@@ -188,7 +186,6 @@ export default {
           this.list.forEach(item => {
             item.createTime = item.createTime ? this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
             item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            item.fileList = item.adImgUrl ? [{ name: '', url: item.adImgUrl }] : []
           })
         }
       }).catch(err => {
@@ -228,7 +225,7 @@ export default {
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
-      params.adWeight = this.tools.isEmptyObject(params.adWeight) && '0'
+      if (!params.adWeight) params.adWeight = 0
       let method = ''
       if (this.dialogStatus === 'create') {
         method = 'bannerAdd'

@@ -5,8 +5,8 @@ const baseAjax = {
   get: (api, params, success, fail, headers) => {
     axios
       .get(api, {
-        params: params,
-        headers: headers
+        params,
+        headers
       })
       .then(function(response) {
         success(response.data)
@@ -107,7 +107,7 @@ export default {
         },
         fail => {
           reject(fail)
-          Message(fail)
+          typeof fail === 'string' && Message(fail)
         }
       )
     })
@@ -122,7 +122,7 @@ export default {
         },
         fail => {
           reject(fail)
-          Message(fail)
+          typeof fail === 'string' && Message(fail)
         },
         headers
       )

@@ -21,7 +21,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="图片" prop="listImg">
-            <upload-image :file-list="temp.fileList" @imageChange="getImage" />
+            <upload-image :file-list="temp.fileList" @getChange="getImage" />
           </el-form-item>
         </el-col>
         <el-col :span="11">
@@ -39,7 +39,7 @@
           </el-form-item>
           <el-form-item label="声明" prop="statement">
             <el-select v-model="temp.statement" placeholder="请选择声明">
-              <el-option v-for="item in statement" :key="item.id" :label="item.label" :value="item.id" />
+              <el-option v-for="item in statementOptions" :key="item.id" :label="item.label" :value="item.label" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -61,7 +61,7 @@
 
 <script>
 import headline from '@/components/headline'
-import uploadImage from '@/components/handleImage/upload'
+import uploadImage from '@/components/uploadFile/uploadImage'
 import Tinymce from '@/components/Tinymce'
 import map from '@/utils/map'
 export default {
@@ -96,11 +96,12 @@ export default {
         status: '',
         startTime: '',
         endTime: '',
+        statement: '',
         weight: ''
       },
       startTimeOptions: {},
       endTimeOptions: {},
-      statement: '',
+      statementOptions: [],
       rules: {
         title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
         type: [{ required: true, message: '请选择资讯栏目', trigger: 'change' }],
@@ -110,13 +111,13 @@ export default {
       }
     }
   },
-  async created() {
-    await map.getTopic()
+  created() {
     this.topicOptions = this.store.session('topicList')
   },
-  mounted() {
+  async mounted() {
     const that = this
-    this.temp = this.store.session('info')
+    await this.getStatement()
+    this.temp = this.store.session('info') || this.$options.data().temp
     this.temp.intoUrl = this.tools.isEmptyObject(this.temp.intoUrl) ? [] : this.temp.intoUrl.split(',')
     !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
     this.startTimeOptions = {
@@ -124,13 +125,12 @@ export default {
         return that.dayjs(time) < that.dayjs().subtract(1, 'day')
       }
     }
-    this.getStatement()
   },
   methods: {
-    getStatement() {
-      this.api.doctorApi.getDictionary('statement').then(data => {
+    async getStatement() {
+      await this.api.doctorApi.getDictionary('statement').then(data => {
         if (data.responseFlag === '1') {
-          this.statement = data.data
+          this.statementOptions = data.data
         }
       }).catch(err => {})
     },
@@ -162,7 +162,7 @@ export default {
       params.intoUrl = params.intoUrl.join(',')
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
-      params.weight = this.tools.isEmptyObject(params.weight) && '0'
+      if (!params.weight) { params.weight = 0 }
       this.api.doctorApi[method](params).then(async(data) => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {

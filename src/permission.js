@@ -20,10 +20,9 @@ const isTokenValid = async() => {
       await doctorApi.refreshToken({
         refreshToken: user.refreshToken
       }).then(data => {
-        if (data.responseFlag = '1') {
-          store.commit('setAccessToken', data.data.accessToken)
-          store.commit('setRefreshTime', dayjs())
+        if (data.responseFlag === '1') {
           isValid = true
+          store.dispatch('user/toggleUserInfo', Object.assign({ refreshToken: user.refreshToken, refreshTime: dayjs() }, data.data))
         } else {
           isValid = false
         }
@@ -43,6 +42,7 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to.meta.title)
 
   const isValid = await isTokenValid()
+
   if (isValid) {
     if (to.path === '/login') {
       next({ path: '/' })

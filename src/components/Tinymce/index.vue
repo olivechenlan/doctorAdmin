@@ -165,6 +165,7 @@ export default {
         toolbar: toolbar,
         plugins: plugins,
         end_container_on_empty_block: true,
+        fontsize_formats: '10px 12px 14px 16px 18px 24px 28px 32px 38px 40px',
         code_dialog_height: 450,
         code_dialog_width: 1000,
         advlist_bullet_styles: 'square',

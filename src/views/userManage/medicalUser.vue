@@ -101,22 +101,22 @@
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="8">
             <el-form-item label="头像" prop="headImg">
-              <upload-image :file-list="temp.headFileList" @imageChange="getImage($event,'headImg')" />
+              <upload-image :src="temp.headImg" @getChange="getImage($event,'headImg')" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="认证图片" prop="workImgUrl">
-              <upload-image :file-list="temp.workFileList" @imageChange="getImage($event,'workImgUrl')" />
+              <upload-image :src="temp.workImgUrl" @getChange="getImage($event,'workImgUrl')" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="身份证正面" label-width="100px" prop="idImgUrl">
-              <upload-image :file-list="temp.idFileList" @imageChange="getImage($event,'idImgUrl')" />
+              <upload-image :src="temp.idImgUrl" @getChange="getImage($event,'idImgUrl')" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" >
+      <div slot="footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -131,7 +131,7 @@
 <script>
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
-import uploadImage from '@/components/handleImage/upload'
+import uploadImage from '@/components/uploadFile/uploadImage'
 import map from '@/utils/map'
 
 export default {
@@ -212,13 +212,15 @@ export default {
     }
   },
   async created() {
-    this.getList()
     await map.getDepartment()
     await map.getTitle()
     await map.getHospital()
     this.departmentOptions = this.store.session('departmentList')
     this.titleOptions = this.store.session('titleList')
     this.hospitalOptions = this.store.session('hospitalList')
+  },
+  mounted() {
+    this.getList()
   },
   methods: {
     getList() {
@@ -227,11 +229,6 @@ export default {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
-          this.list.forEach(item => {
-            item.headFileList = item.headImg ? [{ name: '', url: item.headImg }] : []
-            item.workFileList = item.workImgUrl ? [{ name: '', url: item.workImgUrl }] : []
-            item.idFileList = item.idImgUrl ? [{ name: '', url: item.idImgUrl }] : []
-          })
           this.total = data.data.total
         }
       }).catch(err => {
@@ -240,6 +237,7 @@ export default {
     },
     getImage(e, file) {
       this.temp[file] = e
+      this.$refs.dataForm.validateField(file)
     },
     handleFilter() {
       this.listQuery.current = 1

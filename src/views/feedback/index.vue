@@ -20,7 +20,6 @@
       border
       fit
       highlight-current-row
-      row-key="departmentId"
       style="width: 100%;"
     >
       <el-table-column label="医院名称" prop="hospitalName" min-width="150" align="center" />
@@ -47,8 +46,6 @@
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="70px" :rules="rules">
-        <el-row class="row-bg">
-          <el-col>
             <el-form-item label="手机号码" prop="phone">
               <el-input v-model="temp.phone" disabled placeholder="请填写手机号码" />
             </el-form-item>
@@ -63,8 +60,6 @@
             <el-form-item label="备注" prop="checkInfo">
               <el-input v-model="temp.checkInfo" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
             </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">

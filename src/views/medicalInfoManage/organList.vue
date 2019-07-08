@@ -47,17 +47,17 @@
       <el-table-column label="医院名称" prop="hospitalName" min-width="120" align="center" />
       <el-table-column label="医院性质" width="130" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orgKind|formatToKind }}</span>
+          <span>{{ row.orgKind|formatTo('Kind') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="医院类型" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orgType|formatToType }}</span>
+          <span>{{ row.orgType|formatTo('Type') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="医院等级" min-width="100" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orgLevel|formatToLevel }}</span>
+          <span>{{ row.orgLevel|formatTo('Level') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="联系方式" prop="orgTel" min-width="130" align="center" />
@@ -113,7 +113,7 @@
           </el-col>
         </el-row>
         <el-form-item label="医院图片">
-          <upload-image :file-list="temp.fileList" @imageChange="getImage" />
+          <upload-image :file-list="temp.fileList" @getChange="getImage" />
         </el-form-item>
         <el-form-item label="详细地址" prop="orgAddr">
           <el-input v-model="temp.orgAddr" placeholder="请填写详细地址" />
@@ -123,7 +123,7 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="text-left">
+      <div slot="footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -140,24 +140,14 @@
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
-import uploadImage from '@/components/handleImage/upload'
+import uploadImage from '@/components/uploadFile/uploadImage'
 
 export default {
   components: { uploadImage, headline, Pagination },
   filters: {
-    formatToKind(state) {
+    formatTo(state, type) {
       let result = { name: '' }
-      result = !!state && (map.getHospitalKind.find(item => item.code === state))
-      return result.name
-    },
-    formatToType(state) {
-      let result = { name: '' }
-      result = !!state && (map.getHospitalType.find(item => item.code === state))
-      return result.name
-    },
-    formatToLevel(state) {
-      let result = { name: '' }
-      result = !!state && (map.getHospitalLevel.find(item => item.code === state))
+      result = !!state && (map['getHospital' + type].find(item => item.code === state))
       return result.name
     }
   },
@@ -215,10 +205,9 @@ export default {
       }
     }
   },
-  created() {
-    this.getList()
-  },
+  created() {},
   mounted() {
+    this.getList()
   },
   methods: {
     getList() {

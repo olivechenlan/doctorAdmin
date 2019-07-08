@@ -66,11 +66,18 @@ export const constantRoutes = [
         component: () => import('@/views/operateTools/tag'),
         name: 'tag',
         meta: { title: '标签管理' }
-      }, {
+      },
+      {
         path: '/operateTools/circle',
         component: () => import('@/views/operateTools/circle'),
         name: 'circle',
         meta: { title: '圈子管理' }
+      },
+      {
+        path: '/operateTools/pathway',
+        component: () => import('@/views/operateTools/pathway'),
+        name: 'pathway',
+        meta: { title: '临床路径' }
       }
     ]
   },

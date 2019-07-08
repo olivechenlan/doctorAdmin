@@ -5,14 +5,14 @@
       accept="image/*"
       list-type="picture-card"
       :file-list="fileList"
-      :limit="1"
       :on-preview="handlePictureCardPreview"
-      :auto-upload="false"
       :on-remove="handleRemove"
       :on-change="handleChange"
+      :auto-upload="false"
+      :disabled="isDisabled"
       class="upload-input"
     >
-      <i class="el-icon-plus" />
+      <i v-if="!isDisabled" class="el-icon-plus" />
     </el-upload>
     <el-dialog :visible.sync="dialogVisible" append-to-body>
       <img width="100%" :src="dialogImageUrl" alt="">
@@ -21,8 +21,18 @@
 </template>
 
 <script>
+import { uploadFile } from './js/upload'
 export default {
-  props: ['fileList'],
+  props: {
+    src: {
+      type: String,
+      default: ''
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       dialogImageUrl: '',
@@ -30,41 +40,29 @@ export default {
     }
   },
   computed: {
-
+    fileList() {
+      return !this.src ? [] : [{ name: '', url: this.src }]
+    }
   },
   mounted() {
   },
   methods: {
     handleRemove(file, fileList) {
-      this.$emit('imageChange', '')
+      this.$emit('getChange', '')
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
-    handleChange(file, fileList) {
-      const that = this
-      const reader = new FileReader()
-      reader.onload = async function(e) {
-        const imageSrc = await that.uploadImage(file.raw)
-        that.$emit('imageChange', imageSrc)
+    async handleChange(file, fileList) {
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('上传的文件必须小于2M,请稍后重试')
+        fileList.splice(-1, 1)
+        return
       }
-      reader.readAsDataURL(file.raw)
-    },
-    uploadImage(file) {
-      this.tools.$loading()
-      return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file }).then(data => {
-          this.tools.$loading().hide()
-          if (data.code === '1') {
-            resolve(data.data.url)
-          } else {
-            this.$message.warning(data.msg)
-          }
-        }).catch(err => {
-          this.tools.$loading().hide()
-        })
-      })
+      const imageSrc = await uploadFile(file.raw)
+      this.$emit('getChange', imageSrc)
     }
 
   }
