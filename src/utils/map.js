@@ -266,7 +266,7 @@ const getDepartment = async(isRefresh) => {
         })
         store.session.set('departmentList', data.data)
       }
-    }).catch(err => {})
+    }).catch(() => {})
   }
 }
 
@@ -276,7 +276,7 @@ const getTitle = async(isRefresh) => {
       if (data.responseFlag === '1') {
         store.session.set('titleList', data.data)
       }
-    }).catch(err => {})
+    }).catch(() => {})
   }
 }
 
@@ -286,7 +286,7 @@ const getHospital = async(isRefresh) => {
       if (data.responseFlag === '1') {
         store.session.set('hospitalList', data.data)
       }
-    }).catch(err => {})
+    }).catch(() => {})
   }
 }
 
@@ -328,7 +328,7 @@ const getTopic = async(isRefresh) => {
       if (data.responseFlag === '1') {
         store.session.set('topicList', data.data)
       }
-    }).catch(err => {})
+    }).catch(() => {})
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="dataForm" :model="loginForm" :rules="rules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
         <h3 class="title">医生端后台管理平台</h3>
@@ -65,7 +65,7 @@ export default {
         macType: '3',
         loginType: '1'
       },
-      loginRules: {
+      rules: {
         phone: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
         pwd: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
@@ -93,7 +93,7 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.dataForm.validate(valid => {
         if (valid) {
           this.tools.$loading()
           this.api.doctorApi.login(this.loginForm).then(data => {
@@ -104,7 +104,7 @@ export default {
             } else {
               this.$message.warning(data.responseMessage)
             }
-          }).catch(err => {
+          }).catch(() => {
             this.tools.$loading().hide()
           })
         }

@@ -49,25 +49,25 @@
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="100px" :rules="rules">
-            <el-form-item label="圈子名称" prop="name">
-              <el-input v-model="temp.name" placeholder="请填写圈子名称" />
-            </el-form-item>
-            <el-form-item label="圈子类别" prop="type">
-              <el-select v-model="temp.type" placeholder="请选择圈子类别" clearable>
-                <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-            <el-form-item v-show="temp.type==='2'" label="所属医院" prop="fromId">
-              <el-select v-model="temp.fromId" placeholder="请选择所属医院" clearable>
-                <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="圈子主图" prop="iconUrl">
-              <upload-image :src="temp.iconUrl" @getChange="getImage" />
-            </el-form-item>
-            <el-form-item label="简介" prop="groupInfo">
-              <el-input v-model="temp.groupInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
-            </el-form-item>
+        <el-form-item label="圈子名称" prop="name">
+          <el-input v-model="temp.name" placeholder="请填写圈子名称" />
+        </el-form-item>
+        <el-form-item label="圈子类别" prop="type">
+          <el-select v-model="temp.type" placeholder="请选择圈子类别" clearable>
+            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-show="temp.type==='2'" label="所属医院" prop="fromId">
+          <el-select v-model="temp.fromId" placeholder="请选择所属医院" clearable>
+            <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="圈子主图" prop="iconUrl">
+          <upload-image :src="temp.iconUrl" @getChange="getImage" />
+        </el-form-item>
+        <el-form-item label="简介" prop="groupInfo">
+          <el-input v-model="temp.groupInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
+        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">
@@ -150,12 +150,13 @@ export default {
           this.list = data.data.records
           this.total = data.data.total
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
     resetTemp() {
       this.temp = this.$options.data().temp
+      this.rules.fromId[0].required = true
       !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
     },
     handleFilter() {
@@ -184,7 +185,7 @@ export default {
             })
           })
         }
-      }).catch(err => {})
+      }).catch(() => {})
     },
     getImage(image) {
       this.temp.iconUrl = image
@@ -211,7 +212,7 @@ export default {
           } else {
             this.$message.warning(data.responseMessage)
           }
-        }).catch(err => {
+        }).catch(() => {
           this.tools.$loading().hide()
         })
       }).catch(() => {
@@ -231,7 +232,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },
@@ -244,6 +245,7 @@ export default {
         }
         this.temp.fromId = '3310'
       }
+      this.rules.fromId[0].required = this.temp.type === '2'
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.circleEdit()

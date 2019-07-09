@@ -34,11 +34,11 @@ module.exports = {
       errors: true
     },
     proxy: {
-      'dev-api': {
+      'test-api': {
         target: 'http://101.69.143.198:9998/gatewayAPI/doctor_web',
         changeOrigin: true,
         pathRewrite: {
-          '^/dev-api': '/'
+          '^/test-api': '/'
         }
       },
       'upload-api': {

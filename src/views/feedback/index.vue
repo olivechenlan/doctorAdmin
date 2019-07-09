@@ -46,20 +46,20 @@
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="70px" :rules="rules">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input v-model="temp.phone" disabled placeholder="请填写手机号码" />
-            </el-form-item>
-            <el-form-item label="反馈内容" prop="content">
-              <el-input v-model="temp.content" disabled placeholder="请填写反馈内容" />
-            </el-form-item>
-            <el-form-item label="状态" prop="checkState">
-              <el-select v-model="temp.checkState" placeholder="请选择状态" clearable>
-                <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="备注" prop="checkInfo">
-              <el-input v-model="temp.checkInfo" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
-            </el-form-item>
+        <el-form-item label="手机号码" prop="phone">
+          <el-input v-model="temp.phone" disabled placeholder="请填写手机号码" />
+        </el-form-item>
+        <el-form-item label="反馈内容" prop="content">
+          <el-input v-model="temp.content" disabled placeholder="请填写反馈内容" />
+        </el-form-item>
+        <el-form-item label="状态" prop="checkState">
+          <el-select v-model="temp.checkState" placeholder="请选择状态" clearable>
+            <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" prop="checkInfo">
+          <el-input v-model="temp.checkInfo" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
+        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">
@@ -137,7 +137,7 @@ export default {
           this.list = data.data.records
           this.total = data.data.total
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
@@ -146,7 +146,7 @@ export default {
         if (data.responseFlag === '1') {
           this.versionOptions = data.data.filter(item => item !== null)
         }
-      }).catch(err => {})
+      }).catch(() => {})
     },
     resetTemp() {
       this.temp = this.$options.data().temp
@@ -175,7 +175,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },

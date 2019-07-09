@@ -121,7 +121,7 @@ export default {
             this.tools.$loading().hide()
             this.$message.warning(data.msg)
           }
-        }).catch(err => {
+        }).catch(() => {
           this.tools.$loading().hide()
         })
       })

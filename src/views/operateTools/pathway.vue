@@ -142,7 +142,7 @@ export default {
             item.typeName = item.type ? this.typeOptions.find(item => item.code === item.type).name : ''
           })
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
@@ -184,7 +184,7 @@ export default {
           } else {
             this.$message.warning(data.responseMessage)
           }
-        }).catch(err => {
+        }).catch(() => {
           this.tools.$loading().hide()
         })
       }).catch(() => {
@@ -204,7 +204,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },

@@ -29,21 +29,9 @@ export default {
   methods: {
     getBreadcrumb() {
       // only show routes with meta.title
-      let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
-      const first = matched[0]
-
-      if (!this.isIndex(first)) {
-        matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched)
-      }
+      const matched = this.$route.matched.filter(item => item.meta && item.meta.title)
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
-    },
-    isIndex(route) {
-      const name = route && route.name
-      if (!name) {
-        return false
-      }
-      return name === '首页'
     },
     pathCompile(path) {
       // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561

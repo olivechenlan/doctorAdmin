@@ -121,14 +121,13 @@ export default {
         if (data.responseFlag === '1') {
           this.list = data.data.records
           this.list.forEach(item => {
-            item.fileList = item.listImg ? [{ name: '', url: item.listImg }] : []
             item.typeName = this.topicOptions.find(it => it.type === item.type).name
             item.createTime = item.createTime ? this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
             item.isTop = item.weight > 0 ? '是' : '否'
           })
           this.total = data.data.total
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },

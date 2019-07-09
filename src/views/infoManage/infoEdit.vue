@@ -13,7 +13,7 @@
             <el-input v-model="temp.adLink" placeholder="请填写外部链接" />
           </el-form-item>
           <el-form-item label="上架时间" prop="startTime">
-            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" @change="startTimeChange" />
+            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="temp.status" placeholder="请选择状态">
@@ -21,7 +21,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="图片" prop="listImg">
-            <upload-image :file-list="temp.fileList" @getChange="getImage" />
+            <upload-image :src="temp.listImg" @getChange="getImage" />
           </el-form-item>
         </el-col>
         <el-col :span="11">
@@ -64,19 +64,13 @@ import headline from '@/components/headline'
 import uploadImage from '@/components/uploadFile/uploadImage'
 import Tinymce from '@/components/Tinymce'
 import map from '@/utils/map'
+import { isTimeValidate, weightValidate } from '@/utils/validate'
 export default {
   components: { Tinymce, headline, uploadImage },
 
   data() {
     const timeRangeValidate = (rule, value, callback) => {
-      if (!value) callback('请选择下架时间')
-      if (value) {
-        if (value <= this.temp.startTime) {
-          callback(new Error('下架时间必须大于上架时间'))
-        } else {
-          callback()
-        }
-      }
+      isTimeValidate(rule, value, callback, this.temp.startTime)
     }
     return {
       topicOptions: [],
@@ -107,7 +101,18 @@ export default {
         type: [{ required: true, message: '请选择资讯栏目', trigger: 'change' }],
         startTime: [{ required: true, message: '请选择上架时间', trigger: 'change' }],
         endTime: [{ required: true, validator: timeRangeValidate, trigger: 'change' }],
-        status: [{ required: true, message: '请选择状态', trigger: 'change' }]
+        status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+        weight: [{ validator: weightValidate, trigger: 'blur' }]
+      }
+    }
+  },
+  watch: {
+    'temp.startTime'(nval, oval) {
+      const that = this
+      this.endTimeOptions = {
+        disabledDate(time) {
+          return that.dayjs(time) < that.dayjs(nval)
+        }
       }
     }
   },
@@ -132,18 +137,10 @@ export default {
         if (data.responseFlag === '1') {
           this.statementOptions = data.data
         }
-      }).catch(err => {})
+      }).catch(() => {})
     },
     getTemp(value) {
       this.temp = value
-    },
-    startTimeChange(value) {
-      const that = this
-      this.endTimeOptions = {
-        disabledDate(time) {
-          return that.dayjs(time) < that.dayjs(value)
-        }
-      }
     },
     getImage(image) {
       this.temp.listImg = image
@@ -170,7 +167,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },

@@ -7,8 +7,8 @@ const host = `${process.env.VUE_APP_BASE_API}/`
 
 const doctorPost = (api, params, type = 'Json') => {
   let headers = {}
-  if (store.state.accessToken) {
-    headers = { token: store.state.accessToken }
+  if (store.state.user.accessToken) {
+    headers = { token: store.state.user.accessToken }
   }
 
   return new Promise((resolve, reject) => {

@@ -13,7 +13,16 @@
 
 <script>
 export default {
-  props: ['listTitle', 'buttonName'],
+  props: {
+    listTitle: {
+      type: String,
+      default: ''
+    },
+    buttonName: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {}
   },

@@ -113,7 +113,7 @@
           </el-col>
         </el-row>
         <el-form-item label="医院图片">
-          <upload-image :file-list="temp.fileList" @getChange="getImage" />
+          <upload-image :src="temp.orgIconUrl" @getChange="getImage" />
         </el-form-item>
         <el-form-item label="详细地址" prop="orgAddr">
           <el-input v-model="temp.orgAddr" placeholder="请填写详细地址" />
@@ -141,6 +141,7 @@ import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
 import uploadImage from '@/components/uploadFile/uploadImage'
+import { phoneValidate } from '@/utils/validate'
 
 export default {
   components: { uploadImage, headline, Pagination },
@@ -200,7 +201,7 @@ export default {
         hospitalName: [{ required: true, message: '请输入医院全称', trigger: 'blur' }],
         orgKind: [{ required: true, message: '请选择医院性质', trigger: 'change' }],
         orgLevel: [{ required: true, message: '请选择医院等级', trigger: 'change' }],
-        orgTel: [{ required: true, message: '请输入联系电话', trigger: 'blur' }],
+        orgTel: [{ required: true, validator: phoneValidate, trigger: 'blur' }],
         orgAddr: [{ required: true, message: '请输入详细地址', trigger: 'blur' }]
       }
     }
@@ -216,12 +217,9 @@ export default {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
-          this.list.forEach(item => {
-            item.fileList = item.orgIconUrl ? [{ name: '', url: item.orgIconUrl }] : []
-          })
           this.total = data.data.total
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
@@ -269,7 +267,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },

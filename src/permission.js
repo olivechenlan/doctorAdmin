@@ -26,7 +26,7 @@ const isTokenValid = async() => {
         } else {
           isValid = false
         }
-      }).catch(err => {
+      }).catch(() => {
         isValid = false
       })
     } else {

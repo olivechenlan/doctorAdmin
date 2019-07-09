@@ -121,7 +121,7 @@ export const constantRoutes = [
         path: 'infoEdit',
         component: () => import('@/views/infoManage/infoEdit'),
         name: 'infoEdit',
-        meta: { title: '编辑资讯', breadcrumb: false },
+        meta: { title: '编辑资讯' },
         hidden: true
 
       }

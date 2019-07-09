@@ -52,7 +52,7 @@
               <el-input v-model="temp.title" placeholder="请填写标题" />
             </el-form-item>
             <el-form-item label="上架时间" prop="startTime">
-              <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" @change="startTimeChange" />
+              <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
             </el-form-item>
             <el-form-item label="状态" prop="adStatus">
               <el-select v-model="temp.adStatus" placeholder="请选择状态">
@@ -96,34 +96,32 @@
 import headline from '@/components/headline'
 import uploadImage from '@/components/uploadFile/uploadImage'
 import map from '@/utils/map'
-import dayjs from 'dayjs'
-
+import { isTimeValidate, weightValidate } from '@/utils/validate'
 export default {
   components: { uploadImage, headline },
   filters: {
     formatToState(row) {
-      const startTime = dayjs(row.startTime)
-      const endTime = dayjs(row.endTime)
+      const vm = window.$vue
+      const startTime = vm.dayjs(row.startTime)
+      const endTime = vm.dayjs(row.endTime)
       let isTimesValid = ''
       if (startTime.isValid() && endTime.isValid()) {
-        isTimesValid = row.adStatus === '1' && endTime.isAfter(dayjs()) && endTime.isAfter(startTime)
+        isTimesValid = row.adStatus === '1' && endTime.isAfter(vm.dayjs()) && endTime.isAfter(startTime)
       } else {
         isTimesValid = false
       }
       return isTimesValid ? '上架' : '下架'
     }
   },
-  props: ['adType'],
+  props: {
+    adType: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     const timeRangeValidate = (rule, value, callback) => {
-      if (!value) callback('请选择下架时间')
-      if (value) {
-        if (value <= this.temp.startTime) {
-          callback(new Error('下架时间必须大于上架时间'))
-        } else {
-          callback()
-        }
-      }
+      isTimeValidate(rule, value, callback, this.temp.startTime)
     }
     return {
       listQuery: {
@@ -160,18 +158,30 @@ export default {
         startTime: [{ required: true, message: '请选择上架时间', trigger: 'change' }],
         endTime: [{ required: true, validator: timeRangeValidate, trigger: 'change' }],
         adStatus: [{ required: true, message: '请选择状态', trigger: 'change' }],
-        adImgUrl: [{ required: true, message: '请上传图片', trigger: 'change' }]
+        adImgUrl: [{ required: true, message: '请上传图片', trigger: 'change' }],
+        adWeight: [{ validator: weightValidate, trigger: 'blur' }]
       },
       startTimeOptions: {},
       endTimeOptions: {}
     }
   },
+  watch: {
+    'temp.startTime'(nval, oval) {
+      const that = this
+      this.endTimeOptions = {
+        disabledDate(time) {
+          return that.dayjs(time) < that.dayjs(nval)
+        }
+      }
+    }
+  },
   created() {},
   mounted() {
+    const that = this
     this.getList()
     this.startTimeOptions = {
       disabledDate(time) {
-        return dayjs(time) < dayjs().subtract(1, 'day')
+        return that.dayjs(time) < that.dayjs().subtract(1, 'day')
       }
     }
   },
@@ -188,19 +198,13 @@ export default {
             item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
           })
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
-    startTimeChange(value) {
-      this.endTimeOptions = {
-        disabledDate(time) {
-          return dayjs(time) < dayjs(value)
-        }
-      }
-    },
     getImage(image) {
       this.temp.adImgUrl = image
+      this.$refs.dataForm.validateField('adImgUrl')
     },
     handleFilter() {
       this.getList()
@@ -243,7 +247,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },

@@ -9,7 +9,7 @@ const uploadFile = (file) => {
       } else {
         vm.$message.warning(data.msg)
       }
-    }).catch(err => {
+    }).catch(() => {
       vm.tools.$loading().hide()
     })
   })

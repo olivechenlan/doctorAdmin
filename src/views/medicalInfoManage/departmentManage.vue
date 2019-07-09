@@ -67,7 +67,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="排序" prop="orderNo">
-          <el-input v-model="temp.orderNo" placeholder="请填写排序" />
+          <el-input v-model="temp.orderNo" type="number" placeholder="请填写排序" />
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -86,6 +86,7 @@
 <script>
 import headline from '@/components/headline'
 import map from '@/utils/map'
+import { weightValidate } from '@/utils/validate'
 export default {
   filters: {
     formatTo(state, type) {
@@ -126,7 +127,8 @@ export default {
         type: [{ required: true, message: '请选择科室类别', trigger: 'change' }],
         departmentName: [{ required: true, message: '请输入科室名称', trigger: 'blur' }],
         parDepartment: [{ required: true, message: '请选择父级科室', trigger: 'change' }],
-        useState: [{ required: true, message: '请选择科室状态', trigger: 'change' }]
+        useState: [{ required: true, message: '请选择科室状态', trigger: 'change' }],
+        orderNo: [{ validator: weightValidate, triiger: 'blur' }]
       },
       dialogFormVisible: false,
       dialogStatus: ''
@@ -151,7 +153,7 @@ export default {
           })
           this.list = data.data
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
@@ -177,6 +179,7 @@ export default {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       if (params.type === '0') delete params['parDepartment']
+      if (!params.orderNo) { params.orderNo = 0 }
       this.api.doctorApi.departmentEdit(params).then(async(data) => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {
@@ -188,7 +191,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },

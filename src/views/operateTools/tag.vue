@@ -51,6 +51,7 @@
 <script>
 import headline from '@/components/headline'
 import map from '@/utils/map'
+import { weightValidate } from '@/utils/validate'
 export default {
   components: {
     headline
@@ -77,7 +78,8 @@ export default {
         remarks: ''
       },
       rules: {
-        label: [{ required: true, message: '请输入标签名称', trigger: 'blur' }]
+        label: [{ required: true, message: '请输入标签名称', trigger: 'blur' }],
+        wegith: [{ validator: weightValidate, trigger: 'blur' }]
       },
       dialogFormVisible: false,
       dialogStatus: ''
@@ -95,7 +97,7 @@ export default {
         if (data.responseFlag === '1') {
           this.list = data.data
         }
-      }).catch(err => {
+      }).catch(() => {
         this.listLoading = false
       })
     },
@@ -137,7 +139,7 @@ export default {
         } else {
           this.$message.warning(data.responseMessage)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.tools.$loading().hide()
       })
     },
