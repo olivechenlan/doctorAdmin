@@ -1,7 +1,4 @@
-/**
- * @param {string} path
- * @returns {Boolean}
- */
+
 const isExternal = (path) => {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
@@ -41,7 +38,7 @@ const weightValidate = (rule, value, callback) => {
 
 export {
   isExternal,
-  isTimeValidate,
-  phoneValidate,
-  weightValidate
+  isTimeValidate, // 时间有效性
+  phoneValidate, // 号码校验
+  weightValidate// 权重校验
 }
