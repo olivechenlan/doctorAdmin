@@ -97,7 +97,7 @@ const baseAjax = {
 }
 
 export default {
-  promiseAjaxGet: (api, params) => {
+  promiseAjaxGet: (api, params, headers = {}) => {
     return new Promise((resolve, reject) => {
       baseAjax.get(
         api,
@@ -108,7 +108,8 @@ export default {
         fail => {
           reject(fail)
           typeof fail === 'string' && Message(fail)
-        }
+        },
+        headers
       )
     })
   },

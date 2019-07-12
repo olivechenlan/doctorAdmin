@@ -5968,7 +5968,7 @@ js-beautify@^1.6.12, js-beautify@^1.6.14:
     mkdirp "~0.5.1"
     nopt "~4.0.1"
 
-js-cookie@2.2.0:
+js-cookie@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-2.2.0.tgz#1b2c279a6eece380a12168b92485265b35b1effb"
   integrity sha1-Gywnmm7s44ChIWi5JIUmWzWx7/s=
@@ -9668,11 +9668,6 @@ throttle-debounce@^1.0.1:
   resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-1.1.0.tgz#51853da37be68a155cb6e827b3514a3c422e89cd"
   integrity sha512-XH8UiPCQcWNuk2LYePibW/4qL97+ZQ1AN3FNXwZRBNPPowo/NRU5fAlDCSNBJIYCKbioZfuYtMhG4quqoJhVzg==
 
-throttle-debounce@^2.0.1:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.1.0.tgz#257e648f0a56bd9e54fe0f132c4ab8611df4e1d5"
-  integrity sha512-AOvyNahXQuU7NN+VVvOOX+uW6FPaWdAOdRP5HfwYxAfCzXTFKRMoIMk+n+po318+ktcChx+F1Dd91G3YHeMKyg==
-
 through2@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
@@ -10074,14 +10069,6 @@ uuid@^3.0.1, uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
-v-viewer@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/v-viewer/-/v-viewer-1.4.1.tgz#f8f0830d3d250f49feb05aa3ebce14f14fb7ca2e"
-  integrity sha512-hKm5qrLLGT0Fn1bmjhjHyA7QH5a4nooJTjhhZ8S1pIoqwnh7RWdC05a690ODDvXNQ7/08ZezjdZp2LWastiwqQ==
-  dependencies:
-    throttle-debounce "^2.0.1"
-    viewerjs "^1.3.2"
-
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/validate-npm-package-license/-/validate-npm-package-license-3.0.4.tgz#fc91f6b9c7ba15c857f4cb2c5defeec39d4f410a"
@@ -10108,11 +10095,6 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-viewerjs@^1.3.2:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/viewerjs/-/viewerjs-1.3.3.tgz#62a3301824c5f79f0d50a288f936fdceb93d5ee7"
-  integrity sha512-zmdgdrRnE3wL90MNdxGYNfRV5imqdsg38PlXD1Y90XkhTD+62p2gCkZCBQjE4FdbGqlSfCLNEz+ihm1EYM/0Kg==
 
 vm-browserify@^1.0.1:
   version "1.1.0"

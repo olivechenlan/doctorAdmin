@@ -139,20 +139,6 @@ export default {
         this.initTinymce()
       })
     },
-    uploadImage(file) {
-      return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file }).then(data => {
-          if (data.code === '1') {
-            resolve(data.data.url)
-          } else {
-            this.tools.$loading().hide()
-            this.$message.warning(data.msg)
-          }
-        }).catch(() => {
-          this.tools.$loading().hide()
-        })
-      })
-    },
     initTinymce() {
       const that = this
       window.tinymce.init({

@@ -94,7 +94,7 @@ export default {
       this.tools.$loading()
       const result = []
       for (const i in this.file) {
-        const src = await this.uploadImage(this.file[i].raw)
+        const src = await this.uploadFile(this.file[i].raw)
         result.push(src)
       }
       const callback = {
@@ -112,9 +112,9 @@ export default {
     handleChange(file, fileList) {
       this.file = fileList
     },
-    uploadImage(file) {
+    uploadFile(file) {
       return new Promise((resolve, reject) => {
-        this.api.uploadApi.uploadImage({ file }).then(data => {
+        this.api.uploadApi.uploadFile({ file }).then(data => {
           if (data.code === '1') {
             resolve(data.data.url)
           } else {

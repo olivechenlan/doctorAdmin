@@ -1,21 +1,43 @@
 import network from '../base/axiosHandle'
 import store from '@/store'
+import qs from 'qs'
+import cryptoJs from 'crypto-js'
+import dayjs from 'dayjs'
 
 const promiseAjaxGet = network.promiseAjaxGet
 const promiseAjaxPost = network.promiseAjaxPost
 const host = `${process.env.VUE_APP_BASE_API}/`
 
-const doctorPost = (api, params, type = 'Json') => {
-  let headers = {}
-  if (store.state.user.accessToken) {
-    headers = { token: store.state.user.accessToken }
+const key = 'wNsirOBq88'
+const sid = '8B0308D0EA6B2804E0500B1E1E636A17'
+const headerPackage = (params, type) => {
+  let paramObject = params
+  if (type === 'FormData') paramObject = {}
+  let paramsTemp = decodeURIComponent(qs.stringify(paramObject)).split('&')
+  paramsTemp = paramsTemp.filter(item => item.indexOf('=') < 0 || (item.indexOf('=') + 1) !== item.length)
+  let sortArray = paramsTemp.sort()
+  sortArray = sortArray.concat(['key=' + key])
+  const sortParams = sortArray.join('&')
+  const sign = cryptoJs.MD5(sortParams).toString().toLowerCase()
+  let headers = {
+    sign,
+    sid,
+    origins: 'web',
+    appVersion: 'V1.0.0'
   }
-
+  if (store.state.user.accessToken) {
+    headers = Object.assign(headers, { token: store.state.user.accessToken })
+  }
+  return headers
+}
+const doctorPost = (api, params, type = 'Json') => {
+  const headers = headerPackage(params, type)
   return new Promise((resolve, reject) => {
     promiseAjaxPost(host + api, params, type, headers).then(data => {
       resolve(data)
     }).catch(err => {
       if (typeof err === 'string' && err.indexOf('登录失效') === 0) {
+        store.commit('user/setRefreshTime', dayjs().subtract(4, 'hour'))
         setTimeout(() => {
           window.$vue.$router.go(0)
         }, 800)
@@ -25,7 +47,19 @@ const doctorPost = (api, params, type = 'Json') => {
 }
 
 const doctorGet = (api, params) => {
-  return promiseAjaxGet(host + api, params)
+  const headers = headerPackage(params)
+  return new Promise((resolve, reject) => {
+    promiseAjaxGet(host + api, params, headers).then(data => {
+      resolve(data)
+    }).catch(err => {
+      if (typeof err === 'string' && err.indexOf('登录失效') === 0) {
+        store.commit('setRefreshTime', dayjs().subtract(4, 'hour'))
+        setTimeout(() => {
+          window.$vue.$router.go(0)
+        }, 800)
+      }
+    })
+  })
 }
 
 const getUserInfoList = params => {

@@ -7,6 +7,7 @@ const promiseAjaxPost = network.promiseAjaxPost
 const uploadPost = (api, params = {}) => {
   const key = 'tsoUeDnGRWxo4cowaZmNq6BJCGFHhWmR'
   let paramsArray = qs.stringify(params).split('&')
+  paramsArray = paramsArray.filter(item => item.indexOf('=') < 0 || (item.indexOf('=') + 1) !== item.length)
   paramsArray = paramsArray.filter(item => item.indexOf('file') !== 0) // file字段不参与加密
   let sortArray = paramsArray.sort()
   sortArray = sortArray.concat(['key=' + key])
