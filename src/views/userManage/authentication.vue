@@ -197,15 +197,16 @@ export default {
     }
   },
   async created() {
+
+  },
+  async mounted() {
+    this.getList()
     await map.getDepartment()
     await map.getTitle()
     await map.getHospital()
     this.departmentOptions = this.store.session('departmentList')
     this.titleOptions = this.store.session('titleList')
     this.hospitalOptions = this.store.session('hospitalList')
-  },
-  mounted() {
-    this.getList()
   },
   methods: {
     getList() {

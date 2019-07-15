@@ -10,10 +10,8 @@ const host = `${process.env.VUE_APP_BASE_API}/`
 
 const key = 'wNsirOBq88'
 const sid = '8B0308D0EA6B2804E0500B1E1E636A17'
-const headerPackage = (params, type) => {
-  let paramObject = params
-  if (type === 'FormData') paramObject = {}
-  let paramsTemp = decodeURIComponent(qs.stringify(paramObject)).split('&')
+const headerPackage = (params) => {
+  let paramsTemp = decodeURIComponent(qs.stringify(params)).split('&')
   paramsTemp = paramsTemp.filter(item => item.indexOf('=') < 0 || (item.indexOf('=') + 1) !== item.length)
   let sortArray = paramsTemp.sort()
   sortArray = sortArray.concat(['key=' + key])
@@ -30,34 +28,39 @@ const headerPackage = (params, type) => {
   }
   return headers
 }
-const doctorPost = (api, params, type = 'Json') => {
+const resetToken = () => {
+  if (dayjs().diff(store.state.user.refreshTime, 'hour') >= 3 || !store.state.user.refreshTime) {
+    store.dispatch('user/resetToken')
+  }
+}
+const doctorPost = (api, params, ifAuth = true, type = 'Json') => {
   const headers = headerPackage(params, type)
+
   return new Promise((resolve, reject) => {
     promiseAjaxPost(host + api, params, type, headers).then(data => {
+      if (ifAuth) resetToken()
       resolve(data)
     }).catch(err => {
       if (typeof err === 'string' && err.indexOf('登录失效') === 0) {
-        store.commit('user/setRefreshTime', dayjs().subtract(4, 'hour'))
-        setTimeout(() => {
-          window.$vue.$router.go(0)
-        }, 800)
+        store.dispatch('user/resetToken')
       }
+      reject()
     })
   })
 }
 
-const doctorGet = (api, params) => {
-  const headers = headerPackage(params)
+const doctorGet = (api, params, ifAuth = true) => {
+  const headers = headerPackage({})
+
   return new Promise((resolve, reject) => {
     promiseAjaxGet(host + api, params, headers).then(data => {
+      if (ifAuth) resetToken()
       resolve(data)
     }).catch(err => {
       if (typeof err === 'string' && err.indexOf('登录失效') === 0) {
-        store.commit('setRefreshTime', dayjs().subtract(4, 'hour'))
-        setTimeout(() => {
-          window.$vue.$router.go(0)
-        }, 800)
+        store.dispatch('user/resetToken')
       }
+      reject()
     })
   })
 }
@@ -91,7 +94,7 @@ const authenCheck = params => {
 }
 
 const login = params => {
-  return doctorPost('index/login', params)
+  return doctorPost('index/login', params, false)
 }
 
 const getHospitalListPage = params => {
@@ -131,7 +134,7 @@ const circleDelete = query => {
 }
 
 const getTopicList = params => {
-  return doctorPost('headLine/code', params, 'FormData')
+  return doctorGet('headLine/code', params)
 }
 
 const getBannerList = params => {
@@ -171,7 +174,7 @@ const topicDelete = params => {
 }
 
 const refreshToken = params => {
-  return doctorGet('index/refreshToken', params)
+  return doctorGet('index/refreshToken', params, false)
 }
 
 const getInfoList = params => {
@@ -200,10 +203,6 @@ const feedbackEdit = params => {
 
 const getAppVersion = params => {
   return doctorPost('userFeedback/getAppVersionList', params)
-}
-
-const getNewDetail = params => {
-  return doctorGet('headLine/selectInfoById', params)
 }
 
 export default {
@@ -241,6 +240,5 @@ export default {
   getDictionary, // 获取字典
   getFeedbackList, // 获取反馈列表
   feedbackEdit, // 反馈
-  getAppVersion, // 获取app版本
-  getNewDetail
+  getAppVersion // 获取app版本
 }

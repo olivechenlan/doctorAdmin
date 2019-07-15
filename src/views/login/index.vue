@@ -51,13 +51,6 @@
 
 export default {
   data() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-    }
     return {
       loginForm: {
         phone: '18989619202',
@@ -67,7 +60,7 @@ export default {
       },
       rules: {
         phone: [{ required: true, trigger: 'blur', message: '请输入用户名' }],
-        pwd: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        pwd: [{ required: true, trigger: 'blur', message: '请输入密码' }]
       },
       passwordType: 'password',
       redirect: undefined
@@ -104,7 +97,7 @@ export default {
             } else {
               this.$message.warning(data.responseMessage)
             }
-          }).catch(() => {
+          }).catch((err) => {
             this.tools.$loading().hide()
           })
         }

@@ -120,9 +120,10 @@ export default {
     }
   },
   created() {
-    this.getAppVersion()
+
   },
   mounted() {
+    this.getAppVersion()
     this.getList()
   },
   methods: {

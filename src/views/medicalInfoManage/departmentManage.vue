@@ -134,12 +134,13 @@ export default {
       dialogStatus: ''
     }
   },
-  async created() {
+  created() {
+
+  },
+  async mounted() {
+    this.getList()
     await map.getDepartment()
     this.departmentOptions = this.store.session('departmentList')
-  },
-  mounted() {
-    this.getList()
   },
   methods: {
     getList() {

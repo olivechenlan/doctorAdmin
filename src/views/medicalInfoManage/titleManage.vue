@@ -129,11 +129,12 @@ export default {
       dialogStatus: ''
     }
   },
-  async created() {
+  created() {
+
+  },
+  async mounted() {
     await map.getTitle()
     this.titleOptions = this.store.session('titleList')
-  },
-  mounted() {
     this.getList()
   },
   methods: {

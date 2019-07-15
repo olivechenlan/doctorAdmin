@@ -106,12 +106,13 @@ export default {
       }
     }
   },
-  async created() {
+  created() {
+
+  },
+  async mounted() {
+    this.getList()
     await map.getTopic()
     this.topicOptions = this.store.session('topicList')
-  },
-  mounted() {
-    this.getList()
   },
   methods: {
     getList() {
