@@ -21,7 +21,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: './',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -34,18 +34,11 @@ module.exports = {
       errors: true
     },
     proxy: {
-      'test-api': {
-        target: 'http://101.69.143.198:9998/gatewayAPI/doctor_web',
+      'stage-api': {
+        target: 'http://test.jktz.gov.cn:8084/tzjkmain',
         changeOrigin: true,
         pathRewrite: {
-          '^/test-api': '/'
-        }
-      },
-      'upload-api': {
-        target: 'https://service.jktz.gov.cn/store',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/upload-api': ''
+          '^/stage-api': '/'
         }
       }
     }

@@ -3,6 +3,7 @@ import cryptoJs from 'crypto-js'
 import qs from 'qs'
 import dayjs from 'dayjs'
 const promiseAjaxPost = network.promiseAjaxPost
+const host = `${process.env.VUE_APP_BASE_API}/uploadApi/store/`
 
 const uploadPost = (api, params = {}) => {
   const key = 'tsoUeDnGRWxo4cowaZmNq6BJCGFHhWmR'
@@ -18,7 +19,7 @@ const uploadPost = (api, params = {}) => {
     if (value) { formData.append(key, value) }
   }
   formData.append('sign', sign)
-  return promiseAjaxPost('upload-api/' + api, formData, 'File')
+  return promiseAjaxPost(host + api, formData, 'File')
 }
 
 const uploadFile = (params) => {

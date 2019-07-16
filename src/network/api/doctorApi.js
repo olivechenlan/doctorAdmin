@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 
 const promiseAjaxGet = network.promiseAjaxGet
 const promiseAjaxPost = network.promiseAjaxPost
-const host = `${process.env.VUE_APP_BASE_API}/`
+const host = `${process.env.VUE_APP_BASE_API}/doctorAdminApi/doctor_web/`
 
 const key = 'wNsirOBq88'
 const sid = '8B0308D0EA6B2804E0500B1E1E636A17'
