@@ -39,6 +39,7 @@ const actions = {
           if (data.responseFlag === '1') {
             commit('setAccessToken', data.data.accessToken)
             commit('setRefreshTime', dayjs())
+            vm.$router.go(0)
           } else {
             dispatch('toggleUserInfo', initData)
             if (vm.$route.path !== '/login') vm.$router.push(`/login?redirect=${vm.$route.path}`)
