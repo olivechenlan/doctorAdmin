@@ -17,9 +17,10 @@ const phoneValidate = (rule, value, callback) => {
 }
 
 const isTimeValidate = (rule, value, callback, startTime) => {
+  const vm = window.$vue
   if (!value) callback('请选择下架时间')
   if (value) {
-    if (value <= startTime) {
+    if (vm.dayjs(value) <= vm.dayjs(startTime)) {
       callback(new Error('下架时间必须大于上架时间'))
     } else {
       callback()

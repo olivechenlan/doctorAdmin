@@ -34,7 +34,7 @@
         </template>
       </el-table-column>
       <el-table-column label="描述" prop="remarks" min-width="200" align="center" />
-      <el-table-column label="创建时间" prop="createTime" width="180" align="center" />
+      <el-table-column label="上架时间" prop="startTime" width="180" align="center" />
       <el-table-column label="下架时间" prop="endTime" width="180" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">
@@ -168,9 +168,13 @@ export default {
   watch: {
     'temp.startTime'(nval, oval) {
       const that = this
+      const lastTime =
+        this.dayjs(nval).isBefore(this.dayjs())
+          ? this.dayjs().subtract(1, 'day')
+          : this.dayjs(nval).subtract(1, 'day')
       this.endTimeOptions = {
         disabledDate(time) {
-          return that.dayjs(time) < that.dayjs(nval)
+          return that.dayjs(time) < lastTime
         }
       }
     }
@@ -194,7 +198,7 @@ export default {
         if (data.responseFlag === '1') {
           this.list = data.data
           this.list.forEach(item => {
-            item.createTime = item.createTime ? this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+            item.startTime = item.startTime ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
             item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
           })
         }
@@ -215,6 +219,7 @@ export default {
     },
     handleCreate() {
       this.resetTemp()
+      this.temp.startTime = this.dayjs().format('YYYY-MM-DD HH:mm:ss')
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },

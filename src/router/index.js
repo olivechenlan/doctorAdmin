@@ -43,6 +43,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/guide',
+    component: () => import('@/views/guide/index'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     name: 'operateTools',

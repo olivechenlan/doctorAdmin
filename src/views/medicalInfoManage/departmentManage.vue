@@ -149,7 +149,7 @@ export default {
         this.listLoading = false
         if (data.responseFlag === '1') {
           data.data.forEach(item => {
-            item.parDepartment = item.parDepartment === '0' && ''
+            if (item.parDepartment === '0') item.parDepartment = ''
             item.children = item.subDeptList
           })
           this.list = data.data

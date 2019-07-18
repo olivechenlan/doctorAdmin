@@ -51,7 +51,7 @@
       <el-table-column label="来源" prop="fromSource" width="150" align="center" />
       <el-table-column label="点击量" prop="author" width="100" align="center" />
       <el-table-column label="收藏数" prop="author" width="100" align="center" />
-      <el-table-column label="发布时间" prop="startTime" width="160" align="center" />
+      <el-table-column label="上架时间" prop="startTime" width="160" align="center" />
       <el-table-column label="下架时间" prop="endTime" width="160" align="center" />
       <el-table-column label="创建人" prop="fromUser" width="100" align="center" />
       <el-table-column label="是否置顶" prop="isTop" width="100" align="center" />
@@ -123,7 +123,8 @@ export default {
           this.list = data.data.records
           this.list.forEach(item => {
             item.typeName = this.topicOptions.find(it => it.type === item.type).name
-            item.createTime = item.createTime ? this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+            item.startTime = item.startTime ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
+            item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
             item.isTop = item.weight > 0 ? '是' : '否'
           })
           this.total = data.data.total

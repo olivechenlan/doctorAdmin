@@ -27,7 +27,7 @@ export default {
         }
       }
       return {
-        is: 'router-link',
+        is: 'div',
         to: url
       }
     }

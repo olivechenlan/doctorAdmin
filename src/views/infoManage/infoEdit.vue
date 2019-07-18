@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <headline list-title="编辑资讯" />
+    <headline :list-title="pageTitle" />
     <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules" class="form-container">
       <el-row type="flex" class="row-bg" justify="space-between">
         <el-col :span="11">
@@ -73,6 +73,7 @@ export default {
       isTimeValidate(rule, value, callback, this.temp.startTime)
     }
     return {
+      pageTitle: '',
       topicOptions: [],
       stateOptions: map.getBannerStatus,
       temp: {
@@ -109,9 +110,13 @@ export default {
   watch: {
     'temp.startTime'(nval, oval) {
       const that = this
+      const lastTime =
+        this.dayjs(nval).isBefore(this.dayjs())
+          ? this.dayjs().subtract(1, 'day')
+          : this.dayjs(nval).subtract(1, 'day')
       this.endTimeOptions = {
         disabledDate(time) {
-          return that.dayjs(time) < that.dayjs(nval)
+          return that.dayjs(time) < lastTime
         }
       }
     }
@@ -131,6 +136,7 @@ export default {
         return that.dayjs(time) < that.dayjs().subtract(1, 'day')
       }
     }
+    this.pageTitle = this.tools.isEmptyObject(this.temp.headInfoId) ? '新增资讯' : '编辑资讯'
   },
   methods: {
     async getStatement() {
