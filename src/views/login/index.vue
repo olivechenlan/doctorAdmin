@@ -95,7 +95,7 @@ export default {
               this.$store.dispatch('user/toggleUserInfo', Object.assign({}, data.data, { refreshTime: this.dayjs() }))
               this.$router.replace({ path: this.redirect })
             } else {
-              this.$message.warning(data.responseMessage)
+              this.$message.error(data.responseMessage)
             }
           }).catch((err) => {
             this.tools.$loading().hide()

@@ -119,7 +119,7 @@ export default {
             resolve(data.data.url)
           } else {
             this.tools.$loading().hide()
-            this.$message.warning(data.msg)
+            this.$message.error(data.msg)
           }
         }).catch(() => {
           this.tools.$loading().hide()

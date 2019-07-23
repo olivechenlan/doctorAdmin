@@ -185,7 +185,7 @@ export default {
           this.getList()
           await map.getTitle(true)
         } else {
-          this.$message.warning(data.responseMessage)
+          this.$message.error(data.responseMessage)
         }
       }).catch(() => {
         this.tools.$loading().hide()

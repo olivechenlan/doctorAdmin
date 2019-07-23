@@ -7,7 +7,7 @@ const uploadFile = (file) => {
       if (data.code === '1') {
         resolve(data.data.url)
       } else {
-        vm.$message.warning(data.msg)
+        vm.$message.error(data.msg)
       }
     }).catch(() => {
       vm.tools.$loading().hide()

@@ -172,7 +172,7 @@ export default {
         if (data.responseFlag === '1') {
           this.$router.back()
         } else {
-          this.$message.warning(data.responseMessage)
+          this.$message.error(data.responseMessage)
         }
       }).catch(() => {
         this.tools.$loading().hide()

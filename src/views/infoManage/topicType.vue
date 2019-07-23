@@ -138,7 +138,7 @@ export default {
             this.listQuery = this.$options.data().listQuery
             this.getList()
           } else {
-            this.$message.warning(data.responseMessage)
+            this.$message.error(data.responseMessage)
           }
         }).catch(() => {
           this.tools.$loading().hide()
@@ -164,7 +164,7 @@ export default {
           this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
-          this.$message.warning(data.responseMessage)
+          this.$message.error(data.responseMessage)
         }
       }).catch(() => {
         this.tools.$loading().hide()

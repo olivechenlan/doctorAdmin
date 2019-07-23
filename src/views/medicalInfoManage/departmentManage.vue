@@ -190,7 +190,7 @@ export default {
           this.getList()
           await map.getDepartment(true)
         } else {
-          this.$message.warning(data.responseMessage)
+          this.$message.error(data.responseMessage)
         }
       }).catch(() => {
         this.tools.$loading().hide()
