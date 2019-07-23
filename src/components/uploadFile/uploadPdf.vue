@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     fileList() {
-      return !this.src ? [] : [{ name: '', url: this.src }]
+      return !this.src ? [] : [{ name: this.src, url: this.src }]
     }
   },
   mounted() {

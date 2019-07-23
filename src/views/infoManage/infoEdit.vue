@@ -126,7 +126,7 @@ export default {
   },
   async mounted() {
     const that = this
-    this.topicOptions = this.store.session('topicList')
+    this.topicOptions = this.store.session('topicList') || []
     await this.getStatement()
     this.temp = this.store.session('info') || this.$options.data().temp
     this.temp.intoUrl = this.tools.isEmptyObject(this.temp.intoUrl) ? [] : this.temp.intoUrl.split(',')

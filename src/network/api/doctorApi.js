@@ -205,6 +205,18 @@ const getAppVersion = params => {
   return doctorPost('userFeedback/getAppVersionList', params)
 }
 
+const getPathwayList = params => {
+  return doctorGet('clinicalPathway/getList', params)
+}
+
+const pathwayAdd = params => {
+  return doctorPost('clinicalPathway/saveInfo', params)
+}
+
+const pathwayEdit = params => {
+  return doctorPost('clinicalPathway/updateInfo', params)
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -240,5 +252,8 @@ export default {
   getDictionary, // 获取字典
   getFeedbackList, // 获取反馈列表
   feedbackEdit, // 反馈
-  getAppVersion // 获取app版本
+  getAppVersion, // 获取app版本
+  getPathwayList, // 获取临床路径列表
+  pathwayAdd, // 新增路径
+  pathwayEdit // 编辑路径
 }

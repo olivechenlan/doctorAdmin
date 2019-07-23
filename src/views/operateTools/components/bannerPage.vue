@@ -28,7 +28,8 @@
       </el-table-column>
       <el-table-column label="标题" prop="title" min-width="120" align="center" />
       <el-table-column label="链接地址" prop="adLink" min-width="180" align="center" />
-      <el-table-column label="状态" width="150" align="center">
+      <el-table-column label="是否启用" prop="adStatusName" width="150" align="center" />
+      <el-table-column label="是否上架" width="150" align="center">
         <template slot-scope="{row}">
           {{ row|formatToState }}
         </template>
@@ -104,9 +105,10 @@ export default {
       const vm = window.$vue
       const startTime = vm.dayjs(row.startTime)
       const endTime = vm.dayjs(row.endTime)
+      const nowTime = vm.dayjs()
       let isTimesValid = ''
       if (startTime.isValid() && endTime.isValid()) {
-        isTimesValid = row.adStatus === '1' && endTime.isAfter(vm.dayjs()) && endTime.isAfter(startTime)
+        isTimesValid = row.adStatus === '1' && nowTime.isAfter(startTime) && nowTime.isBefore(endTime)
       } else {
         isTimesValid = false
       }
@@ -198,6 +200,7 @@ export default {
         if (data.responseFlag === '1') {
           this.list = data.data
           this.list.forEach(item => {
+            item.adStatusName = this.stateOptions.find(it => it.code === item.adStatus).name
             item.startTime = item.startTime ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
             item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
           })

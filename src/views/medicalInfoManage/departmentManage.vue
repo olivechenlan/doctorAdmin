@@ -140,7 +140,7 @@ export default {
   async mounted() {
     this.getList()
     await map.getDepartment()
-    this.departmentOptions = this.store.session('departmentList')
+    this.departmentOptions = this.store.session('departmentList') || []
   },
   methods: {
     getList() {

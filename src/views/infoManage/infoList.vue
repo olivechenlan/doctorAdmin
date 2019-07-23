@@ -112,7 +112,7 @@ export default {
   async mounted() {
     this.getList()
     await map.getTopic()
-    this.topicOptions = this.store.session('topicList')
+    this.topicOptions = this.store.session('topicList') || []
   },
   methods: {
     getList() {

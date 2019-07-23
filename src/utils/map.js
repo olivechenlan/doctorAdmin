@@ -254,6 +254,17 @@ const getFeedbackStatus = [
   }
 ]
 
+const getPathwayType = [
+  {
+    name: '普通',
+    code: '1'
+  },
+  {
+    name: '县级',
+    code: '2'
+  }
+]
+
 const getDepartment = async(isRefresh) => {
   if (tools.isEmptyObject(store.session('departmentList')) || isRefresh) {
     await doctorApi.getDepartmentList({}).then(data => {
@@ -332,6 +343,16 @@ const getTopic = async(isRefresh) => {
   }
 }
 
+const getMajor = async(isRefresh) => {
+  if (tools.isEmptyObject(store.session('majorList')) || isRefresh) {
+    await doctorApi.getDictionary('CP_MAJOR').then(data => {
+      if (data.responseFlag === '1') {
+        store.session.set('majorList', data.data)
+      }
+    }).catch(() => {})
+  }
+}
+
 export default {
   getArea, // 获取区域列表
   getDepartment, // 获取科室列表
@@ -352,5 +373,7 @@ export default {
   getCheckStatus, // 获取审核状态
   getBannerStatus, // 获取轮播图状态
   getTopic, // 获取栏目分类
-  getFeedbackStatus // 获取反馈状态
+  getFeedbackStatus, // 获取反馈状态
+  getPathwayType, // 临床路径类型
+  getMajor // 获取所属专业
 }

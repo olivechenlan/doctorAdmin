@@ -219,9 +219,9 @@ export default {
     await map.getDepartment()
     await map.getTitle()
     await map.getHospital()
-    this.departmentOptions = this.store.session('departmentList')
-    this.titleOptions = this.store.session('titleList')
-    this.hospitalOptions = this.store.session('hospitalList')
+    this.departmentOptions = this.store.session('departmentList') || []
+    this.titleOptions = this.store.session('titleList') || []
+    this.hospitalOptions = this.store.session('hospitalList') || []
   },
   methods: {
     getList() {

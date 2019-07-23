@@ -134,7 +134,7 @@ export default {
   },
   async mounted() {
     await map.getTitle()
-    this.titleOptions = this.store.session('titleList')
+    this.titleOptions = this.store.session('titleList') || []
     this.getList()
   },
   methods: {

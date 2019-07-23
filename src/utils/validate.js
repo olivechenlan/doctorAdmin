@@ -4,7 +4,7 @@ const isExternal = (path) => {
 }
 
 const phoneValidate = (rule, value, callback) => {
-  const regMobilePhone = new RegExp(/^1[34578]\d{9}$/)
+  const regMobilePhone = new RegExp(/^[1](([3][0-9])|([4][5-9])|([5][0-3,5-9])|([6][5,6])|([7][0-8])|([8][0-9])|([9][1,8,9]))[0-9]{8}$/)
   const regTelephone = new RegExp(/^((0\d{2,3})-?)(\d{7,8})(-(\d{3,}))?$/)
   if (!value) callback('请填写联系号码')
   if (value) {
