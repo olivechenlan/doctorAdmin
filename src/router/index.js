@@ -57,32 +57,38 @@ export const constantRoutes = [
       {
         path: '/operateTools/indexBanner',
         component: () => import('@/views/operateTools/indexBanner'),
-        name: 'indexBanner',
+        name: 'operateTools-indexBanner',
         meta: { title: '首页轮播图' }
       },
       {
         path: '/operateTools/workbenchBanner',
         component: () => import('@/views/operateTools/workbenchBanner'),
-        name: 'workbenchBanner',
+        name: 'operateTools-workbenchBanner',
         meta: { title: '工作台轮播图' }
       },
       {
         path: '/operateTools/tag',
         component: () => import('@/views/operateTools/tag'),
-        name: 'tag',
+        name: 'operateTools-tag',
         meta: { title: '标签管理' }
       },
       {
         path: '/operateTools/circle',
         component: () => import('@/views/operateTools/circle'),
-        name: 'circle',
+        name: 'operateTools-circle',
         meta: { title: '圈子管理' }
       },
       {
         path: '/operateTools/pathway',
         component: () => import('@/views/operateTools/pathway'),
-        name: 'pathway',
+        name: 'operateTools-pathway',
         meta: { title: '临床路径' }
+      },
+      {
+        path: '/operateTools/guideManagement',
+        component: () => import('@/views/operateTools/guideManagement'),
+        name: 'operateTools-guideManagement',
+        meta: { title: '指南管理' }
       }
     ]
   },
@@ -95,12 +101,12 @@ export const constantRoutes = [
       {
         path: 'medicalUser',
         component: () => import('@/views/userManage/medicalUser'),
-        name: 'medicalUser',
+        name: 'userManage-medicalUser',
         meta: { title: '医护用户信息' }
       }, {
         path: 'authentication',
         component: () => import('@/views/userManage/authentication'),
-        name: 'authentication',
+        name: 'userManage-authentication',
         meta: { title: '认证审核' }
       }
     ]
@@ -114,21 +120,41 @@ export const constantRoutes = [
       {
         path: 'infoList',
         component: () => import('@/views/infoManage/infoList'),
-        name: 'infoList',
+        name: 'infoManage-infoList',
         meta: { title: '资讯列表' }
       }, {
         path: 'topicType',
         component: () => import('@/views/infoManage/topicType'),
-        name: 'topicType',
+        name: 'infoManage-topicType',
         meta: { title: '栏目分类' }
       },
       {
         path: 'infoEdit',
         component: () => import('@/views/infoManage/infoEdit'),
-        name: 'infoEdit',
+        name: 'infoManage-infoEdit',
         meta: { title: '编辑资讯' },
         hidden: true
 
+      }
+    ]
+  },
+  {
+    path: '/medicalSkillManage',
+    component: Layout,
+    name: 'medicalSkillManage',
+    meta: { title: '医术管理', icon: 'list' },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/medicalSkillManage/index'),
+        name: 'medicalSkillManage-index',
+        meta: { title: '病例列表' }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/medicalSkillManage/edit'),
+        name: 'medicalSkillManage-edit',
+        meta: { title: '病例审核' }
       }
     ]
   },
@@ -141,19 +167,19 @@ export const constantRoutes = [
       {
         path: 'organList',
         component: () => import('@/views/medicalInfoManage/organList'),
-        name: 'organList',
+        name: 'medicalInfoManage-organList',
         meta: { title: '医疗机构列表' }
       },
       {
         path: 'departmentManage',
         component: () => import('@/views/medicalInfoManage/departmentManage'),
-        name: 'departmentManage',
+        name: 'medicalInfoManage-departmentManage',
         meta: { title: '科室管理' }
       },
       {
         path: 'titleManage',
         component: () => import('@/views/medicalInfoManage/titleManage'),
-        name: 'titleManage',
+        name: 'medicalInfoManage-titleManage',
         meta: { title: '职称管理' }
       }
     ]
@@ -167,7 +193,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/feedback/index'),
-        name: 'index',
+        name: 'feedback-index',
         meta: { title: '用户反馈' }
       }
     ]

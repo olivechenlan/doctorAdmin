@@ -343,15 +343,59 @@ const getTopic = async(isRefresh) => {
   }
 }
 
-const getMajor = async(isRefresh) => {
-  if (tools.isEmptyObject(store.session('majorList')) || isRefresh) {
+const getPathwayMajor = async(isRefresh) => {
+  if (tools.isEmptyObject(store.session('pathwayMajor')) || isRefresh) {
     await doctorApi.getDictionary('CP_MAJOR').then(data => {
       if (data.responseFlag === '1') {
-        store.session.set('majorList', data.data)
+        store.session.set('pathwayMajor', data.data)
       }
     }).catch(() => {})
   }
 }
+
+const getGuideMajor = async() => {
+  if (tools.isEmptyObject(store.session('guideMajor'))) {
+    await doctorApi.getGuideMajor({}).then(data => {
+      if (data.responseFlag === '1') {
+        store.session.set('guideMajor', data.data)
+      }
+    }).catch(() => {})
+  }
+}
+
+const getGuideType = [
+  {
+    name: '内科',
+    code: '1'
+  },
+  {
+    name: '外科',
+    code: '2'
+  },
+  {
+    name: '其他',
+    code: '3'
+  }
+]
+
+const getSkillCheckState = [
+  {
+    name: '未审核',
+    code: '0'
+  },
+  {
+    name: '审核中',
+    code: '1'
+  },
+  {
+    name: '审核通过',
+    code: '2'
+  },
+  {
+    name: '审核不通过',
+    code: '3'
+  }
+]
 
 export default {
   getArea, // 获取区域列表
@@ -375,5 +419,9 @@ export default {
   getTopic, // 获取栏目分类
   getFeedbackStatus, // 获取反馈状态
   getPathwayType, // 临床路径类型
-  getMajor // 获取所属专业
+  getPathwayMajor, // 获取临床路径所属专业
+  getGuideMajor, // 获取指南专业
+  getGuideType, // 获取指南分类
+  getSkillCheckState // 获取医术审核状态
+
 }

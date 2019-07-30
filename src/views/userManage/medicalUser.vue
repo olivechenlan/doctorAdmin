@@ -244,9 +244,8 @@ export default {
       this.listQuery.current = 1
       this.getList()
     },
-    cascaderChange(e, model, flag) {
-      if (flag === 'listQuery') this.listQuery[model] = e[e.length - 1]
-      if (flag === 'temp') this.temp[model] = e[e.length - 1]
+    cascaderChange(e, model, param) {
+      this[param][mode] = e[e.length - 1]
     },
     resetTemp() {
       this.temp = this.$options.data().temp

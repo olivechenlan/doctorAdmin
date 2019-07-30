@@ -4,29 +4,11 @@
     <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules" class="form-container">
       <el-row type="flex" class="row-bg" justify="space-between">
         <el-col :span="11">
-          <el-form-item label="资讯栏目" prop="type">
-            <el-select v-model="temp.type" placeholder="请选择所属栏目">
-              <el-option v-for="item in topicOptions" :key="item.type" :label="item.name" :value="item.type" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="外部链接" prop="adLink">
-            <el-input v-model="temp.adLink" placeholder="请填写外部链接" />
-          </el-form-item>
-          <el-form-item label="上架时间" prop="startTime">
-            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select v-model="temp.status" placeholder="请选择状态">
-              <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="图片" prop="listImg">
-            <upload-image :src="temp.listImg" @getChange="getImage" />
-          </el-form-item>
+          <phone-viewer src="http://stop.vsnbw.com/subject/H5/zqj/index.html" />
         </el-col>
         <el-col :span="11">
-          <el-form-item label="资讯标题" prop="title">
-            <el-input v-model="temp.title" placeholder="请填写资讯标题" />
+          <el-form-item label="病例标题" prop="title">
+            <el-input v-model="temp.title" placeholder="请填写病例标题" />
           </el-form-item>
           <el-form-item label="来源" prop="fromSource">
             <el-input v-model="temp.fromSource" placeholder="请填写文章来源及作者相关信息" />
@@ -63,10 +45,11 @@
 import headline from '@/components/headline'
 import uploadImage from '@/components/uploadFile/uploadImage'
 import Tinymce from '@/components/Tinymce'
+import phoneViewer from '@/components/phoneViewer'
 import map from '@/utils/map'
 import { isTimeValidate, weightValidate } from '@/utils/validate'
 export default {
-  components: { Tinymce, headline, uploadImage },
+  components: { Tinymce, headline, uploadImage, phoneViewer },
 
   data() {
     const timeRangeValidate = (rule, value, callback) => {
@@ -181,7 +164,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.infoEdit()
+          this.edit()
         }
       })
     }
@@ -191,4 +174,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 </style>

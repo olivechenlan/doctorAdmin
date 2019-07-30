@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请填写症状名称" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.cpMajor" placeholder="请选择所属专业" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in majorOptions" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item filter-item-option">
+      <el-input v-model="listQuery.guideName" placeholder="请填写指南名称" clearable class="filter-item filter-item-option" />
+      <el-select v-model="listQuery.majorType" placeholder="请选择分类" clearable class="filter-item filter-item-option" @change="changeType($event,'listQuery')">
         <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+      </el-select>
+      <el-select v-model="listQuery.guideMajorId" :disabled="!listQuery.majorType" placeholder="请选择专业" clearable class="filter-item filter-item-option">
+        <el-option v-for="item in majorOptions" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
       </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
     </div>
-    <headline list-title="路径列表" button-name="新增路径" @handleAction="handleCreate" />
+    <headline list-title="指南列表" button-name="新增指南" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -22,8 +22,12 @@
       style="width: 100%;"
     >
       <el-table-column label="所属专业" prop="majorName" min-width="150" align="center" />
-      <el-table-column label="症状名称" prop="symptomName" min-width="160" align="center" />
-      <el-table-column label="适用类型" prop="typeName" min-width="120" align="center" />
+      <el-table-column label="标题名称" prop="guideName" min-width="160" align="center" />
+      <el-table-column label="分类" min-width="120" align="center">
+        <template slot-scope="{row}">
+          {{ row.majorType|formatToType }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="220" fixed="right" align="center">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -38,17 +42,17 @@
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
-        <el-form-item label="症状名称" prop="symptomName">
-          <el-input v-model="temp.symptomName" placeholder="请填写症状名称" />
+        <el-form-item label="指南名称" prop="guideName">
+          <el-input v-model="temp.guideName" placeholder="请填写症状名称" />
         </el-form-item>
-        <el-form-item label="所属专业" prop="cpMajor">
-          <el-select v-model="temp.cpMajor" placeholder="请选择所属专业" clearable>
-            <el-option v-for="item in majorOptions" :key="item.value" :label="item.label" :value="item.value" />
+        <el-form-item label="分类" prop="majorType">
+          <el-select v-model="temp.majorType" placeholder="请选择分类" @change="changeType($event,'temp')">
+            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
-        <el-form-item label="适用类型" prop="type">
-          <el-select v-model="temp.type" placeholder="请选择适用类型" clearable>
-            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+        <el-form-item label="所属专业" prop="guideMajorId">
+          <el-select v-model="temp.guideMajorId" :disabled="!temp.majorType" placeholder="请选择所属专业">
+            <el-option v-for="item in majorOptions" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
           </el-select>
         </el-form-item>
         <el-form-item label="上传附件" prop="fileUrl">
@@ -74,70 +78,91 @@ import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
 import uploadPdf from '@/components/uploadFile/uploadPdf'
 export default {
-  filters: {},
+  filters: {
+    formatToType(type) {
+      let result = { name: '' }
+      result = !!type && (map.getGuideType.find(item => item.code === type))
+      return result.name
+    }
+  },
   components: {
     headline, uploadPdf, Pagination
   },
   data() {
     return {
       listQuery: {
-        name: '',
-        cpMajor: '',
-        type: '',
         current: 1,
-        size: 15
+        size: 15,
+        guideName: '',
+        majorType: '',
+        guideMajorId: ''
       },
-      typeOptions: map.getPathwayType,
+      typeOptions: map.getGuideType,
       majorOptions: [],
-      hospitalOptions: [],
       textMap: {
-        update: '编辑临床路径',
-        create: '新增临床路径'
+        update: '编辑指南',
+        create: '新增指南'
       },
       list: null,
       total: 0,
       listLoading: true,
       temp: {
-        id: '',
-        symptomName: '',
-        cpMajor: '',
-        type: '',
-        fileUrl: '',
-        label: ''
+        guideId: '',
+        guideName: '',
+        guideMajorId: '',
+        majorType: '',
+        fileUrl: ''
       },
       rules: {
-        symptomName: [{ required: true, message: '请输入症状名称', trigger: 'blur' }],
-        cpMajor: [{ required: true, message: '请选择所属专业', trigger: 'change' }],
-        type: [{ required: true, message: '请选择适用类型', trigger: 'change' }],
+        guideName: [{ required: true, message: '请输入指南名称', trigger: 'blur' }],
+        guideMajorId: [{ required: true, message: '请选择所属专业', trigger: 'change' }],
+        majorType: [{ required: true, message: '请选择分类', trigger: 'change' }],
         fileUrl: [{ required: true, message: '请上传附件', trigger: 'change' }]
       },
       dialogFormVisible: false,
       dialogStatus: ''
     }
   },
-  watch: {},
+  computed: {
+  },
+  watch: {
+  },
   created() {},
-  async mounted() {
-    await map.getPathwayMajor()
-    this.majorOptions = this.store.session('pathwayMajor') || []
+  mounted() {
+    map.getGuideMajor()
     this.getList()
   },
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getPathwayList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      this.api.doctorApi.getGuideList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
           this.total = data.data.total
-          this.list.forEach(item => {
-            item.majorName = this.majorOptions.find(it => it.value === item.cpMajor).label || ''
-            item.typeName = this.typeOptions.find(it => it.code === item.type).name || ''
-          })
         }
       }).catch(() => {
         this.listLoading = false
       })
+    },
+    initMajorOptions(param) {
+      const guideMajor = this.store.session('guideMajor')
+      if (this[param]['majorType'] === '1') this.majorOptions = guideMajor.nklist
+      if (this[param]['majorType'] === '2') this.majorOptions = guideMajor.wklist
+      if (this[param]['majorType'] === '3') this.majorOptions = guideMajor.otherList
+    },
+    changeType(e, param) {
+      // this[param]['guideMajorId'] = ''
+      if (e === null) {
+        this[param]['guideMajorId'] = ''
+        return
+      }
+      this[param]['majorType'] = e
+      this.initMajorOptions(param)
+    },
+    getPdf(image) {
+      this.temp.fileUrl = image
+      this.$refs.dataForm.validateField('fileUrl')
     },
     resetTemp() {
       this.temp = this.$options.data().temp
@@ -152,13 +177,10 @@ export default {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
-    getPdf(image) {
-      this.temp.fileUrl = image
-      this.$refs.dataForm.validateField('fileUrl')
-    },
     handleUpdate(row) {
       this.resetTemp()
       this.temp = Object.assign({}, row)
+      this.initMajorOptions('temp')
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
@@ -172,13 +194,13 @@ export default {
     pathwayEdit() {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
-      params.label = this.majorOptions.find(item => item.value === params.cpMajor).label
+      delete params['majorType']
       let method = ''
       if (this.dialogStatus === 'create') {
-        method = 'pathwayAdd'
-        delete params['id']
+        method = 'guideAdd'
+        delete params['guideId']
       }
-      if (this.dialogStatus === 'update') { method = 'pathwayEdit' }
+      if (this.dialogStatus === 'update') { method = 'guideEdit' }
       this.api.doctorApi[method](params).then(data => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {

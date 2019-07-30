@@ -217,6 +217,26 @@ const pathwayEdit = params => {
   return doctorPost('clinicalPathway/updateInfo', params)
 }
 
+const getGuideMajor = params => {
+  return doctorGet('workbenchGuide/getMajorList', params)
+}
+
+const getGuideList = params => {
+  return doctorGet('workbenchGuide/getList', params)
+}
+
+const guideAdd = params => {
+  return doctorPost('workbenchGuide/saveInfo', params)
+}
+
+const guideEdit = params => {
+  return doctorPost('workbenchGuide/updateInfo', params)
+}
+
+const getDoctorSkillList = params => {
+  return doctorGet('doctorArtInfo/getlistOpen', params)
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -255,5 +275,10 @@ export default {
   getAppVersion, // 获取app版本
   getPathwayList, // 获取临床路径列表
   pathwayAdd, // 新增路径
-  pathwayEdit // 编辑路径
+  pathwayEdit, // 编辑路径
+  getGuideMajor, // 指南专业
+  getGuideList, // 指南列表
+  guideAdd, // 新增指南
+  guideEdit, // 编辑指南
+  getDoctorSkillList // 获取医术列表
 }
