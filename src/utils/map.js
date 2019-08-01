@@ -265,6 +265,17 @@ const getPathwayType = [
   }
 ]
 
+const getMedicalSkillState = [
+  {
+    name: '不公开',
+    code: '0'
+  },
+  {
+    name: '公开',
+    code: '1'
+  }
+]
+
 const getDepartment = async(isRefresh) => {
   if (tools.isEmptyObject(store.session('departmentList')) || isRefresh) {
     await doctorApi.getDepartmentList({}).then(data => {
@@ -357,7 +368,12 @@ const getGuideMajor = async() => {
   if (tools.isEmptyObject(store.session('guideMajor'))) {
     await doctorApi.getGuideMajor({}).then(data => {
       if (data.responseFlag === '1') {
-        store.session.set('guideMajor', data.data)
+        const majorGroup = [
+          data.data.nklist,
+          data.data.wklist,
+          data.data.otherList
+        ]
+        store.session.set('guideMajor', majorGroup)
       }
     }).catch(() => {})
   }
@@ -422,6 +438,7 @@ export default {
   getPathwayMajor, // 获取临床路径所属专业
   getGuideMajor, // 获取指南专业
   getGuideType, // 获取指南分类
-  getSkillCheckState // 获取医术审核状态
+  getSkillCheckState, // 获取医术审核状态
+  getMedicalSkillState // 医术是否公开
 
 }

@@ -237,6 +237,14 @@ const getDoctorSkillList = params => {
   return doctorGet('doctorArtInfo/getlistOpen', params)
 }
 
+const getDoctorSkillInfo = params => {
+  return doctorGet('doctorArtInfo/open/selectById', params)
+}
+
+const doctorSkillAuthenCheck = params => {
+  return doctorPost('doctorArtInfo/checkInfo', params)
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -280,5 +288,7 @@ export default {
   getGuideList, // 指南列表
   guideAdd, // 新增指南
   guideEdit, // 编辑指南
-  getDoctorSkillList // 获取医术列表
+  getDoctorSkillList, // 获取医术列表
+  getDoctorSkillInfo, // 获取医术详情
+  doctorSkillAuthenCheck // 医术审核
 }

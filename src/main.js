@@ -14,6 +14,7 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import '@/filter' // 过滤器
 import '@/network'
 import tools from '@/utils/tools'
 import store2 from 'store2'

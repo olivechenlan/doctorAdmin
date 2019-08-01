@@ -26,12 +26,12 @@
       <el-table-column label="标准科室代码" prop="departmentCode" min-width="150" align="center" />
       <el-table-column label="科室类别" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.type|formatTo('Type') }}</span>
+          <span>{{ row.type|formatTo('getDepartmentType') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="科室状态" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.useState|formatTo('State') }}</span>
+          <span>{{ row.useState|formatTo('getDepartmentState') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" fixed="right">
@@ -88,13 +88,6 @@ import headline from '@/components/headline'
 import map from '@/utils/map'
 import { weightValidate } from '@/utils/validate'
 export default {
-  filters: {
-    formatTo(state, type) {
-      let result = { name: '' }
-      result = !!state && (map['getDepartment' + type].find(item => item.code === state))
-      return result.name
-    }
-  },
   components: { headline },
   data() {
     return {

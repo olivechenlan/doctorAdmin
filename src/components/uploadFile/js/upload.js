@@ -7,10 +7,12 @@ const uploadFile = (file) => {
       if (data.code === '1') {
         resolve(data.data.url)
       } else {
-        vm.$message.error(data.msg)
+        vm.$message.error('上传失败，请稍后重试')
+        reject()
       }
     }).catch(() => {
       vm.tools.$loading().hide()
+      reject()
     })
   })
 }

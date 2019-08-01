@@ -161,7 +161,7 @@ export default {
         delete params['headInfoId']
         delete params['fromUser']
       } else {
-        method = 'edit.vue'
+        method = 'infoEdit'
       }
       params.intoUrl = params.intoUrl.join(',')
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')

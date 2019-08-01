@@ -2,7 +2,7 @@
   <div class="components-phone-viewer">
     <div class="phone-wrap">
       <div class="content">
-        <iframe :src="src" frameborder="0" />
+        <iframe ref="iframeWrap" :src="src" frameborder="0" width="100%" height="100%" />
       </div>
     </div>
   </div>
@@ -29,8 +29,8 @@ export default {
 
 <style lang="scss">
   .components-phone-viewer {
-    background-color: #f5f5f5;
-    padding-top: 40px;
+    background-color: #fafafa;
+    padding: 10px 0;
     .phone-wrap {
       position: relative;
       margin: 0 auto;
@@ -43,6 +43,9 @@ export default {
         position: absolute;
         bottom: 53px;
         left: 1px;
+        iframe{
+          font-size: 50px!important;
+        }
       }
     }
   }

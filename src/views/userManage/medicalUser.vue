@@ -45,7 +45,7 @@
       <el-table-column label="机构代码" prop="hospitalId" width="80" align="center" />
       <el-table-column label="认证状态" width="100" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.state|formatToState }}</span>
+          <span>{{ row.state|formatTo('getAuthenStatus') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
@@ -136,18 +136,11 @@ import map from '@/utils/map'
 
 export default {
   components: { Pagination, uploadImage, headline },
-  filters: {
-    formatToState(state) {
-      let result = { name: '' }
-      result = !!state && (map.getAuthenStatus.find(item => item.code === state))
-      return result.name
-    }
-  },
   data() {
     return {
       listQuery: {
         current: 1,
-        size: 15,
+        size: 10,
         orgAreaCode: '',
         hospitalName: '',
         hospitalCode: '',
@@ -245,7 +238,7 @@ export default {
       this.getList()
     },
     cascaderChange(e, model, param) {
-      this[param][mode] = e[e.length - 1]
+      this[param][model] = e[e.length - 1]
     },
     resetTemp() {
       this.temp = this.$options.data().temp

@@ -36,6 +36,7 @@
       highlight-current-row
       style="width: 100%;"
     >
+      <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="机构代码" prop="hospitalCode" width="100" align="center" />
       <el-table-column label="医院图片" width="160" align="center">
         <template slot-scope="{row}">
@@ -47,17 +48,17 @@
       <el-table-column label="医院名称" prop="hospitalName" min-width="120" align="center" />
       <el-table-column label="医院性质" width="130" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orgKind|formatTo('Kind') }}</span>
+          <span>{{ row.orgKind|formatTo('getHospitalKind') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="医院类型" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orgType|formatTo('Type') }}</span>
+          <span>{{ row.orgType|formatTo('getHospitalType') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="医院等级" min-width="100" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orgLevel|formatTo('Level') }}</span>
+          <span>{{ row.orgLevel|formatTo('getHospitalLevel') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="联系方式" prop="orgTel" min-width="130" align="center" />
@@ -145,18 +146,11 @@ import { phoneValidate } from '@/utils/validate'
 
 export default {
   components: { uploadImage, headline, Pagination },
-  filters: {
-    formatTo(state, type) {
-      let result = { name: '' }
-      result = !!state && (map['getHospital' + type].find(item => item.code === state))
-      return result.name
-    }
-  },
   data() {
     return {
       listQuery: {
         current: 1,
-        size: 15,
+        size: 10,
         orgAreaCode: '',
         hospitalName: '',
         hospitalCode: '',

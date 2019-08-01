@@ -21,6 +21,7 @@
       highlight-current-row
       style="width: 100%;"
     >
+      <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="所属专业" prop="majorName" min-width="150" align="center" />
       <el-table-column label="症状名称" prop="symptomName" min-width="160" align="center" />
       <el-table-column label="适用类型" prop="typeName" min-width="120" align="center" />
@@ -85,7 +86,7 @@ export default {
         cpMajor: '',
         type: '',
         current: 1,
-        size: 15
+        size: 10
       },
       typeOptions: map.getPathwayType,
       majorOptions: [],
@@ -144,7 +145,7 @@ export default {
       !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
     },
     handleFilter() {
-      this.temp.current = 1
+      this.listQuery.current = 1
       this.getList()
     },
     handleCreate() {

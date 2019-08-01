@@ -1,3 +1,3 @@
 const imgHost = 'http://www.jktz.gov.cn'
-
-export { imgHost }
+const webHost = `${process.env.VUE_APP_BASE_API}/mod/doctorWeb/#/`
+export { imgHost, webHost }

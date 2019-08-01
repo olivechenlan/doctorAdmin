@@ -39,8 +39,12 @@ export default {
       this.$emit('getChange', '')
     },
     async handleChange(file, fileList) {
-      const fileSrc = await uploadFile(file.raw)
-      this.$emit('getChange', fileSrc)
+      this.handleRemove()
+      await uploadFile(file.raw).then(data => {
+        this.$emit('getChange', data)
+      }).catch(() => {
+        fileList.splice(-1, 1)
+      })
     }
 
   }

@@ -25,12 +25,12 @@
       <el-table-column label="职称名称" prop="name" min-width="150" />
       <el-table-column label="职称类别" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.type|formatTo('Type') }}</span>
+          <span>{{ row.type|formatTo('getTitleType') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="职称状态" min-width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.useState|formatTo('State') }}</span>
+          <span>{{ row.useState|formatTo('getTitleState') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" fixed="right">
@@ -84,13 +84,6 @@ import headline from '@/components/headline'
 import map from '@/utils/map'
 import { weightValidate } from '@/utils/validate'
 export default {
-  filters: {
-    formatTo(state, type) {
-      let result = { name: '' }
-      result = !!state && (map['getTitle' + type].find(item => item.code === state))
-      return result.name
-    }
-  },
   components: { headline },
   data() {
     return {

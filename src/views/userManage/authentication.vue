@@ -32,6 +32,7 @@
       highlight-current-row
       style="width: 100%;"
     >
+      <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="手机号" prop="phone" width="120" align="center" />
       <el-table-column label="姓名" prop="name" width="80" align="center" />
       <el-table-column label="身份证号码" prop="idCard" width="180" align="center" />
@@ -42,7 +43,7 @@
       <el-table-column label="审核状态" width="100" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.checkState | stateFilter">
-            {{ row.checkState | formatToState }}
+            {{ row.checkState | formatTo('getCheckStatus') }}
           </el-tag>
         </template>
       </el-table-column>
@@ -136,11 +137,6 @@ import uploadImage from '@/components/uploadFile/uploadImage'
 export default {
   components: { Pagination, uploadImage, headline },
   filters: {
-    formatToState(state) {
-      let result = { name: '' }
-      result = !!state && (map.getCheckStatus.find(item => item.code === state))
-      return result.name
-    },
     stateFilter(state) {
       const stateMap = {
         '1': '',
@@ -154,7 +150,7 @@ export default {
     return {
       listQuery: {
         current: 1,
-        size: 15,
+        size: 10,
         name: '',
         hospitalName: '',
         hospitalCode: '',

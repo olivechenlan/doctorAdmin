@@ -32,7 +32,7 @@
       <el-table-column label="职称" prop="zcName" min-width="150" align="center" />
       <el-table-column label="状态" width="120" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.checkState|formatToState }}</span>
+          <span>{{ row.checkState|formatTo('getFeedbackStatus') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
@@ -79,13 +79,6 @@ import headline from '@/components/headline'
 import map from '@/utils/map'
 import Pagination from '@/components/Pagination'
 export default {
-  filters: {
-    formatToState(state) {
-      let result = { name: '' }
-      result = !!state && (map.getFeedbackStatus.find(item => item.code === state))
-      return result.name
-    }
-  },
   components: { headline, Pagination },
   data() {
     return {
@@ -95,7 +88,7 @@ export default {
         appVersion: '',
         checkState: '',
         current: 1,
-        size: 15
+        size: 10
       },
       versionOptions: [],
       stateOptions: map.getFeedbackStatus,

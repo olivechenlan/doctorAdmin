@@ -9,6 +9,7 @@
       highlight-current-row
       style="width: 100%;"
     >
+      <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="标签" prop="label" min-width="150" align="center" />
       <el-table-column label="描述" prop="remarks" min-width="200" align="center" />
       <el-table-column label="操作" width="148" fixed="right" align="center">
@@ -69,7 +70,6 @@ export default {
         create: '新增标签'
       },
       list: null,
-      total: 0,
       listLoading: true,
       temp: {
         id: '',

@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       listQuery: {
-        size: 15,
+        size: 10,
         current: 1,
         type: '',
         typeCode: '3310',

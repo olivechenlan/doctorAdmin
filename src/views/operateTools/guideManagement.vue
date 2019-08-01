@@ -6,7 +6,7 @@
         <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
       </el-select>
       <el-select v-model="listQuery.guideMajorId" :disabled="!listQuery.majorType" placeholder="请选择专业" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in majorOptions" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
+        <el-option v-for="item in majorOptions.listQuery" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
       </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
@@ -21,11 +21,12 @@
       highlight-current-row
       style="width: 100%;"
     >
+      <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="所属专业" prop="majorName" min-width="150" align="center" />
       <el-table-column label="标题名称" prop="guideName" min-width="160" align="center" />
       <el-table-column label="分类" min-width="120" align="center">
         <template slot-scope="{row}">
-          {{ row.majorType|formatToType }}
+          {{ row.majorType|formatTo('getGuideType') }}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="220" fixed="right" align="center">
@@ -52,7 +53,7 @@
         </el-form-item>
         <el-form-item label="所属专业" prop="guideMajorId">
           <el-select v-model="temp.guideMajorId" :disabled="!temp.majorType" placeholder="请选择所属专业">
-            <el-option v-for="item in majorOptions" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
+            <el-option v-for="item in majorOptions.temp" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
           </el-select>
         </el-form-item>
         <el-form-item label="上传附件" prop="fileUrl">
@@ -78,13 +79,6 @@ import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
 import uploadPdf from '@/components/uploadFile/uploadPdf'
 export default {
-  filters: {
-    formatToType(type) {
-      let result = { name: '' }
-      result = !!type && (map.getGuideType.find(item => item.code === type))
-      return result.name
-    }
-  },
   components: {
     headline, uploadPdf, Pagination
   },
@@ -92,13 +86,12 @@ export default {
     return {
       listQuery: {
         current: 1,
-        size: 15,
+        size: 10,
         guideName: '',
         majorType: '',
         guideMajorId: ''
       },
       typeOptions: map.getGuideType,
-      majorOptions: [],
       textMap: {
         update: '编辑指南',
         create: '新增指南'
@@ -124,6 +117,13 @@ export default {
     }
   },
   computed: {
+    majorOptions() {
+      const guideMajor = this.store.session('guideMajor')
+      const options = {}
+      if (this.temp.majorType) options.temp = guideMajor[this.temp.majorType - 1]
+      if (this.listQuery.majorType) options.listQuery = guideMajor[this.listQuery.majorType - 1]
+      return options
+    }
   },
   watch: {
   },
@@ -145,23 +145,12 @@ export default {
         this.listLoading = false
       })
     },
-    initMajorOptions(param) {
-      const guideMajor = this.store.session('guideMajor')
-      if (this[param]['majorType'] === '1') this.majorOptions = guideMajor.nklist
-      if (this[param]['majorType'] === '2') this.majorOptions = guideMajor.wklist
-      if (this[param]['majorType'] === '3') this.majorOptions = guideMajor.otherList
-    },
     changeType(e, param) {
-      // this[param]['guideMajorId'] = ''
-      if (e === null) {
-        this[param]['guideMajorId'] = ''
-        return
-      }
+      this.$set(this[param], 'guideMajorId', '')
       this[param]['majorType'] = e
-      this.initMajorOptions(param)
     },
-    getPdf(image) {
-      this.temp.fileUrl = image
+    getPdf(file) {
+      this.temp.fileUrl = file
       this.$refs.dataForm.validateField('fileUrl')
     },
     resetTemp() {
@@ -169,7 +158,7 @@ export default {
       !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
     },
     handleFilter() {
-      this.temp.current = 1
+      this.listQuery.current = 1
       this.getList()
     },
     handleCreate() {
@@ -180,7 +169,6 @@ export default {
     handleUpdate(row) {
       this.resetTemp()
       this.temp = Object.assign({}, row)
-      this.initMajorOptions('temp')
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },

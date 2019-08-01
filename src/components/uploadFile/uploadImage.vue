@@ -61,8 +61,11 @@ export default {
         fileList.splice(-1, 1)
         return
       }
-      const imageSrc = await uploadFile(file.raw)
-      this.$emit('getChange', imageSrc)
+      await uploadFile(file.raw).then(data => {
+        this.$emit('getChange', data)
+      }).catch(err => {
+        fileList.splice(-1, 1)
+      })
     }
 
   }

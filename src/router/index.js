@@ -154,7 +154,8 @@ export const constantRoutes = [
         path: 'edit',
         component: () => import('@/views/medicalSkillManage/edit'),
         name: 'medicalSkillManage-edit',
-        meta: { title: '病例审核' }
+        meta: { title: '病例审核' },
+        hidden: true
       }
     ]
   },
