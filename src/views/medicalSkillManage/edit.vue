@@ -13,7 +13,7 @@
             <el-input v-model="temp.title" disabled :autosize="{ minRows: 2, maxRows: 6}" type="textarea" placeholder="" />
           </el-form-item>
           <el-form-item label="谁可以看">
-            <el-select v-model="temp.status" disabled placeholder="" clearable class="filter-item filter-item-option">
+            <el-select v-model="temp.status" disabled placeholder="" class="filter-item filter-item-option">
               <el-option v-for="item in stateOption" :key="item.code" :label="item.name" :value="item.code" />
             </el-select>
           </el-form-item>

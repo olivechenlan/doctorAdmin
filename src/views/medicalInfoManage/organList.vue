@@ -36,9 +36,9 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="80" align="center" />
+      <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="机构代码" prop="hospitalCode" width="100" align="center" />
-      <el-table-column label="医院图片" width="160" align="center">
+      <el-table-column label="医院图片" min-width="120" align="center">
         <template slot-scope="{row}">
           <div class="image-column">
             <img :src="row.orgIconUrl" alt="">
@@ -46,12 +46,12 @@
         </template>
       </el-table-column>
       <el-table-column label="医院名称" prop="hospitalName" min-width="120" align="center" />
-      <el-table-column label="医院性质" width="130" align="center">
+      <el-table-column label="医院性质" min-width="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orgKind|formatTo('getHospitalKind') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="医院类型" min-width="150" align="center">
+      <el-table-column label="医院类型" min-width="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orgType|formatTo('getHospitalType') }}</span>
         </template>
@@ -61,7 +61,7 @@
           <span>{{ row.orgLevel|formatTo('getHospitalLevel') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" prop="orgTel" min-width="130" align="center" />
+      <el-table-column label="联系方式" prop="orgTel" min-width="120" align="center" />
       <el-table-column label="所属区域" prop="orgAreaName" width="100" align="center" />
       <el-table-column label="地址" prop="orgAddr" min-width="200" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right">

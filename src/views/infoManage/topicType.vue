@@ -15,7 +15,7 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="编号" type="index" width="90" align="center" />
+      <el-table-column label="序号" type="index" width="90" align="center" />
       <el-table-column label="栏目名称" prop="name" min-width="200" align="center" />
       <el-table-column label="排序" prop="weight" min-width="100" align="center" />
       <el-table-column label="文章数" prop="textCount" width="120" align="center" />

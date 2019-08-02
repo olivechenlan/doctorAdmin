@@ -28,7 +28,7 @@
               <el-input v-model="temp.label" placeholder="请填写标签名称" />
             </el-form-item>
             <el-form-item label="排序" prop="wegith">
-              <el-input v-model="temp.wegith" type="number" placeholder="请填写排序" />
+              <el-input v-model="temp.wegith" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
             </el-form-item>
             <el-form-item label="标签描述" prop="remarks">
               <el-input v-model="temp.remarks" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />

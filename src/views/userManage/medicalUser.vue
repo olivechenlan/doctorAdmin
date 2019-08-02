@@ -15,7 +15,7 @@
       <el-row>
         <el-col>
           <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" type="number" clearable class="filter-item filter-item-option" />
+          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" type="tel" clearable class="filter-item filter-item-option" />
           <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable class="filter-item filter-item-option" />
           <el-select v-model="listQuery.state" placeholder="请选择认证状态" clearable class="filter-item filter-item-option">
             <el-option v-for="item in authStateOptions" :key="item.code" :label="item.name" :value="item.code" />
@@ -35,15 +35,15 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="80" align="center" />
-      <el-table-column label="手机号" prop="phone" width="150" align="center" />
+      <el-table-column label="序号" type="index" width="50" align="center" />
+      <el-table-column label="手机号" prop="phone" width="140" align="center" />
       <el-table-column label="姓名" prop="name" width="120" align="center" />
-      <el-table-column label="身份证号码" prop="idCard" width="180" align="center" />
+      <el-table-column label="身份证号码" prop="idCard" width="170" align="center" />
       <el-table-column label="医院名称" prop="hospitalName" min-width="150" align="center" />
       <el-table-column label="科室" prop="departmentName" min-width="100" align="center" />
       <el-table-column label="职称" prop="zcName" min-width="100" align="center" />
-      <el-table-column label="机构代码" prop="hospitalId" width="80" align="center" />
-      <el-table-column label="认证状态" width="100" align="center">
+      <el-table-column label="机构代码" prop="hospitalId" width="90" align="center" />
+      <el-table-column label="认证状态" min-width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.state|formatTo('getAuthenStatus') }}</span>
         </template>
@@ -75,7 +75,7 @@
               <el-input v-model="temp.phone" disabled placeholder="请填写手机号码" />
             </el-form-item>
             <el-form-item label="科室" prop="departmentId">
-              <el-cascader v-model="departmentModel" :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','temp')" />
+              <el-cascader v-model="departmentModel" :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" @change="cascaderChange($event,'departmentId','temp')" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -83,7 +83,7 @@
               <el-input v-model="temp.idCard" placeholder="请填写身份证号码" />
             </el-form-item>
             <el-form-item label="职称" prop="zc">
-              <el-cascader v-model="titleModel" :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','temp')" />
+              <el-cascader v-model="titleModel" :props="titleProps" placeholder="请填写职称" :options="titleOptions" @change="cascaderChange($event,'zc','temp')" />
             </el-form-item>
           </el-col>
           <el-col :span="6">

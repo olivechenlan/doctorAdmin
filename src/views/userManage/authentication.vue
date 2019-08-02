@@ -4,7 +4,7 @@
       <el-row>
         <el-col>
           <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable type="number" class="filter-item filter-item-option" />
+          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable type="tel" class="filter-item filter-item-option" />
           <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable class="filter-item filter-item-option" />
           <el-select v-model="listQuery.checkState" placeholder="请选择审核状态" clearable class="filter-item filter-item-option">
             <el-option v-for="item in checkStateOptions" :key="item.code" :label="item.name" :value="item.code" />
@@ -32,7 +32,7 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="80" align="center" />
+      <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="手机号" prop="phone" width="120" align="center" />
       <el-table-column label="姓名" prop="name" width="80" align="center" />
       <el-table-column label="身份证号码" prop="idCard" width="180" align="center" />
@@ -47,8 +47,8 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="提交时间" prop="checkTime" width="180" align="center" />
-      <el-table-column label="操作时间" prop="updateTime" width="180" align="center" />
+      <el-table-column label="提交时间" prop="checkTime" min-width="170" align="center" />
+      <el-table-column label="操作时间" prop="updateTime" min-width="170" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.checkState==='1'" type="primary" size="mini" @click="handleDialog(row,'update')">
@@ -78,17 +78,17 @@
         <el-row type="flex" class="row-bg" :gutter="20">
           <el-col :span="6">
             <el-form-item required label="姓名">
-              <el-input v-model="temp.name" disabled placeholder="请填写姓名" />
+              <el-input v-model="temp.name" disabled placeholder="" />
             </el-form-item>
             <el-form-item label="所属医院" required>
-              <el-select v-model="temp.hospitalId" disabled placeholder="请选择所属医院">
+              <el-select v-model="temp.hospitalId" disabled placeholder="">
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="手机号码">
-              <el-input v-model="temp.phone" type="number" disabled placeholder="请填写手机号码" />
+              <el-input v-model="temp.phone" type="tel" disabled placeholder="" />
             </el-form-item>
             <el-form-item label="科室" required>
               <el-cascader v-model="departmentModel" disabled style="width: 100%" :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" />
@@ -96,18 +96,18 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="身份证号">
-              <el-input v-model="temp.idCard" disabled placeholder="请填写身份证号码" />
+              <el-input v-model="temp.idCard" disabled placeholder="" />
             </el-form-item>
             <el-form-item label="职称" required>
-              <el-cascader v-model="titleModel" disabled style="width: 100%" :props="titleProps" placeholder="请填写职称" :options="titleOptions" />
+              <el-cascader v-model="titleModel" disabled style="width: 100%" :props="titleProps" placeholder="" :options="titleOptions" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="工号">
-              <el-input v-model="temp.doctorWorkId" disabled placeholder="请填写工号" />
+              <el-input v-model="temp.doctorWorkId" disabled placeholder="" />
             </el-form-item>
             <el-form-item label="院内短号">
-              <el-input v-model="temp.shortPhone" disabled placeholder="请填写院内短号" />
+              <el-input v-model="temp.shortPhone" disabled placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -192,8 +192,7 @@ export default {
       dialogStatus: ''
     }
   },
-  async created() {
-
+  created() {
   },
   async mounted() {
     this.getList()
@@ -225,9 +224,8 @@ export default {
       this.listQuery.current = 1
       this.getList()
     },
-    cascaderChange(e, model, flag) {
-      if (flag === 'listQuery') this.listQuery[model] = e[e.length - 1]
-      if (flag === 'temp') this.temp[model] = e[e.length - 1]
+    cascaderChange(e, model, param) {
+      this[param][model] = e[e.length - 1]
     },
     resetTemp() {
       this.temp = this.$options.data().temp

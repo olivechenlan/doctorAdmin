@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable class="filter-item filter-item-option" />
-      <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable class="filter-item filter-item-option" />
+      <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable class="filter-item filter-item-option" />
       <el-select v-model="listQuery.appVersion" placeholder="请选择APP版本" clearable class="filter-item filter-item-option">
         <el-option v-for="(item,index) in versionOptions" :key="index" :label="item" :value="item" />
       </el-select>
@@ -47,13 +47,13 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="70px" :rules="rules">
         <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="temp.phone" disabled placeholder="请填写手机号码" />
+          <el-input v-model="temp.phone" disabled placeholder="" />
         </el-form-item>
         <el-form-item label="反馈内容" prop="content">
-          <el-input v-model="temp.content" disabled placeholder="请填写反馈内容" />
+          <el-input v-model="temp.content" disabled placeholder="" />
         </el-form-item>
         <el-form-item label="状态" prop="checkState">
-          <el-select v-model="temp.checkState" placeholder="请选择状态" clearable>
+          <el-select v-model="temp.checkState" placeholder="请选择状态">
             <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>

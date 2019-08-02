@@ -14,7 +14,7 @@
             <el-option v-for="item in checkStateOption" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
           <el-input v-model="listQuery.name" placeholder="请填写发布人" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable class="filter-item filter-item-option" />
+          <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable class="filter-item filter-item-option" />
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
             搜索
           </el-button>
@@ -30,19 +30,19 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="100" align="center" />
+      <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="标题" prop="title" min-width="160" align="center" />
-      <el-table-column label="发布人" prop="name" min-width="160" align="center" />
-      <el-table-column label="职称" prop="zc" min-width="160" align="center" />
-      <el-table-column label="手机号码" prop="phone" min-width="160" align="center" />
-      <el-table-column label="所属医院" prop="hospitalName" min-width="160" align="center" />
-      <el-table-column label="审核状态" min-width="160" align="center">
+      <el-table-column label="发布人" prop="name" min-width="100" align="center" />
+      <el-table-column label="职称" prop="zc" min-width="100" align="center" />
+      <el-table-column label="手机号码" prop="phone" min-width="120" align="center" />
+      <el-table-column label="所属医院" prop="hospitalName" min-width="130" align="center" />
+      <el-table-column label="审核状态" min-width="100" align="center">
         <template slot-scope="{row}">
-          {{ row.checkState|formatTo('getSkillCheckState')}}
+          {{ row.checkState|formatTo('getSkillCheckState') }}
         </template>
       </el-table-column>
-      <el-table-column label="点击量" prop="views" min-width="160" align="center" />
-      <el-table-column label="审核人" prop="checkName" min-width="160" align="center" />
+      <el-table-column label="点击量" prop="views" min-width="90" align="center" />
+      <el-table-column label="审核人" prop="checkName" min-width="100" align="center" />
       <el-table-column label="创建时间" prop="createTime" min-width="160" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">

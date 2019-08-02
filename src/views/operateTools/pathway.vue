@@ -43,12 +43,12 @@
           <el-input v-model="temp.symptomName" placeholder="请填写症状名称" />
         </el-form-item>
         <el-form-item label="所属专业" prop="cpMajor">
-          <el-select v-model="temp.cpMajor" placeholder="请选择所属专业" clearable>
+          <el-select v-model="temp.cpMajor" placeholder="请选择所属专业">
             <el-option v-for="item in majorOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="适用类型" prop="type">
-          <el-select v-model="temp.type" placeholder="请选择适用类型" clearable>
+          <el-select v-model="temp.type" placeholder="请选择适用类型">
             <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>

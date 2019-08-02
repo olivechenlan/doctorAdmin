@@ -13,7 +13,7 @@
             <el-input v-model="temp.adLink" placeholder="请填写外部链接" />
           </el-form-item>
           <el-form-item label="上架时间" prop="startTime">
-            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
+            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="temp.status" placeholder="请选择状态">
@@ -32,10 +32,10 @@
             <el-input v-model="temp.fromSource" placeholder="请填写文章来源及作者相关信息" />
           </el-form-item>
           <el-form-item label="下架时间" prop="endTime">
-            <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
+            <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
           </el-form-item>
           <el-form-item label="排序" prop="weight">
-            <el-input v-model="temp.weight" type="number" placeholder="请填写排序" />
+            <el-input v-model="temp.weight" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
           </el-form-item>
           <el-form-item label="声明" prop="statement">
             <el-select v-model="temp.statement" placeholder="请选择声明">

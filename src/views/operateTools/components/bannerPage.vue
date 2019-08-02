@@ -18,8 +18,8 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="80" align="center" />
-      <el-table-column label="图片" width="160" align="center">
+      <el-table-column label="序号" type="index" width="50" align="center" />
+      <el-table-column label="图片" min-width="100" align="center">
         <template slot-scope="{row}">
           <div class="image-column">
             <img :src="row.adImgUrl" alt="">
@@ -27,17 +27,17 @@
         </template>
       </el-table-column>
       <el-table-column label="标题" prop="title" min-width="120" align="center" />
-      <el-table-column label="链接地址" prop="adLink" min-width="180" align="center" />
-      <el-table-column label="是否启用" prop="adStatusName" width="150" align="center" />
-      <el-table-column label="是否上架" width="150" align="center">
+      <el-table-column label="链接地址" prop="adLink" min-width="150" align="center" />
+      <el-table-column label="是否启用" prop="adStatusName" min-width="80" align="center" />
+      <el-table-column label="是否上架" min-width="80" align="center">
         <template slot-scope="{row}">
           {{ row|formatToState }}
         </template>
       </el-table-column>
-      <el-table-column label="描述" prop="remarks" min-width="200" align="center" />
-      <el-table-column label="上架时间" prop="startTime" width="180" align="center" />
-      <el-table-column label="下架时间" prop="endTime" width="180" align="center" />
-      <el-table-column label="操作" align="center" width="100" fixed="right">
+      <el-table-column label="描述" prop="remarks" min-width="140" align="center" />
+      <el-table-column label="上架时间" prop="startTime" min-width="160" align="center" />
+      <el-table-column label="下架时间" prop="endTime" min-width="160" align="center" />
+      <el-table-column label="操作" align="center" width="90" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -53,7 +53,7 @@
               <el-input v-model="temp.title" placeholder="请填写标题" />
             </el-form-item>
             <el-form-item label="上架时间" prop="startTime">
-              <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
+              <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
             </el-form-item>
             <el-form-item label="状态" prop="adStatus">
               <el-select v-model="temp.adStatus" placeholder="请选择状态">
@@ -66,11 +66,11 @@
               <el-input v-model="temp.adLink" placeholder="请填写链接地址" />
             </el-form-item>
             <el-form-item label="下架时间" prop="endTime">
-              <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" clearable type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
+              <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
             </el-form-item>
 
             <el-form-item label="排序" prop="adWeight">
-              <el-input v-model="temp.adWeight" type="number" placeholder="请填写排序" />
+              <el-input v-model="temp.adWeight" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
             </el-form-item>
           </el-col>
         </el-row>

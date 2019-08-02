@@ -221,3 +221,13 @@ input{
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+//table头部标题
+.el-table{
+  th{
+    .cell{
+      white-space: pre-line;
+      text-align: center;
+    }
+  }
+}

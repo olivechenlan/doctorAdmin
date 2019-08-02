@@ -34,27 +34,27 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="100" align="center" />
+      <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="标题" prop="title" min-width="160" align="center" />
-      <el-table-column label="缩略图" width="160" align="center">
+      <el-table-column label="缩略图" min-width="100" align="center">
         <template slot-scope="{row}">
           <div class="image-column">
             <img :src="row.listImg" alt="">
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="栏目" width="150" align="center">
+      <el-table-column label="栏目" min-width="90" align="center">
         <template slot-scope="{row}">
           <span>{{ row.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="来源" prop="fromSource" width="150" align="center" />
-      <el-table-column label="点击量" prop="author" width="100" align="center" />
-      <el-table-column label="收藏数" prop="author" width="100" align="center" />
-      <el-table-column label="上架时间" prop="startTime" width="160" align="center" />
-      <el-table-column label="下架时间" prop="endTime" width="160" align="center" />
-      <el-table-column label="创建人" prop="fromUser" width="100" align="center" />
-      <el-table-column label="是否置顶" prop="isTop" width="100" align="center" />
+      <el-table-column label="来源" prop="fromSource" min-width="100" align="center" />
+      <el-table-column label="点击量" prop="author" min-width="70" align="center" />
+      <el-table-column label="收藏数" prop="author" min-width="70" align="center" />
+      <el-table-column label="上架时间" prop="startTime" min-width="160" align="center" />
+      <el-table-column label="下架时间" prop="endTime" min-width="160" align="center" />
+      <el-table-column label="创建人" prop="fromUser" min-width="90" align="center" />
+      <el-table-column label="是否置顶" prop="isTop" min-width="80" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="jumpToEdit(row)">

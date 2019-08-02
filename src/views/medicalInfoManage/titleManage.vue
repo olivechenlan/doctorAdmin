@@ -45,12 +45,12 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
         <el-form-item label="职称类别" prop="type">
-          <el-select v-model="temp.type" placeholder="请选择科室类别" clearable>
+          <el-select v-model="temp.type" placeholder="请选择科室类别">
             <el-option v-for="item in titleTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
         <el-form-item v-if="temp.type==='1'" label="父级职称" prop="parZc">
-          <el-select v-model="temp.parZc" placeholder="请选择一级职称" clearable>
+          <el-select v-model="temp.parZc" placeholder="请选择一级职称">
             <el-option v-for="item in titleOptions" :key="item.id" :disabled="item.id===temp.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -58,12 +58,12 @@
           <el-input v-model="temp.name" placeholder="请填写科室名称" />
         </el-form-item>
         <el-form-item label="职称状态" prop="useState">
-          <el-select v-model="temp.useState" placeholder="请选择科室状态" clearable>
+          <el-select v-model="temp.useState" placeholder="请选择科室状态">
             <el-option v-for="item in titleStateOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
         <el-form-item label="排序" prop="orderNo">
-          <el-input v-model="temp.orderNo" type="number" placeholder="请填写排序" />
+          <el-input v-model="temp.orderNo" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
         </el-form-item>
       </el-form>
       <div slot="footer">

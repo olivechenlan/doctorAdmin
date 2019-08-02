@@ -63,7 +63,7 @@ export default {
       }
       await uploadFile(file.raw).then(data => {
         this.$emit('getChange', data)
-      }).catch(err => {
+      }).catch(() => {
         fileList.splice(-1, 1)
       })
     }

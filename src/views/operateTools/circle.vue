@@ -18,9 +18,9 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" type="index" width="80" align="center" />
-      <el-table-column label="圈子名称" prop="name" width="150" align="center" />
-      <el-table-column label="主图" width="160" align="center">
+      <el-table-column label="序号" type="index" width="50" align="center" />
+      <el-table-column label="圈子名称" prop="name" min-width="140" align="center" />
+      <el-table-column label="主图" min-width="120" align="center">
         <template slot-scope="{row}">
           <div class="image-column">
             <img :src="row.iconUrl" alt="">
@@ -54,12 +54,12 @@
           <el-input v-model="temp.name" placeholder="请填写圈子名称" />
         </el-form-item>
         <el-form-item label="圈子类别" prop="type">
-          <el-select v-model="temp.type" placeholder="请选择圈子类别" clearable>
+          <el-select v-model="temp.type" placeholder="请选择圈子类别">
             <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
         </el-form-item>
         <el-form-item v-show="temp.type==='2'" label="所属医院" prop="fromId">
-          <el-select v-model="temp.fromId" placeholder="请选择所属医院" clearable>
+          <el-select v-model="temp.fromId" placeholder="请选择所属医院">
             <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
           </el-select>
         </el-form-item>
