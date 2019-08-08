@@ -1,35 +1,34 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" label-width="100px">
-        <el-form-item label="标题关键字">
-          <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
-        </el-form-item>
-        <el-form-item label="职称">
-          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange" />
-        </el-form-item>
-        <el-form-item label="医院">
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
-        </el-form-item>
-        <el-form-item label="审核状态">
-          <el-select v-model="listQuery.checkState" placeholder="请选择审核状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in checkStateOption" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="发布人">
-          <el-input v-model="listQuery.name" placeholder="请填写发布人" clearable />
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true" label-width="100px">
+      <el-form-item label="标题关键字">
+        <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
+      </el-form-item>
+      <el-form-item label="职称">
+        <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange" />
+      </el-form-item>
+      <el-form-item label="医院">
+        <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+      </el-form-item>
+      <el-form-item label="审核状态">
+        <el-select v-model="listQuery.checkState" placeholder="请选择审核状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in checkStateOption" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="发布人">
+        <el-input v-model="listQuery.name" placeholder="请填写发布人" clearable />
+      </el-form-item>
+      <el-form-item label="手机号码">
+        <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
+
     <headline list-title="病例列表" />
     <el-table
       v-loading="listLoading"

@@ -1,29 +1,27 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true">
-        <el-form-item label="职称名称">
-          <el-input v-model="listQuery.name" placeholder="请填写职称名称" clearable />
-        </el-form-item>
-        <el-form-item label="职称状态">
-          <el-select v-model="listQuery.useState" placeholder="请选择职称状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in titleStateOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="职称类别">
-          <el-select v-model="listQuery.type" placeholder="请选择职称类别">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in titleTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true">
+      <el-form-item label="职称名称">
+        <el-input v-model="listQuery.name" placeholder="请填写职称名称" clearable />
+      </el-form-item>
+      <el-form-item label="职称状态">
+        <el-select v-model="listQuery.useState" placeholder="请选择职称状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in titleStateOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="职称类别">
+        <el-select v-model="listQuery.type" placeholder="请选择职称类别">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in titleTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="职称列表" button-name="新增职称" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"

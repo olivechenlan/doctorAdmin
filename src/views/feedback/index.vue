@@ -1,32 +1,30 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" label-width="100px">
-        <el-form-item label="医院名称">
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable />
-        </el-form-item>
-        <el-form-item label="APP版本">
-          <el-select v-model="listQuery.appVersion" placeholder="请选择APP版本">
-            <el-option label="全部" value="" />
-            <el-option v-for="(item,index) in versionOptions" :key="index" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="listQuery.checkState" placeholder="请选择状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true" label-width="100px">
+      <el-form-item label="医院名称">
+        <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+      </el-form-item>
+      <el-form-item label="手机号码">
+        <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable />
+      </el-form-item>
+      <el-form-item label="APP版本">
+        <el-select v-model="listQuery.appVersion" placeholder="请选择APP版本">
+          <el-option label="全部" value="" />
+          <el-option v-for="(item,index) in versionOptions" :key="index" :label="item" :value="item" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-select v-model="listQuery.checkState" placeholder="请选择状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="反馈列表" />
     <el-table
       v-loading="listLoading"

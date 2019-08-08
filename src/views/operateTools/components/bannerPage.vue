@@ -1,21 +1,19 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true">
-        <el-form-item label="标题">
-          <el-input v-model="listQuery.title" placeholder="请填写标题" clearable />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="listQuery['adStatus']" placeholder="请选择状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="(item,index) in stateOptions" :key="index" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true">
+      <el-form-item label="标题">
+        <el-input v-model="listQuery.title" placeholder="请填写标题" clearable />
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-select v-model="listQuery['adStatus']" placeholder="请选择状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="(item,index) in stateOptions" :key="index" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="轮播图列表" button-name="新增轮播图" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"

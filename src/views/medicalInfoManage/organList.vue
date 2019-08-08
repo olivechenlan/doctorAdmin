@@ -1,44 +1,42 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" label-width="80px">
-        <el-form-item label="区域">
-          <el-select v-model="listQuery.orgAreaCode" placeholder="请选择区域">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="医院名称">
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
-        </el-form-item>
-        <el-form-item label="机构代码">
-          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
-        </el-form-item>
-        <el-form-item label="医院性质">
-          <el-select v-model="listQuery.orgKind" placeholder="请选择医院性质">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in orgKindOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="医院类型">
-          <el-select v-model="listQuery.orgType" placeholder="请选择医院类型">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in orgTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="医院等级">
-          <el-select v-model="listQuery.orgLevel" placeholder="请选择医院等级">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in orgLevelOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true" label-width="80px">
+      <el-form-item label="区域">
+        <el-select v-model="listQuery.orgAreaCode" placeholder="请选择区域">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="医院名称">
+        <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+      </el-form-item>
+      <el-form-item label="机构代码">
+        <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
+      </el-form-item>
+      <el-form-item label="医院性质">
+        <el-select v-model="listQuery.orgKind" placeholder="请选择医院性质">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in orgKindOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="医院类型">
+        <el-select v-model="listQuery.orgType" placeholder="请选择医院类型">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in orgTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="医院等级">
+        <el-select v-model="listQuery.orgLevel" placeholder="请选择医院等级">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in orgLevelOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="医疗机构列表" button-name="新增医疗机构" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"

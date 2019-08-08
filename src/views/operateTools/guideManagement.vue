@@ -1,29 +1,27 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true">
-        <el-form-item label="指南名称">
-          <el-input v-model="listQuery.guideName" placeholder="请填写指南名称" />
-        </el-form-item>
-        <el-form-item label="分类">
-          <el-select v-model="listQuery.majorType" placeholder="请选择分类" @change="changeType($event,'listQuery')">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="专业">
-          <el-select v-model="listQuery.guideMajorId" :disabled="!listQuery.majorType" placeholder="请选择专业">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in majorOptions.listQuery" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true">
+      <el-form-item label="指南名称">
+        <el-input v-model="listQuery.guideName" placeholder="请填写指南名称" />
+      </el-form-item>
+      <el-form-item label="分类">
+        <el-select v-model="listQuery.majorType" placeholder="请选择分类" @change="changeType($event,'listQuery')">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="专业">
+        <el-select v-model="listQuery.guideMajorId" :disabled="!listQuery.majorType" placeholder="请选择专业">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in majorOptions.listQuery" :key="item.uuid" :label="item.majorName" :value="item.uuid" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="指南列表" button-name="新增指南" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"

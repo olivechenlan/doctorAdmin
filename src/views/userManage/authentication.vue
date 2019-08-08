@@ -1,41 +1,39 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form label-width="100px" :inline="true">
-        <el-form-item label="医生姓名">
-          <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable />
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable type="tel" />
-        </el-form-item>
-        <el-form-item label="身份证号码">
-          <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable />
-        </el-form-item>
-        <el-form-item label="审核状态">
-          <el-select v-model="listQuery.checkState" placeholder="请选择审核状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in checkStateOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="医院名称">
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
-        </el-form-item>
-        <el-form-item label="机构代码">
-          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
-        </el-form-item>
-        <el-form-item label="科室">
-          <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
-        </el-form-item>
-        <el-form-item label="职称">
-          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','listQuery')" />
-        </el-form-item>
-        <el-form-item label="">
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form label-width="100px" :inline="true">
+      <el-form-item label="医生姓名">
+        <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable />
+      </el-form-item>
+      <el-form-item label="手机号码">
+        <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable type="tel" />
+      </el-form-item>
+      <el-form-item label="身份证号码">
+        <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable />
+      </el-form-item>
+      <el-form-item label="审核状态">
+        <el-select v-model="listQuery.checkState" placeholder="请选择审核状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in checkStateOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="医院名称">
+        <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+      </el-form-item>
+      <el-form-item label="机构代码">
+        <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
+      </el-form-item>
+      <el-form-item label="科室">
+        <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
+      </el-form-item>
+      <el-form-item label="职称">
+        <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','listQuery')" />
+      </el-form-item>
+      <el-form-item label="">
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="审核列表" />
     <el-table
       v-loading="listLoading"

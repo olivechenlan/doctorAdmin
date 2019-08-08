@@ -1,47 +1,45 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" label-width="90px">
-        <el-form-item label="区域">
-          <el-select v-model="listQuery.orgAreaCode" placeholder="请选择区域">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="医院名称">
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
-        </el-form-item>
-        <el-form-item label="机构代码">
-          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
-        </el-form-item>
-        <el-form-item label="科室">
-          <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
-        </el-form-item>
-        <el-form-item label="职称">
-          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','listQuery')" />
-        </el-form-item>
-        <el-form-item label="医生姓名">
-          <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable />
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" type="tel" clearable />
-        </el-form-item>
-        <el-form-item label="身份证号码">
-          <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable />
-        </el-form-item>
-        <el-form-item label="认证状态">
-          <el-select v-model="listQuery.state" placeholder="请选择认证状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in authStateOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true" label-width="90px">
+      <el-form-item label="区域">
+        <el-select v-model="listQuery.orgAreaCode" placeholder="请选择区域">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="医院名称">
+        <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+      </el-form-item>
+      <el-form-item label="机构代码">
+        <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
+      </el-form-item>
+      <el-form-item label="科室">
+        <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
+      </el-form-item>
+      <el-form-item label="职称">
+        <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','listQuery')" />
+      </el-form-item>
+      <el-form-item label="医生姓名">
+        <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable />
+      </el-form-item>
+      <el-form-item label="手机号码">
+        <el-input v-model="listQuery.phone" placeholder="请填写手机号码" type="tel" clearable />
+      </el-form-item>
+      <el-form-item label="身份证号码">
+        <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable />
+      </el-form-item>
+      <el-form-item label="认证状态">
+        <el-select v-model="listQuery.state" placeholder="请选择认证状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in authStateOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="医护用户列表" />
     <el-table
       v-loading="listLoading"

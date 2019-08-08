@@ -1,41 +1,39 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true" label-width="100px">
-        <el-form-item label="标题关键字">
-          <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
-        </el-form-item>
-        <el-form-item label="栏目">
-          <el-select v-model="listQuery.type" placeholder="请选择栏目">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in topicOptions" :key="item.type" :label="item.name" :value="item.type" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="listQuery.status" placeholder="请选择状态">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否置顶">
-          <el-select v-model="listQuery.isTOP" placeholder="请选择是否置顶">
-            <el-option label="全部" value="" />
-            <el-option v-for="item in isTopOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="创建人关键字">
-          <el-input v-model="listQuery.fromUser" placeholder="请填写创建人关键字" clearable />
-        </el-form-item>
-        <el-form-item label="来源关键字">
-          <el-input v-model="listQuery.fromSource" placeholder="请填写来源关键字" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true" label-width="100px">
+      <el-form-item label="标题关键字">
+        <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
+      </el-form-item>
+      <el-form-item label="栏目">
+        <el-select v-model="listQuery.type" placeholder="请选择栏目">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in topicOptions" :key="item.type" :label="item.name" :value="item.type" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-select v-model="listQuery.status" placeholder="请选择状态">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="是否置顶">
+        <el-select v-model="listQuery.isTOP" placeholder="请选择是否置顶">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in isTopOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="创建人关键字">
+        <el-input v-model="listQuery.fromUser" placeholder="请填写创建人关键字" clearable />
+      </el-form-item>
+      <el-form-item label="来源关键字">
+        <el-input v-model="listQuery.fromSource" placeholder="请填写来源关键字" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="资讯列表" button-name="新增资讯" @handleAction="jumpToEdit" />
     <el-table
       v-loading="listLoading"

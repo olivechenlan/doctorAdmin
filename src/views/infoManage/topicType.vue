@@ -1,17 +1,15 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-form :inline="true">
-        <el-form-item label="栏目关键字">
-          <el-input v-model="listQuery.name" placeholder="请填写栏目关键字" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <el-form :inline="true">
+      <el-form-item label="栏目关键字">
+        <el-input v-model="listQuery.name" placeholder="请填写栏目关键字" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+          搜索
+        </el-button>
+      </el-form-item>
+    </el-form>
     <headline list-title="栏目列表" button-name="新增栏目" @handleAction="handleCreate" />
     <el-table
       v-loading="listLoading"
