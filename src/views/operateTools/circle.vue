@@ -1,13 +1,22 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请填写圈子名称" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.type" placeholder="请选择圈子类型" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <el-form :inline="true">
+        <el-form-item label="圈子名称">
+          <el-input v-model="listQuery.name" placeholder="请填写圈子名称" clearable />
+        </el-form-item>
+        <el-form-item label="圈子类型">
+          <el-select v-model="listQuery.type" placeholder="请选择圈子类型">
+            <el-option label="全部" value="" />
+            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="圈子列表" button-name="新增圈子" @handleAction="handleCreate" />
     <el-table
@@ -29,13 +38,17 @@
       </el-table-column>
       <el-table-column label="类型" width="120" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.typeName }}</span>
+          <span>{{ row.type|formatTo('getCircleType') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="关注人数" prop="follows" width="90" align="center" />
       <el-table-column label="简介" prop="groupInfo" min-width="150" align="center" />
       <el-table-column label="创建人" prop="fromName" width="120" align="center" />
-      <el-table-column label="创建时间" prop="createTime" width="160" align="center" />
+      <el-table-column label="创建时间" width="160" align="center">
+        <template slot-scope="{row}">
+          {{ row.createTime|formatToTime }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="148" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -141,13 +154,10 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getCircleList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getCircleList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
-          data.data.records.forEach(item => {
-            item.createTime = this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-            item.typeName = this.typeOptions.find(it => it.code === item.type).name
-          })
           this.list = data.data.records
           this.total = data.data.total
         }
@@ -208,7 +218,6 @@ export default {
           this.tools.$loading().hide()
           if (data.responseFlag === '1') {
             this.$message.success('删除成功!')
-            this.listQuery = this.$options.data().listQuery
             this.getList()
           } else {
             this.$message.error(data.responseMessage)
@@ -228,7 +237,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

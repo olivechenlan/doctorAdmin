@@ -1,30 +1,46 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-col>
-          <el-select v-model="listQuery.orgAreaCode" placeholder="请选择区域" clearable class="filter-item filter-item-option">
+      <el-form :inline="true" label-width="90px">
+        <el-form-item label="区域">
+          <el-select v-model="listQuery.orgAreaCode" placeholder="请选择区域">
+            <el-option label="全部" value="" />
             <el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable class="filter-item filter-item-option" />
-          <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable class="filter-item filter-item-option" @change="cascaderChange($event,'departmentId','listQuery')" />
-          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable class="filter-item filter-item-option" @change="cascaderChange($event,'zc','listQuery')" />
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" type="tel" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable class="filter-item filter-item-option" />
-          <el-select v-model="listQuery.state" placeholder="请选择认证状态" clearable class="filter-item filter-item-option">
+        </el-form-item>
+        <el-form-item label="医院名称">
+          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+        </el-form-item>
+        <el-form-item label="机构代码">
+          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
+        </el-form-item>
+        <el-form-item label="科室">
+          <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
+        </el-form-item>
+        <el-form-item label="职称">
+          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','listQuery')" />
+        </el-form-item>
+        <el-form-item label="医生姓名">
+          <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable />
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" type="tel" clearable />
+        </el-form-item>
+        <el-form-item label="身份证号码">
+          <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable />
+        </el-form-item>
+        <el-form-item label="认证状态">
+          <el-select v-model="listQuery.state" placeholder="请选择认证状态">
+            <el-option label="全部" value="" />
             <el-option v-for="item in authStateOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
-          <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
             搜索
           </el-button>
-        </el-col>
-      </el-row>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="医护用户列表" />
     <el-table
@@ -219,7 +235,8 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getUserInfoList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getUserInfoList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
@@ -260,7 +277,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

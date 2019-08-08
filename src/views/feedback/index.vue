@@ -1,17 +1,31 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable class="filter-item filter-item-option" />
-      <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.appVersion" placeholder="请选择APP版本" clearable class="filter-item filter-item-option">
-        <el-option v-for="(item,index) in versionOptions" :key="index" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.checkState" placeholder="请选择状态" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <el-form :inline="true" label-width="100px">
+        <el-form-item label="医院名称">
+          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable />
+        </el-form-item>
+        <el-form-item label="APP版本">
+          <el-select v-model="listQuery.appVersion" placeholder="请选择APP版本">
+            <el-option label="全部" value="" />
+            <el-option v-for="(item,index) in versionOptions" :key="index" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="listQuery.checkState" placeholder="请选择状态">
+            <el-option label="全部" value="" />
+            <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="反馈列表" />
     <el-table
@@ -22,17 +36,22 @@
       highlight-current-row
       style="width: 100%;"
     >
+      <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="医院名称" prop="hospitalName" min-width="150" align="center" />
       <el-table-column label="手机号码" prop="phone" width="120" align="center" />
       <el-table-column label="反馈内容" prop="content" min-width="150" align="center" />
-      <el-table-column label="app版本" prop="appVersion" min-width="120" align="center" />
-      <el-table-column label="手机系统" prop="sysVersion" min-width="120" align="center" />
-      <el-table-column label="反馈日期" prop="createTime" min-width="180" align="center" />
-      <el-table-column label="医生姓名" prop="name" min-width="150" align="center" />
-      <el-table-column label="职称" prop="zcName" min-width="150" align="center" />
-      <el-table-column label="状态" width="120" align="center">
+      <el-table-column label="app版本" prop="appVersion" min-width="90" align="center" />
+      <el-table-column label="手机系统" prop="sysVersion" min-width="100" align="center" />
+      <el-table-column label="医生姓名" prop="name" min-width="100" align="center" />
+      <el-table-column label="职称" prop="zcName" min-width="100" align="center" />
+      <el-table-column label="状态" min-width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.checkState|formatTo('getFeedbackStatus') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="反馈日期" min-width="180" align="center">
+        <template slot-scope="{row}">
+          {{ row.createTime|formatToTime }}
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
@@ -50,7 +69,7 @@
           <el-input v-model="temp.phone" disabled placeholder="" />
         </el-form-item>
         <el-form-item label="反馈内容" prop="content">
-          <el-input v-model="temp.content" disabled placeholder="" />
+          <el-input v-model="temp.content" disabled placeholder="" :autosize="{ minRows: 5, maxRows: 10}" type="textarea" />
         </el-form-item>
         <el-form-item label="状态" prop="checkState">
           <el-select v-model="temp.checkState" placeholder="请选择状态">
@@ -122,12 +141,10 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getFeedbackList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getFeedbackList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
-          data.data.records.forEach(item => {
-            item.createTime = item.createTime ? this.dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
-          })
           this.list = data.data.records
           this.total = data.data.total
         }
@@ -164,7 +181,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

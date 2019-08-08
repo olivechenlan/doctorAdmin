@@ -144,6 +144,7 @@ export default {
       window.tinymce.init({
         selector: `#${this.tinymceId}`,
         language: this.languageTypeList['zh'],
+        forced_root_block: 'div',
         height: this.height,
         body_class: 'panel-body ',
         branding: false,

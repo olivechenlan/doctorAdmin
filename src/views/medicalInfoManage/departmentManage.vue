@@ -1,16 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.departmentName" placeholder="请填写科室名称" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.useState" placeholder="请选择科室状态" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in departmentStateOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="请选择科室类别" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in departmentTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <el-form :inline="true">
+        <el-form-item label="科室名称">
+          <el-input v-model="listQuery.departmentName" placeholder="请填写科室名称" clearable />
+        </el-form-item>
+        <el-form-item label="科室状态">
+          <el-select v-model="listQuery.useState" placeholder="请选择科室状态">
+            <el-option label="全部" value="" />
+            <el-option v-for="item in departmentStateOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="科室类别">
+          <el-select v-model="listQuery.type" placeholder="请选择科室类别">
+            <el-option label="全部" value="" />
+            <el-option v-for="item in departmentTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="科室列表" button-name="新增科室" @handleAction="handleCreate" />
     <el-table
@@ -138,7 +150,8 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getDepartmentList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getDepartmentList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           data.data.forEach(item => {
@@ -179,7 +192,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
           await map.getDepartment(true)
         } else {

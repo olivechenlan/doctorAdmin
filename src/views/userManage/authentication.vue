@@ -1,27 +1,40 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-col>
-          <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable type="tel" class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable class="filter-item filter-item-option" />
-          <el-select v-model="listQuery.checkState" placeholder="请选择审核状态" clearable class="filter-item filter-item-option">
+      <el-form label-width="100px" :inline="true">
+        <el-form-item label="医生姓名">
+          <el-input v-model="listQuery.name" placeholder="请填写医生姓名" clearable />
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input v-model="listQuery.phone" placeholder="请填写手机号码" clearable type="tel" />
+        </el-form-item>
+        <el-form-item label="身份证号码">
+          <el-input v-model="listQuery.idCard" placeholder="请填写身份证号码" clearable />
+        </el-form-item>
+        <el-form-item label="审核状态">
+          <el-select v-model="listQuery.checkState" placeholder="请选择审核状态">
+            <el-option label="全部" value="" />
             <el-option v-for="item in checkStateOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable class="filter-item filter-item-option" />
-          <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable class="filter-item filter-item-option" @change="cascaderChange($event,'departmentId','listQuery')" />
-          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable class="filter-item filter-item-option" @change="cascaderChange($event,'zc','listQuery')" />
-          <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        </el-form-item>
+        <el-form-item label="医院名称">
+          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+        </el-form-item>
+        <el-form-item label="机构代码">
+          <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
+        </el-form-item>
+        <el-form-item label="科室">
+          <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
+        </el-form-item>
+        <el-form-item label="职称">
+          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zc','listQuery')" />
+        </el-form-item>
+        <el-form-item label="">
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
             搜索
           </el-button>
-        </el-col>
-      </el-row>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="审核列表" />
     <el-table
@@ -47,8 +60,16 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="提交时间" prop="checkTime" min-width="170" align="center" />
-      <el-table-column label="操作时间" prop="updateTime" min-width="170" align="center" />
+      <el-table-column label="提交时间" min-width="170" align="center">
+        <template slot-scope="{row}">
+          {{ row.checkTime|formatToTime }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作时间" min-width="170" align="center">
+        <template slot-scope="{row}">
+          {{ row.updateTime|formatToTime }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.checkState==='1'" type="primary" size="mini" @click="handleDialog(row,'update')">
@@ -206,14 +227,11 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getCheckList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getCheckList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
-          this.list.forEach(item => {
-            item.checkTime = item.checkTime ? this.dayjs(item.checkTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            item.updateTime = item.updateTime ? this.dayjs(item.updateTime).format('YYYY-MM-DD HH:mm:ss') : ''
-          })
           this.total = data.data.total
         }
       }).catch(() => {
@@ -247,7 +265,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

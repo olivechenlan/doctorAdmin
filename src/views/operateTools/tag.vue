@@ -59,10 +59,6 @@ export default {
   },
   data() {
     return {
-      listQuery: {
-        label: '',
-        type: ''
-      },
       typeOptions: map.getCircleType,
       hospitalOptions: [],
       textMap: {
@@ -92,7 +88,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getTag(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      this.api.doctorApi.getTag({}).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data
@@ -119,7 +115,7 @@ export default {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
-    circleEdit() {
+    tagEdit() {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       if (!params.wegith) params.wegith = '0'
@@ -134,7 +130,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)
@@ -145,9 +140,7 @@ export default {
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.circleEdit()
-        }
+        if (valid) this.tagEdit()
       })
     }
   }

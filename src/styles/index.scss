@@ -207,6 +207,9 @@ input{
 
 .image-column{
   height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   img{
     max-height: 100%;
     max-width: 100%;

@@ -1,29 +1,40 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-col>
-          <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable class="filter-item filter-item-option" />
-          <el-select v-model="listQuery.type" placeholder="请选择栏目" clearable class="filter-item filter-item-option">
+      <el-form :inline="true" label-width="100px">
+        <el-form-item label="标题关键字">
+          <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
+        </el-form-item>
+        <el-form-item label="栏目">
+          <el-select v-model="listQuery.type" placeholder="请选择栏目">
+            <el-option label="全部" value="" />
             <el-option v-for="item in topicOptions" :key="item.type" :label="item.name" :value="item.type" />
           </el-select>
-          <el-select v-model="listQuery.status" placeholder="请选择状态" clearable class="filter-item filter-item-option">
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="listQuery.status" placeholder="请选择状态">
+            <el-option label="全部" value="" />
             <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <el-select v-model="listQuery.isTOP" placeholder="请选择是否置顶" clearable class="filter-item filter-item-option">
+        </el-form-item>
+        <el-form-item label="是否置顶">
+          <el-select v-model="listQuery.isTOP" placeholder="请选择是否置顶">
+            <el-option label="全部" value="" />
             <el-option v-for="item in isTopOptions" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
-          <el-input v-model="listQuery.fromUser" placeholder="请填写创建人关键字" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.fromSource" placeholder="请填写来源关键字" clearable class="filter-item filter-item-option" />
-          <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        </el-form-item>
+        <el-form-item label="创建人关键字">
+          <el-input v-model="listQuery.fromUser" placeholder="请填写创建人关键字" clearable />
+        </el-form-item>
+        <el-form-item label="来源关键字">
+          <el-input v-model="listQuery.fromSource" placeholder="请填写来源关键字" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
             搜索
           </el-button>
-        </el-col>
-      </el-row>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="资讯列表" button-name="新增资讯" @handleAction="jumpToEdit" />
     <el-table
@@ -43,18 +54,26 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="栏目" min-width="90" align="center">
+      <el-table-column label="栏目" min-width="80" align="center">
         <template slot-scope="{row}">
           <span>{{ row.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="来源" prop="fromSource" min-width="100" align="center" />
-      <el-table-column label="点击量" prop="author" min-width="70" align="center" />
-      <el-table-column label="收藏数" prop="author" min-width="70" align="center" />
-      <el-table-column label="上架时间" prop="startTime" min-width="160" align="center" />
-      <el-table-column label="下架时间" prop="endTime" min-width="160" align="center" />
-      <el-table-column label="创建人" prop="fromUser" min-width="90" align="center" />
+      <el-table-column label="来源" prop="fromSource" min-width="80" align="center" />
+      <el-table-column label="点击量" prop="author" min-width="68" align="center" />
+      <el-table-column label="收藏数" prop="author" min-width="68" align="center" />
+      <el-table-column label="创建人" prop="fromUser" min-width="80" align="center" />
       <el-table-column label="是否置顶" prop="isTop" min-width="80" align="center" />
+      <el-table-column label="上架时间" min-width="160" align="center">
+        <template slot-scope="{row}">
+          {{ row.startTime|formatToTime }}
+        </template>
+      </el-table-column>
+      <el-table-column label="下架时间" min-width="160" align="center">
+        <template slot-scope="{row}">
+          {{ row.endTime|formatToTime }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="jumpToEdit(row)">
@@ -89,11 +108,12 @@ export default {
       topicOptions: [],
       isTopOptions: [
         {
-          name: '否',
-          code: '0'
-        }, {
           name: '是',
           code: '1'
+        },
+        {
+          name: '否',
+          code: '0'
         }
       ],
       stateOptions: map.getBannerStatus,
@@ -117,7 +137,8 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getInfoList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getInfoList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records

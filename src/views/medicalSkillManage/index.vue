@@ -1,25 +1,34 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-col>
-          <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable class="filter-item filter-item-option" />
-          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable class="filter-item filter-item-option" @change="cascaderChange" />
-          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable class="filter-item filter-item-option" />
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <el-select v-model="listQuery.checkState" placeholder="请选择审核状态" clearable class="filter-item filter-item-option">
+      <el-form :inline="true" label-width="100px">
+        <el-form-item label="标题关键字">
+          <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
+        </el-form-item>
+        <el-form-item label="职称">
+          <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange" />
+        </el-form-item>
+        <el-form-item label="医院">
+          <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
+        </el-form-item>
+        <el-form-item label="审核状态">
+          <el-select v-model="listQuery.checkState" placeholder="请选择审核状态">
+            <el-option label="全部" value="" />
             <el-option v-for="item in checkStateOption" :key="item.code" :label="item.name" :value="item.code" />
           </el-select>
-          <el-input v-model="listQuery.name" placeholder="请填写发布人" clearable class="filter-item filter-item-option" />
-          <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable class="filter-item filter-item-option" />
-          <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        </el-form-item>
+        <el-form-item label="发布人">
+          <el-input v-model="listQuery.name" placeholder="请填写发布人" clearable />
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input v-model="listQuery.phone" type="tel" placeholder="请填写手机号码" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
             搜索
           </el-button>
-        </el-col>
-      </el-row>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="病例列表" />
     <el-table
@@ -36,14 +45,18 @@
       <el-table-column label="职称" prop="zc" min-width="100" align="center" />
       <el-table-column label="手机号码" prop="phone" min-width="120" align="center" />
       <el-table-column label="所属医院" prop="hospitalName" min-width="130" align="center" />
-      <el-table-column label="审核状态" min-width="100" align="center">
+      <el-table-column label="审核状态" min-width="95" align="center">
         <template slot-scope="{row}">
           {{ row.checkState|formatTo('getSkillCheckState') }}
         </template>
       </el-table-column>
-      <el-table-column label="点击量" prop="views" min-width="90" align="center" />
+      <el-table-column label="点击量" prop="views" min-width="70" align="center" />
       <el-table-column label="审核人" prop="checkName" min-width="100" align="center" />
-      <el-table-column label="创建时间" prop="createTime" min-width="160" align="center" />
+      <el-table-column label="创建时间" min-width="160" align="center">
+        <template slot-scope="{row}">
+          {{ row.createTime|formatToTime }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">
           <el-button v-if="row.checkState==='0'" type="primary" size="mini" @click="jumpToEdit(row)">
@@ -99,12 +112,11 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getDoctorSkillList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getDoctorSkillList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
-          this.list.forEach(item => {
-          })
           this.total = data.data.total
         }
       }).catch(() => {

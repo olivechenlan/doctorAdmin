@@ -1,16 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请填写症状名称" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.cpMajor" placeholder="请选择所属专业" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in majorOptions" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="请选择类型" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <el-form :inline="true">
+        <el-form-item label="症状名称">
+          <el-input v-model="listQuery.name" placeholder="请填写症状名称" clearable />
+        </el-form-item>
+        <el-form-item label="所属专业">
+          <el-select v-model="listQuery.cpMajor" placeholder="请选择所属专业">
+            <el-option label="全部" value="" />
+            <el-option v-for="item in majorOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="适用类型">
+          <el-select v-model="listQuery.type" placeholder="请选择类型">
+            <el-option label="全部" value="" />
+            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="路径列表" button-name="新增路径" @handleAction="handleCreate" />
     <el-table
@@ -24,7 +36,11 @@
       <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="所属专业" prop="majorName" min-width="150" align="center" />
       <el-table-column label="症状名称" prop="symptomName" min-width="160" align="center" />
-      <el-table-column label="适用类型" prop="typeName" min-width="120" align="center" />
+      <el-table-column label="适用类型" min-width="120" align="center">
+        <template slot-scope="{row}">
+          {{ row.type|formatTo('getPathwayType') }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="220" fixed="right" align="center">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -126,14 +142,14 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getPathwayList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getPathwayList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
           this.total = data.data.total
           this.list.forEach(item => {
             item.majorName = this.majorOptions.find(it => it.value === item.cpMajor).label || ''
-            item.typeName = this.typeOptions.find(it => it.code === item.type).name || ''
           })
         }
       }).catch(() => {
@@ -185,7 +201,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

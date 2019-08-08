@@ -1,13 +1,20 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="请填写标题" clearable class="filter-item filter-item-option" />
-      <el-select v-model="listQuery.adStatus" placeholder="请选择状态" clearable class="filter-item filter-item-option">
-        <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <el-form :inline="true">
+        <el-form-item label="标题">
+          <el-input v-model="listQuery.title" placeholder="请填写标题" clearable />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="listQuery['adStatus']" placeholder="请选择状态">
+            <el-option label="全部" value="" />
+            <el-option v-for="(item,index) in stateOptions" :key="index" :label="item.name" :value="item.code" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="轮播图列表" button-name="新增轮播图" @handleAction="handleCreate" />
     <el-table
@@ -28,15 +35,27 @@
       </el-table-column>
       <el-table-column label="标题" prop="title" min-width="120" align="center" />
       <el-table-column label="链接地址" prop="adLink" min-width="150" align="center" />
-      <el-table-column label="是否启用" prop="adStatusName" min-width="80" align="center" />
+      <el-table-column label="是否启用" min-width="80" align="center">
+        <template slot-scope="{row}">
+          {{ row.adStatus|formatTo('getBannerStatus') }}
+        </template>
+      </el-table-column>
       <el-table-column label="是否上架" min-width="80" align="center">
         <template slot-scope="{row}">
           {{ row|formatToState }}
         </template>
       </el-table-column>
       <el-table-column label="描述" prop="remarks" min-width="140" align="center" />
-      <el-table-column label="上架时间" prop="startTime" min-width="160" align="center" />
-      <el-table-column label="下架时间" prop="endTime" min-width="160" align="center" />
+      <el-table-column label="上架时间" min-width="160" align="center">
+        <template slot-scope="{row}">
+          {{ row.startTime|formatToTime }}
+        </template>
+      </el-table-column>
+      <el-table-column label="下架时间" min-width="160" align="center">
+        <template slot-scope="{row}">
+          {{ row.endTime|formatToTime }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="90" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -181,9 +200,11 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+  },
   mounted() {
     const that = this
+    this.listQuery.adType = this.adType
     this.getList()
     this.startTimeOptions = {
       disabledDate(time) {
@@ -194,16 +215,11 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      Object.assign(this.listQuery, { adType: this.adType })
-      this.api.doctorApi.getBannerList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getBannerList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data
-          this.list.forEach(item => {
-            item.adStatusName = this.stateOptions.find(it => it.code === item.adStatus).name
-            item.startTime = item.startTime ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
-          })
         }
       }).catch(() => {
         this.listLoading = false
@@ -250,7 +266,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

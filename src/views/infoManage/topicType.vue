@@ -1,10 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请填写栏目关键字" clearable class="filter-item filter-item-option" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <el-form :inline="true">
+        <el-form-item label="栏目关键字">
+          <el-input v-model="listQuery.name" placeholder="请填写栏目关键字" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <headline list-title="栏目列表" button-name="新增栏目" @handleAction="handleCreate" />
     <el-table
@@ -58,6 +64,7 @@
 
 <script>
 import headline from '@/components/headline'
+import map from '@/utils/map'
 export default {
   components: { headline },
   filters: {
@@ -97,7 +104,8 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.api.doctorApi.getTopicList(this.tools.removeEmptyValue(this.listQuery)).then(data => {
+      const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
+      this.api.doctorApi.getTopicList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data
@@ -131,12 +139,15 @@ export default {
         type: 'warning'
       }).then(() => {
         this.tools.$loading()
-        this.api.doctorApi.topicDelete(this.tools.saveValueFromObject(row, { type: '', code: '' })).then(data => {
+        this.api.doctorApi.topicDelete({
+          type: row.type,
+          code: row.code
+        }).then(async data => {
           this.tools.$loading().hide()
           if (data.responseFlag === '1') {
             this.$message.success('删除成功!')
-            this.listQuery = this.$options.data().listQuery
             this.getList()
+            await map.getTopic(true)
           } else {
             this.$message.error(data.responseMessage)
           }
@@ -156,13 +167,13 @@ export default {
         method = 'topicAdd'
         delete params['type']
       }
-      this.api.doctorApi[method](params).then(data => {
+      this.api.doctorApi[method](params).then(async data => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
+          await map.getTopic(true)
         } else {
           this.$message.error(data.responseMessage)
         }
