@@ -97,6 +97,7 @@ export default {
       listQuery: {
         size: 10,
         current: 1,
+        status: '',
         type: '',
         typeCode: '3310',
         isTOP: '',
