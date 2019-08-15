@@ -35,6 +35,7 @@ export default {
   name: 'SidebarItem',
   components: { Item, AppLink },
   mixins: [FixiOSBug],
+  inject: ['reload'],
   props: {
     // route object
     item: {
@@ -92,14 +93,7 @@ export default {
     },
     jumpTo(routePath) {
       if (this.$route.path === this.resolvePath(routePath)) {
-        this.$router.replace(
-          {
-            path: '/guide',
-            query: {
-              path: this.$route.path
-            }
-          }
-        )
+        this.reload()
       } else {
         this.$router.push(this.resolvePath(routePath))
       }
