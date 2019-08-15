@@ -44,6 +44,7 @@
         </template>
       </el-table-column>
       <el-table-column label="描述" prop="remarks" min-width="140" align="center" />
+      <el-table-column label="排序" prop="adWeight" min-width="68" align="center" />
       <el-table-column label="上架时间" min-width="160" align="center">
         <template slot-scope="{row}">
           {{ row.startTime|formatToTime }}

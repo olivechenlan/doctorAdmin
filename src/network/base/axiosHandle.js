@@ -78,8 +78,12 @@ const baseAjax = {
       })
   },
   postFile: (api, params, success, fail, headers) => {
+    const data = new FormData()
+    for (const [key, value] of Object.entries(params)) {
+      if (value) { data.append(key, value) }
+    }
     axios
-      .post(api, params, {
+      .post(api, data, {
         headers: Object.assign(
           {
             'Content-Type': 'multipart/form-data'

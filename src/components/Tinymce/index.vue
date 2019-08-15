@@ -2,7 +2,7 @@
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
     <div class="editor-custom-btn-container">
-      <editorImage v-for="(item,index) in buttonGroup" :key="index" color="#1890ff" :disabled="mode!=='all' && mode!==item.mode" class="editor-upload-btn" :type="item.mode" :last-num="item.lastNum" @successCallback="successCallback" />
+      <editorImage v-for="(item,index) in buttonGroup" :key="index" :disabled="intoType!=='' && intoType!==item.intoType" class="editor-upload-btn" :into-type="item.intoType" :last-num="item.lastNum" @successCallback="successCallback" />
     </div>
   </div>
 </template>
@@ -30,10 +30,6 @@ export default {
       type: String,
       default: ''
     },
-    temp: {
-      type: Object,
-      default: () => {}
-    },
     height: {
       type: [Number, String],
       required: false,
@@ -47,7 +43,8 @@ export default {
   },
   data() {
     return {
-      mode: 'all',
+      imageNum: 9,
+      videoNum: 1,
       menubar: 'file edit view format table',
       hasChange: false,
       hasInit: false,
@@ -59,16 +56,8 @@ export default {
         'es': 'es_MX',
         'ja': 'ja'
       },
-      buttonGroup: [
-        {
-          mode: 'image',
-          lastNum: 9
-        },
-        {
-          mode: 'video',
-          lastNum: 1
-        }
-      ]
+      intoType: '',
+      urlNum: 0
 
     }
   },
@@ -79,38 +68,54 @@ export default {
         return `${width}px`
       }
       return width
+    },
+    buttonGroup() {
+      const group = [
+        {
+          intoType: '2',
+          lastNum: this.imageNum - this.urlNum > 0 ? this.imageNum - this.urlNum : 0
+        },
+        {
+          intoType: '1',
+          lastNum: this.videoNum - this.urlNum > 0 ? this.videoNum - this.urlNum : 0
+        }
+      ]
+      return group
     }
   },
   watch: {
-    'temp.intoUrl'(val) {
-      this.buttonGroup[0].lastNum = 9 - val.length
-      this.buttonGroup[1].lastNum = 1 - val.length
-    },
     value(nval, oval) {
       if (!this.hasChange && this.hasInit) {
         this.$nextTick(() => {
           window.tinymce.get(this.tinymceId).setContent(nval || '')
         })
       }
-      if (!!nval && nval.indexOf('<video') >= 0) this.mode = 'video'
-      if (!!nval && nval.indexOf('<img') >= 0) this.mode = 'image'
-      if (!nval || (nval.indexOf('<video') < 0 && nval.indexOf('<img') < 0)) {
-        this.mode = 'all'
-        this.temp.intoUrl = []
-        this.temp.intoType = ''
+      let urlNum = 0
+      let intoType = ''
+      if (nval) {
+        let matchString = ''
+        if (nval.indexOf('<img') >= 0) {
+          intoType = '2'
+          matchString = '<img'
+        }
+        if (nval.indexOf('<video') >= 0) {
+          intoType = '1'
+          matchString = '<video'
+        }
+        if (nval.indexOf('<video') >= 0 && nval.indexOf('<img') >= 0) {
+          intoType = ''
+          matchString = ''
+        }
+        if (matchString) {
+          const exp = new RegExp(matchString, 'g')
+          urlNum = nval.match(exp).length
+        }
       }
-      const urlArray = []
-      // 内容删减的情况下计算intourl
-      if (!!oval && !!nval && oval.split('src=').length > nval.split('src=').length) {
-        const valArray = nval.split('src="')
-        valArray.forEach(item => {
-          if (item.indexOf('http') === 0) {
-            const endPath = item.indexOf('"')
-            urlArray.push(item.slice(0, endPath))
-          }
-        })
-        this.temp.intoUrl = urlArray
-      }
+      this.intoType = intoType
+      this.urlNum = urlNum
+      this.$emit('getTemp', {
+        intoType, urlNum
+      })
     }
   },
   mounted() {
@@ -128,7 +133,6 @@ export default {
     this.destroyTinymce()
   },
   methods: {
-
     init() {
       // dynamic load tinymce from cdn
       load(tinymceCDN, (err) => {
@@ -193,21 +197,16 @@ export default {
       window.tinymce.get(this.tinymceId).getContent()
     },
     successCallback(val) {
-      this.mode = val.mode
-      if (val.mode === 'image') {
-        this.temp.intoType = '2'
-        val.result.forEach(item => {
+      if (this.intoType === '2') {
+        val.forEach(item => {
           window.tinymce.get(this.tinymceId).insertContent(`<img src="${item}" />`)
         })
       }
-      if (val.mode === 'video') {
-        this.temp.intoType = '1'
-        val.result.forEach(item => {
+      if (this.intoType === '1') {
+        val.forEach(item => {
           window.tinymce.get(this.tinymceId).insertContent(`<video src="${item}" controls="controls" />`)
         })
       }
-      this.temp.intoUrl = this.temp.intoUrl.concat(val.result)
-      this.$emit('getTemp', this.temp)
     }
   }
 }

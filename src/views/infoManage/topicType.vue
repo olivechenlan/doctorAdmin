@@ -67,7 +67,7 @@ export default {
   components: { headline },
   data() {
     const nameValidate = (rule, value, callback) => {
-      if (!value) callback('请填写栏目名称')
+      if (!value) callback(new Error('请填写栏目名称'))
       if (value) {
         if (value.length > 5) {
           callback(new Error('栏目名称只允许最多5个字，请重试'))

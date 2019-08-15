@@ -1,6 +1,6 @@
 <template>
   <div class="upload-container">
-    <el-button :disabled="disabled" :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
+    <el-button :disabled="disabled" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
       添加{{ typeName }}
     </el-button>
     <el-dialog :visible.sync="dialogVisible" append-to-body>
@@ -16,10 +16,11 @@
         list-type="picture-card"
         :auto-upload="false"
       >
-        <el-button size="small" type="primary">
+        <el-button type="primary">
           添加{{ typeName }}
         </el-button>
       </el-upload>
+      <div class="upload-tip">{{ lastNumTip }}</div>
       <el-button @click="dialogVisible = false">
         取消
       </el-button>
@@ -43,13 +44,9 @@ export default {
       type: Boolean,
       default: false
     },
-    type: {
+    intoType: {
       type: String,
       default: ''
-    },
-    color: {
-      type: String,
-      default: '#1890ff'
     },
     intoUrl: {
       type: Array,
@@ -58,6 +55,7 @@ export default {
   },
   data() {
     return {
+      lastNumTip: '',
       isMultiple: true,
       accept: 'image/*',
       typeName: '',
@@ -70,25 +68,32 @@ export default {
 
   },
   watch: {
+    lastNum(val) {
+      this.lastNumTip = this.intoType === '2' ? `最多可再添加${val}张图片` : `最多可再添加${val}段视频`
+    }
   },
 
   created() {
-    if (this.type === 'image') {
-      this.isMultiple = true
-      this.accept = 'image/*'
-      this.typeName = '图片'
-    }
-    if (this.type === 'video') {
+    if (this.intoType === '1') {
       this.isMultiple = false
       this.accept = 'video/*'
       this.typeName = '视频'
     }
+    if (this.intoType === '2') {
+      this.isMultiple = true
+      this.accept = 'image/*'
+      this.typeName = '图片'
+    }
   },
   methods: {
     async handleSubmit() {
+      if (this.file.length <= 0) {
+        this.$message.error('请先选择一张上传')
+        return
+      }
       if (this.file.length > this.lastNum) {
-        if (this.type === 'image') this.$message.error(`最多只能再上传${this.lastNum}张图片，请重试`)
-        if (this.type === 'video') this.$message.error(`最多只能再上传${this.lastNum}段视频，请重试`)
+        if (this.intoType === '2') this.$message.error(`最多只能再上传${this.lastNum}张图片，请重试`)
+        if (this.intoType === '1') this.$message.error(`最多只能再上传${this.lastNum}段视频，请重试`)
         return
       }
       this.tools.$loading()
@@ -97,11 +102,7 @@ export default {
         const src = await this.uploadFile(this.file[i].raw)
         result.push(src)
       }
-      const callback = {
-        result,
-        mode: this.type
-      }
-      this.$emit('successCallback', callback)
+      this.$emit('successCallback', result)
       this.tools.$loading().hide()
       this.fileList = []
       this.dialogVisible = false
@@ -135,10 +136,18 @@ export default {
     background-color: #a0cfff;
     border-color: #a0cfff;
   }
-.editor-slide-upload {
-  margin-bottom: 20px;
-  /deep/ .el-upload--picture-card {
-    width: 100%;
+  .editor-slide-upload {
+    margin-bottom: 20px;
+    /deep/ .el-upload--picture-card {
+      line-height: 1;
+      height: auto;
+      border-width: 0;
+      width: 100%;
+
+    }
   }
-}
+  .upload-tip{
+    margin-bottom: 20px;
+  }
+
 </style>

@@ -44,7 +44,7 @@
       style="width: 100%;"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
-      <el-table-column label="标题" prop="title" min-width="160" align="center" />
+      <el-table-column label="标题" prop="title" min-width="200" align="center" />
       <el-table-column label="缩略图" min-width="100" align="center">
         <template slot-scope="{row}">
           <div class="image-column">
@@ -52,24 +52,19 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="栏目" min-width="80" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.typeName }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="栏目" min-width="80" prop="typeName" align="center" />
       <el-table-column label="来源" prop="fromSource" min-width="80" align="center" />
       <el-table-column label="点击量" prop="author" min-width="68" align="center" />
       <el-table-column label="收藏数" prop="author" min-width="68" align="center" />
       <el-table-column label="创建人" prop="fromUser" min-width="80" align="center" />
-      <el-table-column label="是否置顶" prop="isTop" min-width="80" align="center" />
-      <el-table-column label="上架时间" min-width="160" align="center">
+      <el-table-column label="是否置顶" min-width="80" align="center">
         <template slot-scope="{row}">
-          {{ row.startTime|formatToTime }}
+          {{ row.weight|formatTo('getIsTop') }}
         </template>
       </el-table-column>
-      <el-table-column label="下架时间" min-width="160" align="center">
+      <el-table-column label="发布时间" min-width="160" align="center">
         <template slot-scope="{row}">
-          {{ row.endTime|formatToTime }}
+          {{ row.createTime|formatToTime }}
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
@@ -105,16 +100,7 @@ export default {
         fromSource: ''
       },
       topicOptions: [],
-      isTopOptions: [
-        {
-          name: '是',
-          code: '1'
-        },
-        {
-          name: '否',
-          code: '0'
-        }
-      ],
+      isTopOptions: map.getIsTop,
       stateOptions: map.getBannerStatus,
       list: null,
       total: 0,
@@ -143,9 +129,15 @@ export default {
           this.list = data.data.records
           this.list.forEach(item => {
             item.typeName = this.topicOptions.find(it => it.type === item.type).name
-            item.startTime = item.startTime ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            item.endTime = item.endTime ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss') : ''
-            item.isTop = item.weight > 0 ? '是' : '否'
+            item.weight = item.weight > 0 ? 1 : 0
+            item.startTime =
+              item.startTime && item.weight > 0
+                ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss')
+                : ''
+            item.endTime =
+              item.endTime && item.weight > 0
+                ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss')
+                : ''
           })
           this.total = data.data.total
         }

@@ -21,7 +21,7 @@ const saveValueFromObject = (tempObject, keyObject) => {
   for (const [key, value] of Object.entries(tempObject)) {
     for (const i in keyArray) {
       if (keyArray[i] === key) {
-        result[key] = value || ''
+        result[key] = value === 0 ? value : value || ''
         break
       }
     }

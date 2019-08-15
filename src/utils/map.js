@@ -276,6 +276,17 @@ const getMedicalSkillState = [
   }
 ]
 
+const getIsTop = [
+  {
+    name: '是',
+    code: 1
+  },
+  {
+    name: '否',
+    code: 0
+  }
+]
+
 const getDepartment = async(isRefresh) => {
   if (tools.isEmptyObject(store.session('departmentList')) || isRefresh) {
     await doctorApi.getDepartmentList({}).then(data => {
@@ -439,6 +450,7 @@ export default {
   getGuideMajor, // 获取指南专业
   getGuideType, // 获取指南分类
   getSkillCheckState, // 获取医术审核状态
-  getMedicalSkillState // 医术是否公开
+  getMedicalSkillState, // 医术是否公开
+  getIsTop // 是否置顶
 
 }

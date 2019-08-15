@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <headline :list-title="pageTitle" />
-    <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules" class="form-container">
+    <el-form ref="dataForm" :model="temp" label-width="110px" :rules="rules" class="form-container">
       <el-row type="flex" class="row-bg" justify="space-between">
         <el-col :span="11">
           <el-form-item label="资讯栏目" prop="type">
@@ -9,15 +9,15 @@
               <el-option v-for="item in topicOptions" :key="item.type" :label="item.name" :value="item.type" />
             </el-select>
           </el-form-item>
-          <el-form-item label="外部链接" prop="adLink">
-            <el-input v-model="temp.adLink" placeholder="请填写外部链接" />
-          </el-form-item>
-          <el-form-item label="上架时间" prop="startTime">
-            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
-          </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="temp.status" placeholder="请选择状态">
               <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="声明" prop="statement">
+            <el-select v-model="temp.statement" placeholder="请选择声明">
+              <el-option v-for="item in statementOptions" :key="item.id" :label="item.label" :value="item.label" />
             </el-select>
           </el-form-item>
           <el-form-item label="图片" prop="listImg">
@@ -31,21 +31,21 @@
           <el-form-item label="来源" prop="fromSource">
             <el-input v-model="temp.fromSource" placeholder="请填写文章来源及作者相关信息" />
           </el-form-item>
-          <el-form-item label="下架时间" prop="endTime">
-            <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
-          </el-form-item>
-          <el-form-item label="排序" prop="weight">
-            <el-input v-model="temp.weight" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
-          </el-form-item>
-          <el-form-item label="声明" prop="statement">
-            <el-select v-model="temp.statement" placeholder="请选择声明">
-              <el-option v-for="item in statementOptions" :key="item.id" :label="item.label" :value="item.label" />
+          <el-form-item label="是否置顶" prop="weight">
+            <el-select v-model="temp.weight" placeholder="请选择是否置顶" @change="weightChange">
+              <el-option v-for="item in isTopOptions" :key="item.code" :label="item.name" :value="item.code" />
             </el-select>
+          </el-form-item>
+          <el-form-item v-show="temp.weight>0" label="置顶开始时间" prop="startTime">
+            <el-date-picker v-model="temp.startTime" :picker-options="startTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择上架时间" style="width: 100%" />
+          </el-form-item>
+          <el-form-item v-show="temp.weight>0" label="置顶结束时间" prop="endTime">
+            <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-form-item label="内容" prop="intoUrl">
-        <Tinymce ref="editor" v-model="temp.content" :temp="temp" :height="400" @getTemp="getTemp" />
+        <Tinymce ref="editor" v-model="temp.content" :height="400" @getTemp="getTemp" />
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -64,7 +64,7 @@ import headline from '@/components/headline'
 import uploadImage from '@/components/uploadFile/uploadImage'
 import Tinymce from '@/components/Tinymce'
 import map from '@/utils/map'
-import { isTimeValidate, weightValidate } from '@/utils/validate'
+import { isTimeValidate } from '@/utils/validate'
 export default {
   components: { Tinymce, headline, uploadImage },
 
@@ -73,9 +73,14 @@ export default {
       isTimeValidate(rule, value, callback, this.temp.startTime)
     }
     return {
+      imageNum: 9,
+      videoNum: 1,
+      urlNum: 0,
+      imgPrefix: 'service.jktz.gov.cn',
       pageTitle: '',
       topicOptions: [],
       stateOptions: map.getBannerStatus,
+      isTopOptions: map.getIsTop,
       temp: {
         headInfoId: '',
         title: '',
@@ -103,42 +108,46 @@ export default {
         startTime: [{ required: true, message: '请选择上架时间', trigger: 'change' }],
         endTime: [{ required: true, validator: timeRangeValidate, trigger: 'change' }],
         status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-        weight: [{ validator: weightValidate, trigger: 'blur' }]
+        weight: [{ required: true, message: '请选择是否置顶', trigger: 'change' }]
       }
     }
   },
   watch: {
-    'temp.startTime'(nval, oval) {
-      const that = this
-      const lastTime =
-        this.dayjs(nval).isBefore(this.dayjs())
-          ? this.dayjs().subtract(1, 'day')
-          : this.dayjs(nval).subtract(1, 'day')
-      this.endTimeOptions = {
-        disabledDate(time) {
-          return that.dayjs(time) < lastTime
+    'temp.startTime'(val) {
+      if (val) {
+        const that = this
+        const lastTime =
+          this.dayjs(val).isBefore(this.dayjs())
+            ? this.dayjs().subtract(1, 'day')
+            : this.dayjs(val).subtract(1, 'day')
+        this.endTimeOptions = {
+          disabledDate(time) {
+            return that.dayjs(time) < lastTime
+          }
         }
       }
     }
   },
   created() {
-
   },
   async mounted() {
-    const that = this
-    this.topicOptions = this.store.session('topicList') || []
-    await this.getStatement()
-    this.temp = this.store.session('info') || this.$options.data().temp
-    this.temp.intoUrl = this.tools.isEmptyObject(this.temp.intoUrl) ? [] : this.temp.intoUrl.split(',')
-    !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    this.startTimeOptions = {
-      disabledDate(time) {
-        return that.dayjs(time) < that.dayjs().subtract(1, 'day')
-      }
-    }
-    this.pageTitle = this.tools.isEmptyObject(this.temp.headInfoId) ? '新增资讯' : '编辑资讯'
+    await this.initData()
   },
   methods: {
+    async initData() {
+      const that = this
+      this.topicOptions = this.store.session('topicList') || []
+      await this.getStatement()
+      this.temp = this.store.session('info') || this.$options.data().temp
+      this.temp.intoUrl = this.tools.isEmptyObject(this.temp.intoUrl) ? [] : this.temp.intoUrl.split(',')
+      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
+      this.startTimeOptions = {
+        disabledDate(time) {
+          return that.dayjs(time) < that.dayjs().subtract(1, 'day')
+        }
+      }
+      this.pageTitle = this.tools.isEmptyObject(this.temp.headInfoId) ? '新增资讯' : '编辑资讯'
+    },
     async getStatement() {
       await this.api.doctorApi.getDictionary('statement').then(data => {
         if (data.responseFlag === '1') {
@@ -146,14 +155,52 @@ export default {
         }
       }).catch(() => {})
     },
-    getTemp(value) {
-      this.temp = value
+    weightChange(val) {
+      if (val === 0) {
+        this.temp.startTime = ''
+        this.temp.endTime = ''
+      }
+    },
+    getTemp(val) {
+      this.urlNum = val.urlNum
+      this.temp.intoType = val.intoType
     },
     getImage(image) {
       this.temp.listImg = image
     },
-    infoEdit() {
+    uploadUrl(url) {
       this.tools.$loading()
+      return new Promise((resolve, reject) => {
+        this.api.uploadApi.uploadUrl({ url }).then(data => {
+          if (data.code === '1') {
+            resolve(data.data.url)
+          } else {
+            this.tools.$loading().hide()
+            this.$message.error(data.msg)
+          }
+        }).catch(() => {
+          this.tools.$loading().hide()
+        })
+      })
+    },
+    async handleContent() {
+      const intoUrl = []
+      if (this.temp.content.split(' src=').length > 0) {
+        const imgArrayTemp = this.temp.content.split(' src=')
+        for (const i in imgArrayTemp) {
+          if (imgArrayTemp[i].indexOf('http') === 1) {
+            const endString = imgArrayTemp[i].substr(0, 1)
+            const tempItemArray = imgArrayTemp[i].split(endString)
+            if (tempItemArray[1].indexOf(this.imgPrefix) < 0) tempItemArray[1] = await this.uploadUrl(tempItemArray[1])
+            intoUrl.push(tempItemArray[1])
+            imgArrayTemp[i] = tempItemArray.join(endString)
+          }
+        }
+        this.temp.content = imgArrayTemp.join(' src=')
+      }
+      this.temp.intoUrl = intoUrl
+    },
+    infoEdit() {
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       let method = ''
       if (this.tools.isEmptyObject(this.temp.headInfoId)) {
@@ -164,9 +211,8 @@ export default {
         method = 'infoEdit'
       }
       params.intoUrl = params.intoUrl.join(',')
-      params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
-      params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
-      if (!params.weight) { params.weight = 0 }
+      params.startTime = params.startTime ? this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss') : ''
+      params.endTime = params.endTime ? this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss') : ''
       this.api.doctorApi[method](params).then(async(data) => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {
@@ -179,8 +225,19 @@ export default {
       })
     },
     updateData() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.rules.startTime[0].required = this.temp.weight > 0
+      this.rules.endTime[0].required = this.temp.weight > 0
+      this.$refs['dataForm'].validate(async(valid) => {
         if (valid) {
+          if (this.temp.intoType === '2' && this.urlNum > this.imageNum) {
+            this.$message.error(`您已上传${this.urlNum}张图片,最多只能上传${this.imageNum}张,请重试`)
+            return
+          }
+          if (this.temp.intoType === '1' && this.urlNum > this.videoNum) {
+            this.$message.error(`您已上传${this.urlNum}段视频,最多只能上传${this.videoNum}段,请重试`)
+            return
+          }
+          await this.handleContent()
           this.infoEdit()
         }
       })
