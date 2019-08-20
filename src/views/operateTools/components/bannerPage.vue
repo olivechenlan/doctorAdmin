@@ -14,14 +14,13 @@
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       </el-form-item>
     </el-form>
-    <headline list-title="轮播图列表" button-name="新增轮播图" @handleAction="handleCreate" />
+    <headline list-title="轮播图列表" button-name="新增轮播图" @handleAction="createBanner" />
     <el-table
       v-loading="listLoading"
+      class="table-wrap"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="图片" min-width="100" align="center">
@@ -63,9 +62,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1000px" top="3%" custom-class="form-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
-        <el-row type="flex" justify="space-between" class="row-bg" :gutter="20">
+        <el-row type="flex" justify="space-between" class="row-bg">
           <el-col :span="11">
             <el-form-item label="标题" prop="title">
               <el-input v-model="temp.title" placeholder="请填写标题" />
@@ -86,14 +85,13 @@
             <el-form-item label="下架时间" prop="endTime">
               <el-date-picker v-model="temp.endTime" :disabled="!temp.startTime" :picker-options="endTimeOptions" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="请选择下架时间" style="width: 100%" />
             </el-form-item>
-
             <el-form-item label="排序" prop="adWeight">
               <el-input v-model="temp.adWeight" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="图片" prop="adImgUrl">
-          <upload-image :src="temp.adImgUrl" @getChange="getImage" />
+          <upload-image :src="temp.adImgUrl" @getChange="getFile($event,'adImgUrl')" />
         </el-form-item>
         <el-form-item label="描述" prop="remarks">
           <el-input v-model="temp.remarks" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
@@ -116,6 +114,7 @@ import headline from '@/components/headline'
 import uploadImage from '@/components/uploadFile/uploadImage'
 import map from '@/utils/map'
 import { isTimeValidate, weightValidate } from '@/utils/validate'
+import handleTemp from '@/mixin/handleTemp'
 export default {
   components: { uploadImage, headline },
   filters: {
@@ -133,6 +132,7 @@ export default {
       return isTimesValid ? '上架' : '下架'
     }
   },
+  mixins: [handleTemp],
   props: {
     adType: {
       type: String,
@@ -154,10 +154,6 @@ export default {
         update: '编辑轮播图',
         create: '新增轮播图'
       },
-
-      list: null,
-      total: 0,
-      listLoading: true,
       temp: {
         rotationChartId: '',
         title: '',
@@ -171,8 +167,6 @@ export default {
         endTime: '',
         remarks: ''
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
       rules: {
         title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
         startTime: [{ required: true, message: '请选择上架时间', trigger: 'change' }],
@@ -186,15 +180,17 @@ export default {
     }
   },
   watch: {
-    'temp.startTime'(nval, oval) {
-      const that = this
-      const lastTime =
-        this.dayjs(nval).isBefore(this.dayjs())
-          ? this.dayjs().subtract(1, 'day')
-          : this.dayjs(nval).subtract(1, 'day')
-      this.endTimeOptions = {
-        disabledDate(time) {
-          return that.dayjs(time) < lastTime
+    'temp.startTime'(val) {
+      const today = this.dayjs().startOf('day')
+      if (val) {
+        const startDate = this.dayjs(val).startOf('day')
+        const that = this
+        const lastTime =
+          startDate.isBefore(today) ? today : startDate
+        this.endTimeOptions = {
+          disabledDate(time) {
+            return that.dayjs(time) < lastTime
+          }
         }
       }
     }
@@ -224,35 +220,16 @@ export default {
         this.listLoading = false
       })
     },
-    getImage(image) {
-      this.temp.adImgUrl = image
-      this.$refs.dataForm.validateField('adImgUrl')
-    },
-    handleFilter() {
-      this.getList()
-    },
-    resetTemp() {
-      this.temp = this.$options.data().temp
-      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.temp.startTime = this.dayjs().format('YYYY-MM-DD HH:mm:ss')
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
+    createBanner() {
+      this.handleCreate()
+      this.temp.startTime = this.dayjs()
     },
     bannerEdit() {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
-      if (!params.adWeight) params.adWeight = 0
+      if (!params.adWeight) params.adWeight = '0'
       let method = ''
       if (this.dialogStatus === 'create') {
         method = 'bannerAdd'

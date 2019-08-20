@@ -34,9 +34,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="标题" prop="title" min-width="160" align="center" />
@@ -75,8 +74,11 @@
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
+import handleTemp from '@/mixin/handleTemp'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   components: { headline, Pagination },
+  mixins: [handleTemp],
   data() {
     return {
       listQuery: {
@@ -94,21 +96,22 @@ export default {
         value: 'id',
         label: 'name',
         children: 'subZcList'
-      },
-      titleOptions: [],
-      list: null,
-      total: 0,
-      listLoading: true
+      }
     }
+  },
+  computed: {
+    ...mapGetters(['titleOptions'])
   },
   created() {
   },
-  async mounted() {
-    await map.getTitle()
-    this.titleOptions = this.store.session('titleList') || []
+  mounted() {
     this.getList()
+    this.getTitle()
   },
   methods: {
+    ...mapActions({
+      getTitle: 'options/getTitle'
+    }),
     getList() {
       this.listLoading = true
       const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
@@ -124,10 +127,6 @@ export default {
     },
     cascaderChange(val) {
       this.listQuery.zcId = val[val.length - 1]
-    },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
     },
     jumpToEdit(row) {
       this.$router.push({

@@ -1,7 +1,6 @@
 <template>
   <div class="login-container">
-    <el-form ref="dataForm" :model="loginForm" :rules="rules" class="login-form" auto-complete="on" label-position="left">
-
+    <el-form ref="dataForm" :model="loginForm" :rules="rules" class="login-form" auto-complete="on">
       <div class="title-container">
         <h3 class="title">医生端后台管理平台</h3>
       </div>
@@ -53,8 +52,8 @@ export default {
   data() {
     return {
       loginForm: {
-        phone: '18989619202',
-        pwd: '123456',
+        phone: '',
+        pwd: '',
         macType: '3',
         loginType: '1'
       },
@@ -186,11 +185,11 @@ $light_gray:#eee;
     position: relative;
 
     .title {
-      font-size: 26px;
+      font-size: 28px;
       color: $light_gray;
       margin: 0px auto 40px auto;
       text-align: center;
-      font-weight: bold;
+      font-weight: 400;
     }
   }
 

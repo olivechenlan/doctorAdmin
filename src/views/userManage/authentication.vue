@@ -39,9 +39,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="手机号" prop="phone" width="120" align="center" />
@@ -80,7 +79,7 @@
 
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
 
-    <el-dialog width="1000px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
+    <el-dialog width="1200px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="11">
@@ -94,7 +93,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row type="flex" class="row-bg" :gutter="20">
+        <el-row type="flex" class="row-bg">
           <el-col :span="6">
             <el-form-item required label="姓名">
               <el-input v-model="temp.name" disabled placeholder="" />
@@ -152,6 +151,8 @@ import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
 import uploadImage from '@/components/uploadFile/uploadImage'
+import handleTemp from '@/mixin/handleTemp'
+import handleDefault from '@/mixin/handleDefault'
 
 export default {
   components: { Pagination, uploadImage, headline },
@@ -165,6 +166,7 @@ export default {
       return stateMap[state]
     }
   },
+  mixins: [handleTemp, handleDefault],
   data() {
     return {
       listQuery: {
@@ -179,14 +181,12 @@ export default {
         idCard: '',
         checkState: ''
       },
-      departmentOptions: [],
       departmentProps: {
         value: 'departmentId',
         label: 'departmentName',
         children: 'subDeptList'
       },
       departmentModel: [],
-      titleOptions: [],
       titleProps: {
         value: 'id',
         label: 'name',
@@ -194,33 +194,24 @@ export default {
       },
       titleModel: [],
       checkStateOptions: map.getCheckStatus,
-      hospitalOptions: [],
       textMap: {
         update: '用户审核',
         watch: '用户查看'
       },
-      list: null,
-      total: 0,
-      listLoading: true,
       temp: {
         userId: '',
         checkState: '',
         checkInfo: ''
-      },
-      dialogFormVisible: false,
-      dialogStatus: ''
+      }
     }
   },
   created() {
   },
-  async mounted() {
+  mounted() {
     this.getList()
-    await map.getDepartment()
-    await map.getTitle()
-    await map.getHospital()
-    this.departmentOptions = this.store.session('departmentList') || []
-    this.titleOptions = this.store.session('titleList') || []
-    this.hospitalOptions = this.store.session('hospitalList') || []
+    this.getDepartment()
+    this.getTitle()
+    this.getHospital()
   },
   methods: {
     getList() {
@@ -236,21 +227,14 @@ export default {
         this.listLoading = false
       })
     },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
-    },
     cascaderChange(e, model, param) {
       this[param][model] = e[e.length - 1]
-    },
-    resetTemp() {
-      this.temp = this.$options.data().temp
     },
     handleDialog(row, state) {
       this.resetTemp()
       this.temp = Object.assign({}, row)
-      this.departmentModel = map.getDefaultFromDepartment(row.departmentId)
-      this.titleModel = map.getDefaultFromTitle(row.zc)
+      this.departmentModel = this.getDefaultFromDepartment(row.departmentId)
+      this.titleModel = this.getDefaultFromTitle(row.zc)
       this.dialogStatus = state
       this.dialogFormVisible = true
     },

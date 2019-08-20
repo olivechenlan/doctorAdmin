@@ -167,6 +167,13 @@ export const constantRoutes = [
         meta: { title: '医疗机构列表' }
       },
       {
+        path: 'organEdit',
+        component: () => import('@/views/medicalInfoManage/organEdit'),
+        name: 'medicalInfoManage-organEdit',
+        meta: { title: '编辑医疗机构' },
+        hidden: true
+      },
+      {
         path: 'departmentManage',
         component: () => import('@/views/medicalInfoManage/departmentManage'),
         name: 'medicalInfoManage-departmentManage',

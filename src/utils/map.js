@@ -1,6 +1,3 @@
-import doctorApi from '@/network/api/doctorApi'
-import store from 'store2'
-import tools from './tools'
 
 const getArea = [
   {
@@ -200,7 +197,17 @@ const getDepartmentState = [
     code: '1'
   }
 ]
-const getTitleState = getDepartmentState
+
+const getTitleState = [
+  {
+    name: '已使用',
+    code: '0'
+  },
+  {
+    name: '未使用',
+    code: '1'
+  }
+]
 
 const getBannerStatus = [
   {
@@ -287,109 +294,6 @@ const getIsTop = [
   }
 ]
 
-const getDepartment = async(isRefresh) => {
-  if (tools.isEmptyObject(store.session('departmentList')) || isRefresh) {
-    await doctorApi.getDepartmentList({}).then(data => {
-      if (data.responseFlag === '1') {
-        data.data.forEach(item => {
-          if (!item.subDeptList) item.subDeptList = []
-          for (const i in item.subDeptList) {
-            if (!item.subDeptList[i]) item.subDeptList[i] = []
-          }
-        })
-        store.session.set('departmentList', data.data)
-      }
-    }).catch(() => {})
-  }
-}
-
-const getTitle = async(isRefresh) => {
-  if (tools.isEmptyObject(store.session('titleList')) || isRefresh) {
-    await doctorApi.getTitleList({}).then(data => {
-      if (data.responseFlag === '1') {
-        store.session.set('titleList', data.data)
-      }
-    }).catch(() => {})
-  }
-}
-
-const getHospital = async(isRefresh) => {
-  if (tools.isEmptyObject(store.session('hospitalList')) || isRefresh) {
-    await doctorApi.getHospitalList({}).then(data => {
-      if (data.responseFlag === '1') {
-        store.session.set('hospitalList', data.data)
-      }
-    }).catch(() => {})
-  }
-}
-
-const getDefaultFromDepartment = (id) => {
-  const departmentList = store.session('departmentList')
-  for (const i in departmentList) {
-    if (departmentList[i].departmentId === id) {
-      return [id]
-    } else {
-      for (const j in departmentList[i].subDeptList) {
-        if (departmentList[i].subDeptList[j].departmentId === id) {
-          return [departmentList[i].departmentId, departmentList[i].subDeptList[j].departmentId]
-        }
-      }
-    }
-  }
-}
-
-const getDefaultFromTitle = (id) => {
-  const titleList = store.session('titleList')
-  for (const i in titleList) {
-    if (titleList[i].id === id) {
-      return [id]
-    } else {
-      for (const j in titleList[i].subZcList) {
-        if (titleList[i].subZcList[j].id === id) {
-          return [titleList[i].id, titleList[i].subZcList[j].id]
-        }
-      }
-    }
-  }
-}
-
-const getTopic = async(isRefresh) => {
-  if (tools.isEmptyObject(store.session('topicList')) || isRefresh) {
-    await doctorApi.getTopicList({
-      code: '3310'
-    }).then(data => {
-      if (data.responseFlag === '1') {
-        store.session.set('topicList', data.data)
-      }
-    }).catch(() => {})
-  }
-}
-
-const getPathwayMajor = async(isRefresh) => {
-  if (tools.isEmptyObject(store.session('pathwayMajor')) || isRefresh) {
-    await doctorApi.getDictionary('CP_MAJOR').then(data => {
-      if (data.responseFlag === '1') {
-        store.session.set('pathwayMajor', data.data)
-      }
-    }).catch(() => {})
-  }
-}
-
-const getGuideMajor = async() => {
-  if (tools.isEmptyObject(store.session('guideMajor'))) {
-    await doctorApi.getGuideMajor({}).then(data => {
-      if (data.responseFlag === '1') {
-        const majorGroup = [
-          data.data.nklist,
-          data.data.wklist,
-          data.data.otherList
-        ]
-        store.session.set('guideMajor', majorGroup)
-      }
-    }).catch(() => {})
-  }
-}
-
 const getGuideType = [
   {
     name: '内科',
@@ -426,12 +330,7 @@ const getSkillCheckState = [
 
 export default {
   getArea, // 获取区域列表
-  getDepartment, // 获取科室列表
-  getTitle, // 获取职称列表
   getAuthenStatus, // 获取认证状态
-  getHospital, // 获取医院列表
-  getDefaultFromDepartment, // 获取默认科室
-  getDefaultFromTitle, // 获取默认职称
   checkStatus, // 获取审核状态
   getHospitalKind, // 获取医院性质
   getHospitalType, // 获取医院类型
@@ -443,11 +342,8 @@ export default {
   getCircleType, // 获取圈子类型
   getCheckStatus, // 获取审核状态
   getBannerStatus, // 获取轮播图状态
-  getTopic, // 获取栏目分类
   getFeedbackStatus, // 获取反馈状态
   getPathwayType, // 临床路径类型
-  getPathwayMajor, // 获取临床路径所属专业
-  getGuideMajor, // 获取指南专业
   getGuideType, // 获取指南分类
   getSkillCheckState, // 获取医术审核状态
   getMedicalSkillState, // 医术是否公开

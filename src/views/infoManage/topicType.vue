@@ -15,9 +15,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="90" align="center" />
       <el-table-column label="栏目名称" prop="name" min-width="200" align="center" />
@@ -63,8 +62,11 @@
 <script>
 import headline from '@/components/headline'
 import map from '@/utils/map'
+import handleTemp from '@/mixin/handleTemp'
+import { mapActions } from 'vuex'
 export default {
   components: { headline },
+  mixins: [handleTemp],
   data() {
     const nameValidate = (rule, value, callback) => {
       if (!value) callback(new Error('请填写栏目名称'))
@@ -81,9 +83,6 @@ export default {
         name: '',
         code: '3310'
       },
-      list: null,
-      total: 0,
-      listLoading: true,
       textMap: {
         update: '编辑栏目',
         create: '新增栏目'
@@ -95,8 +94,6 @@ export default {
         code: '3310',
         weight: ''
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
       rules: {
         name: [{ required: true, validator: nameValidate, trigger: 'blur' }]
       }
@@ -107,35 +104,38 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
+    ...mapActions({
+      updateTopic: 'options/updateTopic'
+    }),
+    getList(ifUpdate) {
       this.listLoading = true
       const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
       this.api.doctorApi.getTopicList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data
+          if (ifUpdate) this.updateTopic(data.data)
         }
       }).catch(() => {
         this.listLoading = false
       })
     },
-    resetTemp() {
-      this.temp = this.$options.data().temp
-      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    },
-    handleFilter() {
-      this.getList()
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
+    topicDelete(row) {
+      this.tools.$loading()
+      this.api.doctorApi.topicDelete({
+        type: row.type,
+        code: row.code
+      }).then(async data => {
+        this.tools.$loading().hide()
+        if (data.responseFlag === '1') {
+          this.$message.success('删除成功!')
+          this.getList(true)
+        } else {
+          this.$message.error(data.responseMessage)
+        }
+      }).catch(() => {
+        this.tools.$loading().hide()
+      })
     },
     handleDelete(row) {
       this.$confirm('确定删除该栏目?', '提示', {
@@ -143,22 +143,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.tools.$loading()
-        this.api.doctorApi.topicDelete({
-          type: row.type,
-          code: row.code
-        }).then(async data => {
-          this.tools.$loading().hide()
-          if (data.responseFlag === '1') {
-            this.$message.success('删除成功!')
-            this.getList()
-            await map.getTopic(true)
-          } else {
-            this.$message.error(data.responseMessage)
-          }
-        }).catch(() => {
-          this.tools.$loading().hide()
-        })
+        this.topicDelete(row)
       }).catch(() => {
       })
     },
@@ -177,8 +162,7 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.getList()
-          await map.getTopic(true)
+          this.getList(true)
         } else {
           this.$message.error(data.responseMessage)
         }

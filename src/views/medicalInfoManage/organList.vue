@@ -37,14 +37,13 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <headline list-title="医疗机构列表" button-name="新增医疗机构" @handleAction="handleCreate" />
+    <headline list-title="医疗机构列表" button-name="新增医疗机构" @handleAction="jumpToEdit" />
     <el-table
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="机构代码" prop="hospitalCode" width="100" align="center" />
@@ -55,7 +54,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="医院名称" prop="hospitalName" min-width="120" align="center" />
+      <el-table-column label="医院名称" prop="shortName" min-width="120" align="center" />
       <el-table-column label="医院性质" min-width="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orgKind|formatTo('getHospitalKind') }}</span>
@@ -76,73 +75,13 @@
       <el-table-column label="地址" prop="orgAddr" min-width="200" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="jumpToEdit(row)">
             编辑
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
-    <el-dialog width="1000px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
-        <el-row type="flex" class="row-bg" justify="space-between">
-          <el-col :span="11">
-            <el-form-item label="医院名称" prop="shortName">
-              <el-input v-model="temp.shortName" placeholder="请填写医院名称" />
-            </el-form-item>
-            <el-form-item label="机构代码" prop="hospitalCode">
-              <el-input v-model="temp.hospitalCode" :disabled="dialogStatus==='update'" placeholder="请填写机构代码" />
-            </el-form-item>
-            <el-form-item label="医院类型" prop="orgType">
-              <el-select v-model="temp.orgType" placeholder="请选择医院类型">
-                <el-option v-for="item in orgTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="所属区域" prop="orgAreaCode">
-              <el-select v-model="temp.orgAreaCode" placeholder="请选择所属区域" @change="changeAreaName">
-                <el-option v-for="item in areaOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
-            <el-form-item label="医院全称" prop="hospitalName">
-              <el-input v-model="temp.hospitalName" :disabled="dialogStatus==='update'" placeholder="请填写医院全称" />
-            </el-form-item>
-            <el-form-item label="医院性质" prop="orgKind">
-              <el-select v-model="temp.orgKind" placeholder="请选择医院性质">
-                <el-option v-for="item in orgKindOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="医院等级" prop="orgLevel">
-              <el-select v-model="temp.orgLevel" placeholder="请选择医院等级">
-                <el-option v-for="item in orgLevelOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="联系电话" prop="orgTel">
-              <el-input v-model="temp.orgTel" placeholder="请填写联系电话" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="医院图片">
-          <upload-image :src="temp.orgIconUrl" @getChange="getImage" />
-        </el-form-item>
-        <el-form-item label="详细地址" prop="orgAddr">
-          <el-input v-model="temp.orgAddr" placeholder="请填写详细地址" />
-        </el-form-item>
-        <el-form-item label="医院介绍" prop="orgInfo">
-          <el-input v-model="temp.orgInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
-        </el-form-item>
-
-      </el-form>
-      <div slot="footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="updateData()">
-          提交
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 
 </template>
@@ -151,11 +90,12 @@
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
-import uploadImage from '@/components/uploadFile/uploadImage'
 import { phoneValidate } from '@/utils/validate'
+import handleTemp from '@/mixin/handleTemp'
 
 export default {
-  components: { uploadImage, headline, Pagination },
+  components: { headline, Pagination },
+  mixins: [handleTemp],
   data() {
     return {
       listQuery: {
@@ -173,13 +113,6 @@ export default {
       orgKindOptions: map.getHospitalKind,
       orgTypeOptions: map.getHospitalType,
       orgLevelOptions: map.getHospitalLevel,
-      textMap: {
-        update: '编辑用户信息',
-        create: '新增用户'
-      },
-      list: null,
-      total: 0,
-      listLoading: true,
       temp: {
         hospitalId: '',
         hospitalCode: '',
@@ -195,8 +128,6 @@ export default {
         orgInfo: '',
         orgIconUrl: ''
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
       rules: {
         shortName: [{ required: true, message: '请输入医院名称', trigger: 'blur' }],
         hospitalCode: [{ required: true, message: '请输入机构代码', trigger: 'blur' }],
@@ -228,30 +159,13 @@ export default {
         this.listLoading = false
       })
     },
-    getImage(image) {
-      this.temp.orgIconUrl = image
-    },
-    changeAreaName(value) {
-      this.temp.orgAreaName = this.areaOptions.find(item => item.code === value).name
-    },
-    resetTemp() {
-      this.temp = this.$options.data().temp
-      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
+    jumpToEdit(row) {
+      if (row) { this.store.session.set('organInfo', row) } else {
+        this.store.session.remove('organInfo')
+      }
+      this.$router.push({
+        path: '/medicalInfoManage/organEdit'
+      })
     },
     hospitalEdit() {
       this.tools.$loading()
@@ -267,7 +181,6 @@ export default {
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
-          this.listQuery = this.$options.data().listQuery
           this.getList()
         } else {
           this.$message.error(data.responseMessage)

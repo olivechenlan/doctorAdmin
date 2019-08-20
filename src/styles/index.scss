@@ -234,3 +234,18 @@ input{
     }
   }
 }
+.table-wrap{
+  width: 100%;
+}
+
+//disable展示
+.is-disabled{
+  .el-input__inner,
+  .el-textarea__inner,
+  .el-cascader__label{
+    color: #606266!important;
+  }
+  .el-cascader__label{
+    cursor: not-allowed;
+  }
+}

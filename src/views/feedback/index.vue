@@ -30,9 +30,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="医院名称" prop="hospitalName" min-width="150" align="center" />
@@ -63,16 +62,22 @@
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="70px" :rules="rules">
-        <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="temp.phone" disabled placeholder="" />
-        </el-form-item>
+        <el-row type="flex" justify="space-between" class="row-bg">
+          <el-col :span="11">
+            <el-form-item label="手机号码" prop="phone">
+              <el-input v-model="temp.phone" disabled placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="状态" prop="checkState">
+              <el-select v-model="temp.checkState" placeholder="请选择状态">
+                <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="反馈内容" prop="content">
           <el-input v-model="temp.content" disabled placeholder="" :autosize="{ minRows: 5, maxRows: 10}" type="textarea" />
-        </el-form-item>
-        <el-form-item label="状态" prop="checkState">
-          <el-select v-model="temp.checkState" placeholder="请选择状态">
-            <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="checkInfo">
           <el-input v-model="temp.checkInfo" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
@@ -95,8 +100,10 @@
 import headline from '@/components/headline'
 import map from '@/utils/map'
 import Pagination from '@/components/Pagination'
+import handleTemp from '@/mixin/handleTemp'
 export default {
   components: { headline, Pagination },
+  mixins: [handleTemp],
   data() {
     return {
       listQuery: {
@@ -113,10 +120,6 @@ export default {
         update: '编辑反馈',
         create: ''
       },
-
-      list: null,
-      total: 0,
-      listLoading: true,
       temp: {
         id: '',
         checkState: '',
@@ -124,9 +127,7 @@ export default {
       },
       rules: {
         checkState: [{ required: true, message: '请选择状态', trigger: 'change' }]
-      },
-      dialogFormVisible: false,
-      dialogStatus: ''
+      }
     }
   },
   created() {
@@ -156,20 +157,6 @@ export default {
           this.versionOptions = data.data.filter(item => item !== null)
         }
       }).catch(() => {})
-    },
-    resetTemp() {
-      this.temp = this.$options.data().temp
-      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
     },
     feedbackEdit() {
       this.tools.$loading()

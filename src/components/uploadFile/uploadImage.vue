@@ -79,6 +79,13 @@ export default {
       height: 148px;
       overflow:hidden;
     }
+    /deep/.is-disabled + .el-upload--picture-card{
+       border-style: solid;
+      cursor: default;
+      &:hover{
+        border-color: #c0ccda!important;
+      }
+    }
   }
 
 </style>

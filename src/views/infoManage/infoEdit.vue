@@ -21,7 +21,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="图片" prop="listImg">
-            <upload-image :src="temp.listImg" @getChange="getImage" />
+            <upload-image :src="temp.listImg" @getChange="getFile($event,'listImg')" />
           </el-form-item>
         </el-col>
         <el-col :span="11">
@@ -65,6 +65,7 @@ import uploadImage from '@/components/uploadFile/uploadImage'
 import Tinymce from '@/components/Tinymce'
 import map from '@/utils/map'
 import { isTimeValidate } from '@/utils/validate'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   components: { Tinymce, headline, uploadImage },
 
@@ -78,7 +79,6 @@ export default {
       urlNum: 0,
       imgPrefix: 'service.jktz.gov.cn',
       pageTitle: '',
-      topicOptions: [],
       stateOptions: map.getBannerStatus,
       isTopOptions: map.getIsTop,
       temp: {
@@ -112,14 +112,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['topicOptions'])
+  },
   watch: {
     'temp.startTime'(val) {
+      const today = this.dayjs().startOf('day')
       if (val) {
+        const startDate = this.dayjs(val).startOf('day')
         const that = this
         const lastTime =
-          this.dayjs(val).isBefore(this.dayjs())
-            ? this.dayjs().subtract(1, 'day')
-            : this.dayjs(val).subtract(1, 'day')
+          startDate.isBefore(today) ? today : startDate
         this.endTimeOptions = {
           disabledDate(time) {
             return that.dayjs(time) < lastTime
@@ -128,15 +131,19 @@ export default {
       }
     }
   },
+
   created() {
   },
   async mounted() {
     await this.initData()
   },
   methods: {
+    ...mapActions({
+      getTopic: 'options/getTopic'
+    }),
     async initData() {
       const that = this
-      this.topicOptions = this.store.session('topicList') || []
+      this.getTopic()
       await this.getStatement()
       this.temp = this.store.session('info') || this.$options.data().temp
       this.temp.intoUrl = this.tools.isEmptyObject(this.temp.intoUrl) ? [] : this.temp.intoUrl.split(',')
@@ -164,9 +171,6 @@ export default {
     getTemp(val) {
       this.urlNum = val.urlNum
       this.temp.intoType = val.intoType
-    },
-    getImage(image) {
-      this.temp.listImg = image
     },
     uploadUrl(url) {
       this.tools.$loading()

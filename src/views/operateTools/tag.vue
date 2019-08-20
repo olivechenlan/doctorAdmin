@@ -5,9 +5,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="标签" prop="label" min-width="150" align="center" />
@@ -53,10 +52,12 @@
 import headline from '@/components/headline'
 import map from '@/utils/map'
 import { weightValidate } from '@/utils/validate'
+import handleTemp from '@/mixin/handleTemp'
 export default {
   components: {
     headline
   },
+  mixins: [handleTemp],
   data() {
     return {
       typeOptions: map.getCircleType,
@@ -65,8 +66,6 @@ export default {
         update: '编辑标签',
         create: '新增标签'
       },
-      list: null,
-      listLoading: true,
       temp: {
         id: '',
         label: '',
@@ -76,9 +75,7 @@ export default {
       rules: {
         label: [{ required: true, message: '请输入标签名称', trigger: 'blur' }],
         wegith: [{ validator: weightValidate, trigger: 'blur' }]
-      },
-      dialogFormVisible: false,
-      dialogStatus: ''
+      }
     }
   },
   created() {},
@@ -96,24 +93,6 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-    },
-    resetTemp() {
-      this.temp = this.$options.data().temp
-      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    },
-    handleFilter() {
-      this.getList()
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
     },
     tagEdit() {
       this.tools.$loading()

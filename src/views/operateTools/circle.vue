@@ -21,9 +21,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="圈子名称" prop="name" min-width="140" align="center" />
@@ -60,26 +59,33 @@
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
-      <el-form ref="dataForm" :model="temp" label-width="100px" :rules="rules">
-        <el-form-item label="圈子名称" prop="name">
-          <el-input v-model="temp.name" placeholder="请填写圈子名称" />
-        </el-form-item>
-        <el-form-item label="圈子类别" prop="type">
-          <el-select v-model="temp.type" placeholder="请选择圈子类别">
-            <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
-          </el-select>
-        </el-form-item>
-        <el-form-item v-show="temp.type==='2'" label="所属医院" prop="fromId">
-          <el-select v-model="temp.fromId" placeholder="请选择所属医院">
-            <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="圈子主图" prop="iconUrl">
-          <upload-image :src="temp.iconUrl" @getChange="getImage" />
-        </el-form-item>
+      <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
+        <el-row type="flex" justify="space-between" class="row-bg">
+          <el-col :span="11">
+            <el-form-item label="圈子名称" prop="name">
+              <el-input v-model="temp.name" placeholder="请填写圈子名称" />
+            </el-form-item>
+            <el-form-item label="圈子主图" prop="iconUrl">
+              <upload-image :src="temp.iconUrl" @getChange="getFile($event,'iconUrl')" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="圈子类别" prop="type">
+              <el-select v-model="temp.type" placeholder="请选择圈子类别">
+                <el-option v-for="item in typeOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
+            </el-form-item>
+            <el-form-item v-show="temp.type==='2'" label="所属医院" prop="fromId">
+              <el-select v-model="temp.fromId" placeholder="请选择所属医院">
+                <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="简介" prop="groupInfo">
           <el-input v-model="temp.groupInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
         </el-form-item>
+
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">
@@ -99,11 +105,13 @@ import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
 import uploadImage from '@/components/uploadFile/uploadImage'
+import handleTemp from '@/mixin/handleTemp'
 export default {
   filters: {},
   components: {
     headline, uploadImage, Pagination
   },
+  mixins: [handleTemp],
   data() {
     return {
       listQuery: {
@@ -118,9 +126,6 @@ export default {
         update: '编辑圈子',
         create: '新增圈子'
       },
-      list: null,
-      total: 0,
-      listLoading: true,
       temp: {
         groupId: '',
         name: '',
@@ -133,9 +138,7 @@ export default {
         name: [{ required: true, message: '请输入圈子名称', trigger: 'blur' }],
         type: [{ required: true, message: '请选择圈子类型', trigger: 'change' }],
         fromId: [{ required: true, message: '请选择所属医院', trigger: 'change' }]
-      },
-      dialogFormVisible: false,
-      dialogStatus: ''
+      }
     }
   },
   watch: {
@@ -168,15 +171,6 @@ export default {
       this.rules.fromId[0].required = true
       !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
     },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-    },
     getNotAddedHospital() {
       this.hospitalOptions = []
       if (this.dialogStatus === 'update') {
@@ -195,15 +189,6 @@ export default {
           })
         }
       }).catch(() => {})
-    },
-    getImage(image) {
-      this.temp.iconUrl = image
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
     },
     handleDelete(row) {
       this.$confirm('确定删除该圈子?', '提示', {

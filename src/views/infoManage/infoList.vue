@@ -39,9 +39,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="标题" prop="title" min-width="200" align="center" />
@@ -84,9 +83,11 @@
 import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
+import handleTemp from '@/mixin/handleTemp'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   components: { Pagination, headline },
-
+  mixins: [handleTemp],
   data() {
     return {
       listQuery: {
@@ -99,27 +100,28 @@ export default {
         fromUser: '',
         fromSource: ''
       },
-      topicOptions: [],
       isTopOptions: map.getIsTop,
       stateOptions: map.getBannerStatus,
-      list: null,
-      total: 0,
-      listLoading: true,
       textMap: {
         update: '编辑资讯',
         create: '新增资讯'
       }
     }
   },
+  computed: {
+    ...mapGetters(['topicOptions'])
+  },
   created() {
 
   },
-  async mounted() {
+  mounted() {
     this.getList()
-    await map.getTopic()
-    this.topicOptions = this.store.session('topicList') || []
+    this.getTopic()
   },
   methods: {
+    ...mapActions({
+      getTopic: 'options/getTopic'
+    }),
     getList() {
       this.listLoading = true
       const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
@@ -130,24 +132,14 @@ export default {
           this.list.forEach(item => {
             item.typeName = this.topicOptions.find(it => it.type === item.type).name
             item.weight = item.weight > 0 ? 1 : 0
-            item.startTime =
-              item.startTime && item.weight > 0
-                ? this.dayjs(item.startTime).format('YYYY-MM-DD HH:mm:ss')
-                : ''
-            item.endTime =
-              item.endTime && item.weight > 0
-                ? this.dayjs(item.endTime).format('YYYY-MM-DD HH:mm:ss')
-                : ''
+            if (!this.dayjs(item.startTime).isValid() || item.weight < 1) item.startTime = ''
+            if (!this.dayjs(item.endTime).isValid() || item.weight < 1) item.endTime = ''
           })
           this.total = data.data.total
         }
       }).catch(() => {
         this.listLoading = false
       })
-    },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
     },
     jumpToEdit(row) {
       if (row) { this.store.session.set('info', row) } else {

@@ -45,9 +45,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="手机号" prop="phone" width="140" align="center" />
@@ -64,16 +63,16 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="100" fixed="right">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="updateMedicalUser(row)">
             编辑
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1000px" top="3%" custom-class="form-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="1200px" top="3%" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
-        <el-row type="flex" class="row-bg" :gutter="20">
+        <el-row type="flex" class="row-bg">
           <el-col :span="6">
             <el-form-item label="姓名" prop="name">
               <el-input v-model="temp.name" placeholder="请填写姓名" />
@@ -109,26 +108,26 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="简介" prop="doctorInfo">
-          <el-input v-model="temp.doctorInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
-        </el-form-item>
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="8">
             <el-form-item label="头像" prop="headImg">
-              <upload-image :src="temp.headImg" @getChange="getImage($event,'headImg')" />
+              <upload-image :src="temp.headImg" @getChange="getFile($event,'headImg')" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="认证图片" prop="workImgUrl">
-              <upload-image :src="temp.workImgUrl" @getChange="getImage($event,'workImgUrl')" />
+              <upload-image :src="temp.workImgUrl" @getChange="getFile($event,'workImgUrl')" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="身份证正面" label-width="100px" prop="idImgUrl">
-              <upload-image :src="temp.idImgUrl" @getChange="getImage($event,'idImgUrl')" />
+              <upload-image :src="temp.idImgUrl" @getChange="getFile($event,'idImgUrl')" />
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="简介" prop="doctorInfo">
+          <el-input v-model="temp.doctorInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
+        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">
@@ -147,9 +146,13 @@ import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import uploadImage from '@/components/uploadFile/uploadImage'
 import map from '@/utils/map'
+import handleTemp from '@/mixin/handleTemp'
+import handleDefault from '@/mixin/handleDefault'
+import { idNumberValidate } from '@/utils/validate'
 
 export default {
   components: { Pagination, uploadImage, headline },
+  mixins: [handleTemp, handleDefault],
   data() {
     return {
       listQuery: {
@@ -167,14 +170,12 @@ export default {
       },
       cascaderModel: [],
       areaOptions: map.getArea,
-      departmentOptions: [],
       departmentProps: {
         value: 'departmentId',
         label: 'departmentName',
         children: 'subDeptList'
       },
       departmentModel: [],
-      titleOptions: [],
       titleProps: {
         value: 'id',
         label: 'name',
@@ -182,16 +183,10 @@ export default {
       },
       titleModel: [],
       authStateOptions: map.getAuthenStatus,
-      hospitalOptions: [],
       textMap: {
         update: '编辑用户信息',
         create: '新增用户'
       },
-
-      list: null,
-      total: 0,
-      listLoading: true,
-
       temp: {
         userId: '',
         name: '',
@@ -206,10 +201,9 @@ export default {
         workImgUrl: '',
         idImgUrl: ''
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
       rules: {
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        idCard: [{ validator: idNumberValidate, trigger: 'blur' }],
         hospitalId: [{ required: true, message: '请选择所属医院', trigger: 'change' }],
         departmentId: [{ required: true, message: '请选择科室', trigger: 'change' }],
         zc: [{ required: true, message: '请选择职称', trigger: 'change' }],
@@ -218,17 +212,15 @@ export default {
       }
     }
   },
-  created() {
-
+  computed: {
   },
-  async mounted() {
+  created() {
+  },
+  mounted() {
     this.getList()
-    await map.getDepartment()
-    await map.getTitle()
-    await map.getHospital()
-    this.departmentOptions = this.store.session('departmentList') || []
-    this.titleOptions = this.store.session('titleList') || []
-    this.hospitalOptions = this.store.session('hospitalList') || []
+    this.getDepartment()
+    this.getTitle()
+    this.getHospital()
   },
   methods: {
     getList() {
@@ -244,28 +236,13 @@ export default {
         this.listLoading = false
       })
     },
-    getImage(e, file) {
-      this.temp[file] = e
-      this.$refs.dataForm.validateField(file)
-    },
-    handleFilter() {
-      this.listQuery.current = 1
-      this.getList()
-    },
     cascaderChange(e, model, param) {
       this[param][model] = e[e.length - 1]
     },
-    resetTemp() {
-      this.temp = this.$options.data().temp
-      !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-    },
-    handleUpdate(row) {
-      this.resetTemp()
-      this.temp = Object.assign({}, row)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.departmentModel = map.getDefaultFromDepartment(row.departmentId)
-      this.titleModel = map.getDefaultFromTitle(row.zc)
+    updateMedicalUser(row) {
+      this.handleUpdate(row)
+      this.departmentModel = this.getDefaultFromDepartment(row.departmentId)
+      this.titleModel = this.getDefaultFromTitle(row.zc)
     },
     userInfoEdit() {
       this.tools.$loading()
