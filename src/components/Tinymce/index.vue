@@ -2,7 +2,7 @@
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
     <div class="editor-custom-btn-container">
-      <editorImage v-for="(item,index) in buttonGroup" :key="index" :disabled="intoType!==item.intoType || intoType==='3'" class="editor-upload-btn" :into-type="item.intoType" :last-num="item.lastNum" @successCallback="successCallback" />
+      <editorImage v-for="(item,index) in buttonGroup" :key="index" :disabled="item.ifDisabled" class="editor-upload-btn" :into-type="item.intoType" :last-num="item.lastNum" @successCallback="successCallback" />
     </div>
   </div>
 </template>
@@ -73,11 +73,13 @@ export default {
       const group = [
         {
           intoType: '2',
-          lastNum: this.imageNum - this.urlNum > 0 ? this.imageNum - this.urlNum : 0
+          lastNum: this.imageNum - this.urlNum > 0 ? this.imageNum - this.urlNum : 0,
+          ifDisabled: (this.intoType !== '' && this.intoType !== '2') || this.intoType === '3'
         },
         {
           intoType: '1',
-          lastNum: this.videoNum - this.urlNum > 0 ? this.videoNum - this.urlNum : 0
+          lastNum: this.videoNum - this.urlNum > 0 ? this.videoNum - this.urlNum : 0,
+          ifDisabled: (this.intoType !== '' && this.intoType !== '1') || this.intoType === '3'
         }
       ]
       return group
