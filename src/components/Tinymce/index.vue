@@ -2,7 +2,7 @@
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
     <div class="editor-custom-btn-container">
-      <editorImage v-for="(item,index) in buttonGroup" :key="index" :disabled="intoType!=='' && intoType!==item.intoType" class="editor-upload-btn" :into-type="item.intoType" :last-num="item.lastNum" @successCallback="successCallback" />
+      <editorImage v-for="(item,index) in buttonGroup" :key="index" :disabled="intoType!==item.intoType || intoType==='3'" class="editor-upload-btn" :into-type="item.intoType" :last-num="item.lastNum" @successCallback="successCallback" />
     </div>
   </div>
 </template>
@@ -103,7 +103,7 @@ export default {
           matchString = '<video'
         }
         if (nval.indexOf('<video') >= 0 && nval.indexOf('<img') >= 0) {
-          intoType = ''
+          intoType = '3'
           matchString = ''
         }
         if (matchString) {
@@ -197,16 +197,17 @@ export default {
       window.tinymce.get(this.tinymceId).getContent()
     },
     successCallback(val) {
-      if (this.intoType === '2') {
-        val.forEach(item => {
+      if (val.intoType === '2') {
+        val.result.forEach(item => {
           window.tinymce.get(this.tinymceId).insertContent(`<img src="${item}" />`)
         })
       }
-      if (this.intoType === '1') {
-        val.forEach(item => {
+      if (val.intoType === '1') {
+        val.result.forEach(item => {
           window.tinymce.get(this.tinymceId).insertContent(`<video src="${item}" controls="controls" />`)
         })
       }
+      if (!this.intoType) this.intoType = val.intoType
     }
   }
 }

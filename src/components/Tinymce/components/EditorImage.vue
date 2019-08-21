@@ -102,7 +102,11 @@ export default {
         const src = await this.uploadFile(this.file[i].raw)
         result.push(src)
       }
-      this.$emit('successCallback', result)
+      const callback = {
+        result,
+        intoType: this.intoType
+      }
+      this.$emit('successCallback', callback)
       this.tools.$loading().hide()
       this.fileList = []
       this.dialogVisible = false

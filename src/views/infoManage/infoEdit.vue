@@ -241,6 +241,10 @@ export default {
             this.$message.error(`您已上传${this.urlNum}段视频,最多只能上传${this.videoNum}段,请重试`)
             return
           }
+          if (this.temp.intoType === '3') {
+            this.$message.error(`只能选择上传图片或者视频的其中一种,请重试`)
+            return
+          }
           await this.handleContent()
           this.infoEdit()
         }
