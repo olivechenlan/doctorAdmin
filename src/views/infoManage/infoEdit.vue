@@ -66,9 +66,10 @@ import Tinymce from '@/components/Tinymce'
 import map from '@/utils/map'
 import { isTimeValidate } from '@/utils/validate'
 import { mapGetters, mapActions } from 'vuex'
+import handleTemp from '@/mixin/handleTemp'
 export default {
   components: { Tinymce, headline, uploadImage },
-
+  mixins: [handleTemp],
   data() {
     const timeRangeValidate = (rule, value, callback) => {
       isTimeValidate(rule, value, callback, this.temp.startTime)

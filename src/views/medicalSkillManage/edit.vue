@@ -30,7 +30,7 @@
               无
             </template>
           </el-form-item>
-          <el-form-item label="驳回理由" prop="rejectContent">
+          <el-form-item v-show="temp.checkState!=='2'" label="驳回理由" prop="rejectContent">
             <el-input v-model="temp.rejectContent" :disabled="temp.checkState!=='0'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
           </el-form-item>
           <el-form-item>
