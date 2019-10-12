@@ -41,7 +41,11 @@
       <el-table-column label="标题" prop="title" min-width="160" align="center" />
       <el-table-column label="发布人" prop="name" min-width="100" align="center" />
       <el-table-column label="职称" prop="zc" min-width="100" align="center" />
-      <el-table-column label="手机号码" prop="phone" min-width="120" align="center" />
+      <el-table-column label="手机号码" prop="phone" min-width="120" align="center">
+        <template slot-scope="{row}">
+          {{ row.phone|numDesensitization(3,4) }}
+        </template>
+      </el-table-column>
       <el-table-column label="所属医院" prop="hospitalName" min-width="130" align="center" />
       <el-table-column label="审核状态" min-width="95" align="center">
         <template slot-scope="{row}">

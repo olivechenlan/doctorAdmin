@@ -152,6 +152,10 @@ input{
   text-align: left
 }
 
+.text-right{
+  text-align: right;
+}
+
 .sub-navbar {
   height: 50px;
   line-height: 50px;
@@ -200,7 +204,7 @@ input{
 }
 
 .form-container{
-  .el-select{
+  .el-select, .el-cascader{
     width: 100%;
   }
 }

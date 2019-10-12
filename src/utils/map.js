@@ -328,6 +328,28 @@ const getSkillCheckState = [
   }
 ]
 
+const getInquiry = [
+  {
+    name: '已开通',
+    code: '1'
+  },
+  {
+    name: '未开通',
+    code: '0'
+  }
+]
+
+const getIsHot = [
+  {
+    name: '是',
+    code: '1'
+  },
+  {
+    name: '不是',
+    code: '0'
+  }
+]
+
 export default {
   getArea, // 获取区域列表
   getAuthenStatus, // 获取认证状态
@@ -347,6 +369,7 @@ export default {
   getGuideType, // 获取指南分类
   getSkillCheckState, // 获取医术审核状态
   getMedicalSkillState, // 医术是否公开
-  getIsTop // 是否置顶
-
+  getIsTop, // 是否置顶
+  getInquiry, // 是否开通问诊
+  getIsHot // 是否热门
 }

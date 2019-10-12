@@ -16,6 +16,12 @@
           <el-option v-for="item in departmentTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
+      <el-form-item label="问诊科室">
+        <el-select v-model="listQuery.inquiry" placeholder="请选择是否是问诊科室">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="handleFilter">
           搜索
@@ -43,6 +49,12 @@
           <span>{{ row.useState|formatTo('getDepartmentState') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="问诊科室" min-width="100" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.inquiry|formatTo('getInquiry') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" prop="orderNo" min-width="60" align="center" />
       <el-table-column label="操作" align="center" width="200" fixed="right">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -82,6 +94,11 @@
             <el-form-item label="标准科室代码" prop="departmentCode">
               <el-input v-model="temp.departmentCode" placeholder="请填写标准科室代码" />
             </el-form-item>
+            <el-form-item v-show="temp.type==='0'" label="问诊科室" prop="inquiry">
+              <el-select v-model="temp.inquiry" placeholder="请选择是否问诊科室">
+                <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -112,10 +129,17 @@ export default {
       listQuery: {
         departmentName: '',
         useState: '',
-        type: ''
+        type: '',
+        inquiry: ''
       },
+      list: [
+        {
+          departmentId: ''
+        }
+      ],
       departmentTypeOptions: map.getDepartmentType,
       departmentStateOptions: map.getDepartmentState,
+      inquiryOptions: map.getInquiry,
       textMap: {
         update: '编辑科室信息',
         create: '新增科室'
@@ -127,14 +151,16 @@ export default {
         departmentCode: '',
         useState: '',
         orderNo: '',
-        departmentId: ''
+        departmentId: '',
+        inquiry: ''
       },
       rules: {
         type: [{ required: true, message: '请选择科室类别', trigger: 'change' }],
         departmentName: [{ required: true, message: '请输入科室名称', trigger: 'blur' }],
         parDepartment: [{ required: true, message: '请选择父级科室', trigger: 'change' }],
         useState: [{ required: true, message: '请选择科室状态', trigger: 'change' }],
-        orderNo: [{ validator: weightValidate, triiger: 'blur' }]
+        orderNo: [{ validator: weightValidate, triiger: 'blur' }],
+        inquiry: [{ required: true, message: '请选择是否开通问诊', trigger: 'change' }]
       }
     }
   },
@@ -143,7 +169,7 @@ export default {
   },
   created() {
   },
-  async mounted() {
+  mounted() {
     this.getList()
     this.getDepartment()
   },
@@ -152,7 +178,7 @@ export default {
       getDepartment: 'options/getDepartment',
       updateDepartment: 'options/updateDepartment'
     }),
-    getList(ifUpdate) {
+    getList(ifUpdate = false) {
       this.listLoading = true
       const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
       this.api.doctorApi.getDepartmentList(params).then(data => {

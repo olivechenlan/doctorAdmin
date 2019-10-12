@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true">
+    <el-form :inline="true" label-width="100px">
       <el-form-item label="职称名称">
         <el-input v-model="listQuery.name" placeholder="请填写职称名称" clearable />
       </el-form-item>
@@ -14,6 +14,12 @@
         <el-select v-model="listQuery.type" placeholder="请选择职称类别">
           <el-option label="全部" value="" />
           <el-option v-for="item in titleTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="允许开通问诊">
+        <el-select v-model="listQuery.inquiry" placeholder="请选择是否允许开通问诊">
+          <el-option label="全部" value="" />
+          <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -40,6 +46,11 @@
       <el-table-column label="职称状态" min-width="150" align="center">
         <template slot-scope="{row}">
           <span>{{ row.useState|formatTo('getTitleState') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="问诊科室" min-width="100" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.inquiry|formatTo('getInquiry') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" fixed="right">
@@ -70,13 +81,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="职称状态" prop="useState">
+            <el-form-item label="职称状态" prop="useState" label-width="110px">
               <el-select v-model="temp.useState" placeholder="请选择科室状态">
                 <el-option v-for="item in titleStateOptions" :key="item.code" :label="item.name" :value="item.code" />
               </el-select>
             </el-form-item>
-            <el-form-item label="排序" prop="orderNo">
+            <el-form-item label="排序" prop="orderNo" label-width="110px">
               <el-input v-model="temp.orderNo" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
+            </el-form-item>
+            <el-form-item v-show="temp.type==='1'" label="允许开通问诊" prop="inquiry" label-width="110px">
+              <el-select v-model="temp.inquiry" placeholder="请选择是否允许开通问诊">
+                <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -109,10 +125,17 @@ export default {
       listQuery: {
         name: '',
         useState: '',
-        type: ''
+        type: '',
+        inquiry: ''
       },
+      list: [
+        {
+          id: ''
+        }
+      ],
       titleStateOptions: map.getTitleState,
       titleTypeOptions: map.getTitleType,
+      inquiryOptions: map.getInquiry,
       textMap: {
         update: '编辑职称',
         create: '新增职称'
@@ -123,14 +146,16 @@ export default {
         parZc: '',
         id: '',
         useState: '',
-        orderNo: ''
+        orderNo: '',
+        inquiry: ''
       },
       rules: {
         type: [{ required: true, message: '请选择职称类别', trigger: 'change' }],
         name: [{ required: true, message: '请输入职称名称', trigger: 'blur' }],
         parZc: [{ required: true, message: '请选择父级职称', trigger: 'change' }],
         useState: [{ required: true, message: '请选择职称状态', trigger: 'change' }],
-        orderNo: [{ validator: weightValidate, trigger: 'blur' }]
+        orderNo: [{ validator: weightValidate, trigger: 'blur' }],
+        inquiry: [{ required: true, message: '请选择是否允许开通问诊', trigger: 'change' }]
       }
     }
   },
@@ -168,7 +193,10 @@ export default {
     titleEdit() {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
-      if (params.type === '0') delete params['parZc']
+      if (params.type === '0') {
+        delete params['parZc']
+        delete params['inquiry']
+      }
       if (!params.orderNo) { params.orderNo = 0 }
       this.api.doctorApi.titleEdit(params).then(async(data) => {
         this.tools.$loading().hide()

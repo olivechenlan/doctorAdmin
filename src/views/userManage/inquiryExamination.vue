@@ -19,8 +19,8 @@
       <el-form-item label="医院名称">
         <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
       </el-form-item>
-      <el-form-item label="机构代码">
-        <el-input v-model="listQuery.hospitalCode" placeholder="请填写机构代码" clearable />
+      <el-form-item label="工号">
+        <el-input v-model="listQuery.doctorWorkId" placeholder="请填写机构代码" clearable />
       </el-form-item>
       <el-form-item label="科室">
         <el-cascader :props="departmentProps" placeholder="请填写科室" :options="departmentOptions" clearable @change="cascaderChange($event,'departmentId','listQuery')" />
@@ -43,21 +43,21 @@
       class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
-      <el-table-column label="手机号" prop="phone" width="110" align="center">
+      <el-table-column label="手机号" prop="phone" width="120" align="center">
         <template slot-scope="{row}">
           {{ row.phone|numDesensitization(3,4) }}
         </template>
       </el-table-column>
       <el-table-column label="姓名" prop="name" width="80" align="center" />
-      <el-table-column label="身份证号码" prop="idCard" width="160" align="center">
+      <el-table-column label="身份证号码" prop="idCard" width="180" align="center">
         <template slot-scope="{row}">
           {{ row.idCard|numDesensitization(6,4) }}
         </template>
       </el-table-column>
       <el-table-column label="医院名称" prop="hospitalName" min-width="130" align="center" />
-      <el-table-column label="机构代码" prop="hospitalId" width="100" align="center" />
       <el-table-column label="科室" prop="departmentName" min-width="100" align="center" />
       <el-table-column label="职称" prop="zcName" min-width="100" align="center" />
+      <el-table-column label="工号" prop="doctorWorkId" min-width="100" align="center" />
       <el-table-column label="审核状态" width="100" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.checkState | stateFilter">
@@ -90,14 +90,19 @@
     <el-dialog width="1200px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" justify="space-between">
-          <el-col :span="11">
+          <el-col :span="8">
             <el-form-item label="认证图片" required>
               <upload-image :src="temp.workImgUrl" :is-disabled="true" />
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="8">
             <el-form-item label="身份证正面" required label-width="100px">
               <upload-image :src="temp.idImgUrl" :is-disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="问诊头像" required label-width="100px">
+              <upload-image :src="temp.inquiryHead" :is-disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -132,8 +137,17 @@
             <el-form-item label="工号">
               <el-input v-model="temp.doctorWorkId" disabled placeholder="" />
             </el-form-item>
-            <el-form-item label="院内短号">
-              <el-input v-model="temp.shortPhone" disabled placeholder="" />
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="space-between" class="row-bg">
+          <el-col :span="11">
+            <el-form-item label="擅长">
+              <el-input v-model="temp.beGoodAt" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="个人简介">
+              <el-input v-model="temp.doctorInfo" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -182,12 +196,12 @@ export default {
         size: 10,
         name: '',
         hospitalName: '',
-        hospitalCode: '',
         departmentId: '',
         zc: '',
         phone: '',
         idCard: '',
-        checkState: ''
+        checkState: '',
+        doctorWorkId: ''
       },
       departmentProps: {
         value: 'departmentId',
@@ -201,10 +215,10 @@ export default {
         children: 'subZcList'
       },
       titleModel: [],
-      checkStateOptions: map.getCheckStatus,
+      checkStateOptions: map.getSkillCheckState,
       textMap: {
-        update: '用户审核',
-        watch: '用户查看'
+        update: '开通问诊审核',
+        watch: '问诊审核查看'
       },
       temp: {
         userId: '',
@@ -225,7 +239,7 @@ export default {
     getList() {
       this.listLoading = true
       const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
-      this.api.doctorApi.getCheckList(params).then(data => {
+      this.api.doctorApi.getInquiryCheckList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
           this.list = data.data.records
@@ -238,15 +252,30 @@ export default {
     cascaderChange(e, model, param) {
       this[param][model] = e[e.length - 1]
     },
-    handleDialog(row, state) {
+    async handleDialog(row, state) {
       this.resetTemp()
-      this.temp = Object.assign({}, row)
+      await this.getInquiryDetailWEB(row.userId)
       this.departmentModel = this.getDefaultFromDepartment(row.departmentId)
       this.titleModel = this.getDefaultFromTitle(row.zc)
       this.dialogStatus = state
       this.dialogFormVisible = true
     },
-    authenCheck(state) {
+    async getInquiryDetailWEB(id) {
+      this.tools.$loading()
+      await this.api.doctorApi.getInquiryDetailWEB({
+        userId: id
+      }).then(data => {
+        this.tools.$loading().hide()
+        if (data.responseFlag === '1') {
+          this.temp = data.data
+        } else {
+          this.$message.error(data.responseMessage)
+        }
+      }).catch(() => {
+        this.tools.$loading().hide()
+      })
+    },
+    checkInquiry(state) {
       this.tools.$loading()
       this.temp.checkState = state
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)

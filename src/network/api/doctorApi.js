@@ -245,6 +245,26 @@ const doctorSkillAuthenCheck = params => {
   return doctorPost('doctorArtInfo/checkInfo', params)
 }
 
+const getInquiryList = params => {
+  return doctorPost('inquiry/getInquiryListWEB', params)
+}
+
+const getInquiryEvaluateList = params => {
+  return doctorGet('inquiry/getInquiryEvaluateList', params)
+}
+
+const updateEvaluate = params => {
+  return doctorPost('inquiry/updateEvaluate', params)
+}
+
+const getInquiryCheckList = params => {
+  return doctorPost('inquiry/getInquiryCheckList', params)
+}
+
+const getInquiryDetailWEB = params => {
+  return doctorGet('inquiry/getInquiryDetailWEB', params)
+}
+
 export default {
   getUserInfoList, // 获取用户信息列表
   userInfoEdit, // 编辑用户信息
@@ -290,5 +310,10 @@ export default {
   guideEdit, // 编辑指南
   getDoctorSkillList, // 获取医术列表
   getDoctorSkillInfo, // 获取医术详情
-  doctorSkillAuthenCheck // 医术审核
+  doctorSkillAuthenCheck, // 医术审核
+  getInquiryList, // 获取问诊医生列表
+  getInquiryEvaluateList, // 获取医生评价列表
+  updateEvaluate, // 修改评论是否隐藏
+  getInquiryCheckList, // 获取问诊审核列表
+  getInquiryDetailWEB // 获取问诊审核详情 ，获取问诊医生详情
 }

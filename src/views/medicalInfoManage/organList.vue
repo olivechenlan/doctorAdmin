@@ -70,7 +70,11 @@
           <span>{{ row.orgLevel|formatTo('getHospitalLevel') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" prop="orgTel" min-width="125" align="center" />
+      <el-table-column label="联系方式" prop="orgTel" min-width="125" align="center">
+        <template slot-scope="{row}">
+          {{ row.orgTel|numDesensitization(3,4) }}
+        </template>
+      </el-table-column>
       <el-table-column label="所属区域" prop="orgAreaName" width="100" align="center" />
       <el-table-column label="地址" prop="orgAddr" min-width="200" align="center" />
       <el-table-column label="操作" align="center" width="100" fixed="right">

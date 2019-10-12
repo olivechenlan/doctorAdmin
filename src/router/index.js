@@ -103,6 +103,25 @@ export const constantRoutes = [
         component: () => import('@/views/userManage/authentication'),
         name: 'userManage-authentication',
         meta: { title: '认证审核' }
+      },
+      {
+        path: 'doctorList',
+        component: () => import('@/views/userManage/doctorList'),
+        name: 'userManage-doctorList',
+        meta: { title: '问诊医生列表' }
+      },
+      {
+        path: 'doctorList/commentList',
+        component: () => import('@/views/userManage/commentList'),
+        name: 'userManage-doctorList-commentList',
+        meta: { title: '医生评价列表' },
+        hidden: true
+      },
+      {
+        path: 'inquiryExamination',
+        component: () => import('@/views/userManage/inquiryExamination'),
+        name: 'userManage-inquiryExamination',
+        meta: { title: '开通问诊审核' }
       }
     ]
   },

@@ -34,8 +34,12 @@
       class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
-      <el-table-column label="医院名称" prop="hospitalName" min-width="150" align="center" />
-      <el-table-column label="手机号码" prop="phone" width="120" align="center" />
+      <el-table-column label="医院名称" prop="hospitalName" min-width="140" align="center" />
+      <el-table-column label="手机号码" prop="phone" width="110" align="center">
+        <template slot-scope="{row}">
+          {{ row.phone|numDesensitization(3,4) }}
+        </template>
+      </el-table-column>
       <el-table-column label="反馈内容" prop="content" min-width="150" align="center" />
       <el-table-column label="app版本" prop="appVersion" min-width="90" align="center" />
       <el-table-column label="手机系统" prop="sysVersion" min-width="100" align="center" />
