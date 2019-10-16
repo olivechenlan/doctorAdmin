@@ -29,6 +29,21 @@ const saveValueFromObject = (tempObject, keyObject) => {
   return result
 }
 
+const saveDifferentValue = (temp, tempOrigin) => {
+  const result = {}
+  for (const [key, value] of Object.entries(tempOrigin)) {
+    for (const [k, v] of Object.entries(temp)) {
+      if (k === key) {
+        if (value !== v) {
+          result[k] = v === 0 ? v : v || ''
+        }
+        break
+      }
+    }
+  }
+  return result
+}
+
 const $loading = (params = {}) => {
   const options = Object.assign({
     lock: true,
@@ -45,5 +60,6 @@ export default {
   isEmptyObject,
   removeEmptyValue, // 去除对象中的空数值
   saveValueFromObject, // 取原对象中的指定数值重组
+  saveDifferentValue, // 编辑时取修改过的值
   $loading // 加载
 }

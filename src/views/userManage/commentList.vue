@@ -5,12 +5,12 @@
         <div class="rate-box">
           <div>
             <p>好评率</p>
-            <p class="rate">%</p>
+            <p class="rate">{{ record.applauseRate }}%</p>
           </div>
         </div>
         <div class="doctor-image">
-          <el-avatar :src="url" shape="square" :size="160" fit="cover" @error="errorHandler">
-            <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
+          <el-avatar :src="record.inquiryHead" shape="square" :size="160" fit="cover" @error="errorHandler">
+            <img :src="emptyPic">
           </el-avatar>
           <p class="name">{{ record.name }}</p>
           <p>{{ record.hospitalName }}</p>
@@ -25,10 +25,11 @@
           <el-radio v-for="(item,index) in radioGroup" :key="index" v-model="radio" :label="item.code" @change="radioChange">{{ item.name }}</el-radio>
         </aside>
         <div class="comment-container">
+          <div v-show="!list" class="list-no-item">暂无相关数据</div>
           <el-row v-for="(item,index) in list" :key="index" class="comment-list">
             <el-col :span="21">
-              <el-row>
-                <el-col :span="4">{{ item.fromUser }}</el-col>
+              <el-row type="flex" align="center">
+                <el-col :span="4" class="name">{{ item.fromUser }}</el-col>
                 <el-col :span="20">
                   <el-rate
                     v-model="item.evaluateValue"
@@ -37,7 +38,7 @@
                   />
                 </el-col>
               </el-row>
-              <p>kkkk</p>
+              <p>{{ item.content }}</p>
               <p class="datetime">{{ item.createTime|formatToTime }}</p>
             </el-col>
             <el-col :span="3" class="text-right">
@@ -57,7 +58,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      emptyPic: require('@/assets/empty/noItem.png'),
       listQuery: {
         userId: '',
         current: 1,
@@ -136,6 +137,7 @@ export default {
 <style lang="scss" scoped>
   @import "~@/styles/variables.scss";
   .app-container{
+    font-size: 14px;
     p{
       margin: 0;
     }
@@ -170,14 +172,23 @@ export default {
       padding: 0 20px;
       margin-top: -20px;
       .comment-list{
-        padding: 20px 0;
+        color: #606266;
+        padding: 15px 0;
         border-bottom: 1px solid #eee;
         p{
           padding-top: 8px;
         }
+        .name{
+          line-height: 21px;
+        }
         .datetime{
           color: #999;
         }
+      }
+      .list-no-item{
+        text-align: center;
+        color: #999;
+        margin-top: 60px;
       }
     }
 

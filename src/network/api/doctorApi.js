@@ -246,7 +246,7 @@ const doctorSkillAuthenCheck = params => {
 }
 
 const getInquiryList = params => {
-  return doctorPost('inquiry/getInquiryListWEB', params)
+  return doctorGet('inquiry/getInquiryListWEB', params)
 }
 
 const getInquiryEvaluateList = params => {
@@ -258,11 +258,19 @@ const updateEvaluate = params => {
 }
 
 const getInquiryCheckList = params => {
-  return doctorPost('inquiry/getInquiryCheckList', params)
+  return doctorGet('inquiry/getInquiryCheckList', params)
 }
 
 const getInquiryDetailWEB = params => {
   return doctorGet('inquiry/getInquiryDetailWEB', params)
+}
+
+const checkInquiry = params => {
+  return doctorPost('inquiry/checkInquiry', params)
+}
+
+const editInquiryDoctor = params => {
+  return doctorPost('userInfo/editUserInquiry', params)
 }
 
 export default {
@@ -315,5 +323,7 @@ export default {
   getInquiryEvaluateList, // 获取医生评价列表
   updateEvaluate, // 修改评论是否隐藏
   getInquiryCheckList, // 获取问诊审核列表
-  getInquiryDetailWEB // 获取问诊审核详情 ，获取问诊医生详情
+  getInquiryDetailWEB, // 获取问诊审核详情 ，获取问诊医生详情
+  checkInquiry, // 问诊审核
+  editInquiryDoctor // 编辑问诊医生
 }

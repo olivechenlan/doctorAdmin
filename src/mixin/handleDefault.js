@@ -8,11 +8,18 @@ export default {
   },
   data() {
     return {
-      list: null,
-      total: 0,
-      listLoading: true,
-      dialogFormVisible: false,
-      dialogStatus: ''
+      departmentProps: {
+        value: 'departmentId',
+        label: 'departmentName',
+        children: 'subDeptList'
+      },
+      departmentModel: [],
+      titleProps: {
+        value: 'id',
+        label: 'name',
+        children: 'subZcList'
+      },
+      titleModel: []
     }
   },
   mounted() {
@@ -23,6 +30,9 @@ export default {
       getTitle: 'options/getTitle',
       getHospital: 'options/getHospital'
     }),
+    cascaderChange(e, model, param) {
+      this[param][model] = e[e.length - 1]
+    },
     getDefaultFromDepartment(id) {
       const departmentList = this.departmentOptions
       for (const i in departmentList) {

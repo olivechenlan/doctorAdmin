@@ -5,7 +5,7 @@
         <el-input v-model="listQuery.title" placeholder="请填写标题关键字" clearable />
       </el-form-item>
       <el-form-item label="职称">
-        <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange" />
+        <el-cascader :props="titleProps" placeholder="请填写职称" :options="titleOptions" clearable @change="cascaderChange($event,'zcId','listQuery')" />
       </el-form-item>
       <el-form-item label="医院">
         <el-input v-model="listQuery.hospitalName" placeholder="请填写医院名称" clearable />
@@ -79,10 +79,10 @@ import headline from '@/components/headline'
 import Pagination from '@/components/Pagination'
 import map from '@/utils/map'
 import handleTemp from '@/mixin/handleTemp'
-import { mapGetters, mapActions } from 'vuex'
+import handleDefault from '@/mixin/handleDefault'
 export default {
   components: { headline, Pagination },
-  mixins: [handleTemp],
+  mixins: [handleTemp, handleDefault],
   data() {
     return {
       listQuery: {
@@ -104,7 +104,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['titleOptions'])
   },
   created() {
   },
@@ -113,9 +112,6 @@ export default {
     this.getTitle()
   },
   methods: {
-    ...mapActions({
-      getTitle: 'options/getTitle'
-    }),
     getList() {
       this.listLoading = true
       const params = this.tools.removeEmptyValue(Object.assign({}, this.listQuery))
@@ -129,9 +125,6 @@ export default {
         this.listLoading = false
       })
     },
-    cascaderChange(val) {
-      this.listQuery.zcId = val[val.length - 1]
-    },
     jumpToEdit(row) {
       this.$router.push({
         path: '/medicalSkillManage/edit',
@@ -141,7 +134,6 @@ export default {
         }
       })
     }
-
   }
 }
 </script>

@@ -90,8 +90,8 @@
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
               </el-select>
             </el-form-item>
-            <el-form-item label="开通问诊" prop="inquiry">
-              <el-select v-model="temp.inquiry" placeholder="请选择是否开通问诊" disabled>
+            <el-form-item label="开通问诊" prop="isInquiry">
+              <el-select v-model="temp.isInquiry" placeholder="请选择是否开通问诊" disabled>
                 <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
               </el-select>
             </el-form-item>
@@ -103,7 +103,7 @@
             <el-form-item label="科室" prop="departmentId">
               <el-cascader v-model="departmentModel" :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" @change="cascaderChange($event,'departmentId','temp')" />
             </el-form-item>
-            <el-form-item v-show="temp.inquiry===1" label="工号" prop="doctorWorkId">
+            <el-form-item v-show="temp.isInquiry==='2'" label="工号" prop="doctorWorkId" :required="temp.isInquiry==='2'">
               <el-input v-model="temp.doctorWorkId" placeholder="请填写工号" />
             </el-form-item>
           </el-col>
@@ -167,7 +167,6 @@ import map from '@/utils/map'
 import handleTemp from '@/mixin/handleTemp'
 import handleDefault from '@/mixin/handleDefault'
 import { idNumberValidate } from '@/utils/validate'
-
 export default {
   components: { Pagination, uploadImage, headline },
   mixins: [handleTemp, handleDefault],
@@ -186,35 +185,33 @@ export default {
         idCard: '',
         state: ''
       },
-      cascaderModel: [],
       areaOptions: map.getArea,
-      departmentProps: {
-        value: 'departmentId',
-        label: 'departmentName',
-        children: 'subDeptList'
-      },
-      departmentModel: [],
-      titleProps: {
-        value: 'id',
-        label: 'name',
-        children: 'subZcList'
-      },
-      titleModel: [],
       authStateOptions: map.getAuthenStatus,
-      inquiryOptions: map.getInquiry,
+      inquiryOptions: [
+        {
+          name: '已开通',
+          code: '2'
+        },
+        {
+          name: '未开通',
+          code: '1'
+        }
+      ],
       textMap: {
-        update: '编辑用户信息',
-        create: '新增用户'
+        update: '编辑用户信息'
       },
       temp: {
         userId: '',
         name: '',
+        phone: '',
         idCard: '',
+        shortPhone: '',
         doctorWorkId: '',
         hospitalId: '',
         departmentId: '',
         zc: '',
-        shortPhone: '',
+        state: '',
+        isInquiry: '',
         doctorInfo: '',
         headImg: '',
         workImgUrl: '',
@@ -222,12 +219,15 @@ export default {
       },
       rules: {
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-        idCard: [{ validator: idNumberValidate, trigger: 'blur' }],
+        idCard: [{ required: true, validator: idNumberValidate, trigger: 'blur' }],
         hospitalId: [{ required: true, message: '请选择所属医院', trigger: 'change' }],
         departmentId: [{ required: true, message: '请选择科室', trigger: 'change' }],
         zc: [{ required: true, message: '请选择职称', trigger: 'change' }],
         workImgUrl: [{ required: true, message: '请上传认证照片', trigger: 'change' }],
-        idImgUrl: [{ required: true, message: '请上传身份证正面', trigger: 'change' }]
+        idImgUrl: [{ required: true, message: '请上传身份证正面', trigger: 'change' }],
+        state: [{ required: true, message: '请选择认证状态', trigger: 'change' }],
+        doctorWorkId: [{ message: '请输入工号', trigger: 'blur' }],
+        isInquiry: [{ required: true, message: '请选择是否开通问诊', trigger: 'change' }]
       }
     }
   },
@@ -248,6 +248,9 @@ export default {
       this.api.doctorApi.getUserInfoList(params).then(data => {
         this.listLoading = false
         if (data.responseFlag === '1') {
+          data.data.records.forEach(item => {
+            item.isInquiry = item.isInquiry === '2' ? '2' : '1'
+          })
           this.list = data.data.records
           this.total = data.data.total
         }
@@ -255,17 +258,19 @@ export default {
         this.listLoading = false
       })
     },
-    cascaderChange(e, model, param) {
-      this[param][model] = e[e.length - 1]
-    },
     updateMedicalUser(row) {
       this.handleUpdate(row)
       this.departmentModel = this.getDefaultFromDepartment(row.departmentId)
       this.titleModel = this.getDefaultFromTitle(row.zc)
     },
     userInfoEdit() {
+      let params = this.tools.saveDifferentValue(this.temp, this.tempBackup)
+      if (this.tools.isEmptyObject(params)) {
+        this.dialogFormVisible = false
+        return
+      }
       this.tools.$loading()
-      const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
+      params = Object.assign({}, params, { userId: this.temp.userId, hospitalId: this.temp.hospitalId })
       this.api.doctorApi.userInfoEdit(params).then(data => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {

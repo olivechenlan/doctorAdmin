@@ -37,14 +37,21 @@
       class="table-wrap"
     >
       <el-table-column label="序号" type="index" width="50" align="center" />
-      <el-table-column label="手机号" prop="phone" width="110" align="center">
+      <el-table-column label="手机号" prop="phone" width="100" align="center">
         <template slot-scope="{row}">
           {{ row.phone|numDesensitization(3,4) }}
         </template>
       </el-table-column>
       <el-table-column label="姓名" prop="name" min-width="70" align="center" />
-      <el-table-column label="医院名称" prop="hospitalName" min-width="150" align="center" />
-      <el-table-column label="科室" prop="departmentName" min-width="100" align="center" />
+      <el-table-column label="问诊头像" min-width="100" align="center">
+        <template slot-scope="{row}">
+          <div class="image-column">
+            <img :src="row.inquiryHead" alt="">
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="医院名称" prop="hospitalName" min-width="130" align="center" />
+      <el-table-column label="科室" prop="departmentName" min-width="90" align="center" />
       <el-table-column label="职称" prop="zcName" min-width="80" align="center" />
       <el-table-column label="问诊定价" prop="registrationFee" min-width="80" align="center" />
       <el-table-column label="总接诊量" prop="total" min-width="80" align="center" />
@@ -84,8 +91,8 @@
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
               </el-select>
             </el-form-item>
-            <el-form-item label="问诊头像" prop="workImgUrl">
-              <upload-image :src="temp.workImgUrl" @getChange="getFile($event,'workImgUrl')" />
+            <el-form-item label="问诊头像" prop="inquiryHead">
+              <upload-image :src="temp.inquiryHead" @getChange="getFile($event,'inquiryHead')" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -120,8 +127,8 @@
         </el-row>
         <el-row type="flex" class="row-bg" justify="space-between" :gutter="20">
           <el-col :span="12">
-            <el-form-item label="擅长" prop="doctorInfo">
-              <el-input v-model="temp.doctorInfo" :autosize="{ minRows: 4, maxRows: 8}" type="textarea" placeholder="" />
+            <el-form-item label="擅长" prop="beGoodAt">
+              <el-input v-model="temp.beGoodAt" :autosize="{ minRows: 4, maxRows: 8}" type="textarea" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -169,21 +176,8 @@ export default {
         isHot: ''
       },
       isHotOptions: map.getIsHot,
-      departmentProps: {
-        value: 'departmentId',
-        label: 'departmentName',
-        children: 'subDeptList'
-      },
-      departmentModel: [],
-      titleProps: {
-        value: 'id',
-        label: 'name',
-        children: 'subZcList'
-      },
-      titleModel: [],
       textMap: {
-        update: '编辑问诊医生信息',
-        create: '新增用户'
+        update: '编辑问诊医生信息'
       },
       temp: {
         userId: '',
@@ -196,14 +190,16 @@ export default {
         shortPhone: '',
         doctorInfo: '',
         headImg: '',
-        workImgUrl: '',
-        idImgUrl: ''
+        inquiryHead: '',
+        beGoodAt: '',
+        isHot: ''
       },
       rules: {
         isHot: [{ required: true, message: '请选择是否热门医生', trigger: 'change' }],
         weight: [{ validator: weightValidate, trigger: 'blur' }],
-        workImgUrl: [{ required: true, message: '请上传认证照片', trigger: 'change' }],
-        idImgUrl: [{ required: true, message: '请上传身份证正面', trigger: 'change' }]
+        inquiryHead: [{ required: true, message: '请上传问诊头像', trigger: 'change' }],
+        beGoodAt: [{ required: true, message: '请填写擅长', trigger: 'blur' }],
+        doctorInfo: [{ required: true, message: '请填写个人简介', trigger: 'blur' }]
       }
     }
   },
@@ -231,15 +227,12 @@ export default {
         this.listLoading = false
       })
     },
-    cascaderChange(e, model, param) {
-      this[param][model] = e[e.length - 1]
-    },
-    async handleDialog(row, state) {
-      this.resetTemp()
+    async handleDialog(row) {
+      this.handleUpdate(row)
       await this.getInquiryDetailWEB(row.userId)
       this.departmentModel = this.getDefaultFromDepartment(row.departmentId)
       this.titleModel = this.getDefaultFromTitle(row.zc)
-      this.dialogStatus = state
+      this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
     async getInquiryDetailWEB(id) {
@@ -257,10 +250,10 @@ export default {
         this.tools.$loading().hide()
       })
     },
-    userInfoEdit() {
+    editInquiryDoctor() {
       this.tools.$loading()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
-      this.api.doctorApi.userInfoEdit(params).then(data => {
+      this.api.doctorApi.editInquiryDoctor(params).then(data => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
@@ -276,7 +269,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.userInfoEdit()
+          this.editInquiryDoctor()
         }
       })
     },

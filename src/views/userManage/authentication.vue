@@ -137,16 +137,16 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="驳回理由">
+        <el-form-item label="驳回理由" prop="checkInfo">
           <el-input v-model="temp.checkInfo" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
 
       <div v-show="dialogStatus==='update'" slot="footer">
-        <el-button type="primary" @click="authenCheck('2')">
+        <el-button type="primary" @click="updateData('2')">
           同意
         </el-button>
-        <el-button type="primary" plain @click="authenCheck('3')">
+        <el-button type="primary" plain @click="updateData('3')">
           驳回
         </el-button>
       </div>
@@ -189,18 +189,6 @@ export default {
         idCard: '',
         checkState: ''
       },
-      departmentProps: {
-        value: 'departmentId',
-        label: 'departmentName',
-        children: 'subDeptList'
-      },
-      departmentModel: [],
-      titleProps: {
-        value: 'id',
-        label: 'name',
-        children: 'subZcList'
-      },
-      titleModel: [],
       checkStateOptions: map.getCheckStatus,
       textMap: {
         update: '用户审核',
@@ -210,6 +198,9 @@ export default {
         userId: '',
         checkState: '',
         checkInfo: ''
+      },
+      rules: {
+        checkInfo: [{ required: true, message: '请填写驳回理由', trigger: 'blur' }]
       }
     }
   },
@@ -235,9 +226,6 @@ export default {
         this.listLoading = false
       })
     },
-    cascaderChange(e, model, param) {
-      this[param][model] = e[e.length - 1]
-    },
     handleDialog(row, state) {
       this.resetTemp()
       this.temp = Object.assign({}, row)
@@ -261,6 +249,15 @@ export default {
         }
       }).catch(() => {
         this.tools.$loading().hide()
+      })
+    },
+    updateData(state) {
+      this.temp.checkState = state
+      this.rules.checkInfo[0].required = this.temp.checkState === '3'
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.authenCheck(state)
+        }
       })
     }
 

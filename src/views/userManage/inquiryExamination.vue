@@ -88,7 +88,7 @@
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
 
     <el-dialog width="1200px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
-      <el-form :model="temp" label-width="80px">
+      <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
         <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="8">
             <el-form-item label="认证图片" required>
@@ -134,33 +134,33 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="工号">
+            <el-form-item label="工号" required prop="doctorWorkId">
               <el-input v-model="temp.doctorWorkId" disabled placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" justify="space-between" class="row-bg">
           <el-col :span="11">
-            <el-form-item label="擅长">
+            <el-form-item label="擅长" prop="beGoodAt">
               <el-input v-model="temp.beGoodAt" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="个人简介">
+            <el-form-item label="个人简介" prop="doctorInfo">
               <el-input v-model="temp.doctorInfo" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="驳回理由">
+        <el-form-item label="驳回理由" prop="checkInfo">
           <el-input v-model="temp.checkInfo" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
 
       <div v-show="dialogStatus==='update'" slot="footer">
-        <el-button type="primary" @click="authenCheck('2')">
+        <el-button type="primary" @click="updateData('2')">
           同意
         </el-button>
-        <el-button type="primary" plain @click="authenCheck('3')">
+        <el-button type="primary" plain @click="updateData('3')">
           驳回
         </el-button>
       </div>
@@ -203,18 +203,6 @@ export default {
         checkState: '',
         doctorWorkId: ''
       },
-      departmentProps: {
-        value: 'departmentId',
-        label: 'departmentName',
-        children: 'subDeptList'
-      },
-      departmentModel: [],
-      titleProps: {
-        value: 'id',
-        label: 'name',
-        children: 'subZcList'
-      },
-      titleModel: [],
       checkStateOptions: map.getSkillCheckState,
       textMap: {
         update: '开通问诊审核',
@@ -224,7 +212,13 @@ export default {
         userId: '',
         checkState: '',
         checkInfo: ''
+      },
+      rules: {
+        beGoodAt: [{ required: true, message: '请填写擅长', trigger: 'blur' }],
+        doctorInfo: [{ required: true, message: '请填写个人简介', trigger: 'blur' }],
+        checkInfo: [{ required: true, message: '请填写驳回理由', trigger: 'blur' }]
       }
+
     }
   },
   created() {
@@ -248,9 +242,6 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-    },
-    cascaderChange(e, model, param) {
-      this[param][model] = e[e.length - 1]
     },
     async handleDialog(row, state) {
       this.resetTemp()
@@ -277,9 +268,8 @@ export default {
     },
     checkInquiry(state) {
       this.tools.$loading()
-      this.temp.checkState = state
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
-      this.api.doctorApi.authenCheck(params).then(data => {
+      this.api.doctorApi.checkInquiry(params).then(data => {
         this.tools.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
@@ -290,6 +280,15 @@ export default {
         }
       }).catch(() => {
         this.tools.$loading().hide()
+      })
+    },
+    updateData(state) {
+      this.temp.checkState = state
+      this.rules.checkInfo[0].required = this.temp.checkState === '3'
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.checkInquiry(state)
+        }
       })
     }
 
