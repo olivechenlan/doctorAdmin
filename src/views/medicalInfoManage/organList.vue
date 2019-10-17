@@ -172,7 +172,7 @@ export default {
       })
     },
     hospitalEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       let method = ''
       if (this.dialogStatus === 'create') {
@@ -181,7 +181,7 @@ export default {
       }
       if (this.dialogStatus === 'update') method = 'hospitalEdit'
       this.api.doctorApi[method](params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -190,7 +190,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

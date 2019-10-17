@@ -44,22 +44,9 @@ const saveDifferentValue = (temp, tempOrigin) => {
   return result
 }
 
-const $loading = (params = {}) => {
-  const options = Object.assign({
-    lock: true,
-    background: 'rgba(0, 0, 0, 0)'
-  }, params)
-  const loadingInstance = Loading.service(options)
-  const hide = () => {
-    loadingInstance.close()
-  }
-  return { hide }
-}
-
 export default {
   isEmptyObject,
   removeEmptyValue, // 去除对象中的空数值
   saveValueFromObject, // 取原对象中的指定数值重组
-  saveDifferentValue, // 编辑时取修改过的值
-  $loading // 加载
+  saveDifferentValue // 编辑时取修改过的值
 }

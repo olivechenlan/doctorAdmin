@@ -225,7 +225,7 @@ export default {
       this.temp.startTime = this.dayjs()
     },
     bannerEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       params.startTime = this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss')
       params.endTime = this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss')
@@ -238,7 +238,7 @@ export default {
       }
       if (this.dialogStatus === 'update') method = 'bannerEdit'
       this.api.doctorApi[method](params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -247,7 +247,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

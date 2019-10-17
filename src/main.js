@@ -19,9 +19,11 @@ import '@/network'
 import tools from '@/utils/tools'
 import store2 from 'store2'
 import dayjs from 'dayjs'
+import loading from '@/plugin/toast'
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
+Vue.use(loading)
 
 Vue.config.productionTip = false
 Vue.prototype.tools = tools

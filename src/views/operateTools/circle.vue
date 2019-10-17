@@ -196,9 +196,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.tools.$loading()
+        this.$loading().show()
         this.api.doctorApi.circleDelete(row.groupId).then(data => {
-          this.tools.$loading().hide()
+          this.$loading().hide()
           if (data.responseFlag === '1') {
             this.$message.success('删除成功!')
             this.getList()
@@ -206,17 +206,17 @@ export default {
             this.$message.error(data.responseMessage)
           }
         }).catch(() => {
-          this.tools.$loading().hide()
+          this.$loading().hide()
         })
       }).catch(() => {
       })
     },
     circleEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       if (this.dialogStatus === 'create') { delete params['groupId'] }
       this.api.doctorApi.circleEdit(params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -225,7 +225,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

@@ -191,7 +191,7 @@ export default {
       })
     },
     titleEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       if (params.type === '0') {
         delete params['parZc']
@@ -199,7 +199,7 @@ export default {
       }
       if (!params.orderNo) { params.orderNo = 0 }
       this.api.doctorApi.titleEdit(params).then(async(data) => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -208,7 +208,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

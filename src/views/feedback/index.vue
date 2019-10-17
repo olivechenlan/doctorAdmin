@@ -163,10 +163,10 @@ export default {
       }).catch(() => {})
     },
     feedbackEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       this.api.doctorApi.feedbackEdit(params).then(async(data) => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -175,7 +175,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

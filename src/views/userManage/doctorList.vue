@@ -236,25 +236,25 @@ export default {
       this.dialogFormVisible = true
     },
     async getInquiryDetailWEB(id) {
-      this.tools.$loading()
+      this.$loading().show()
       await this.api.doctorApi.getInquiryDetailWEB({
         userId: id
       }).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.temp = data.data
         } else {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     editInquiryDoctor() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       this.api.doctorApi.editInquiryDoctor(params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -263,7 +263,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

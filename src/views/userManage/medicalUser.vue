@@ -264,15 +264,10 @@ export default {
       this.titleModel = this.getDefaultFromTitle(row.zc)
     },
     userInfoEdit() {
-      let params = this.tools.saveDifferentValue(this.temp, this.tempBackup)
-      if (this.tools.isEmptyObject(params)) {
-        this.dialogFormVisible = false
-        return
-      }
-      this.tools.$loading()
-      params = Object.assign({}, params, { userId: this.temp.userId, hospitalId: this.temp.hospitalId })
+      this.$loading().show()
+      const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       this.api.doctorApi.userInfoEdit(params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -281,7 +276,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

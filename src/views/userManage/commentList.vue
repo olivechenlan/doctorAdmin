@@ -99,10 +99,10 @@ export default {
       return true
     },
     getList() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = Object.assign({}, this.listQuery, { userId: this.$route.query.id })
       this.api.doctorApi.getInquiryEvaluateList(params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.record = data.data
           this.list = data.data.evaluates.records
@@ -112,22 +112,22 @@ export default {
           })
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateEvaluate(id, isDelete) {
-      this.tools.$loading()
+      this.$loading().show()
       this.api.doctorApi.updateEvaluate({
         id: id,
         isDelete: isDelete ? '1' : '0'
       }).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.$message.success('操作成功')
           this.getList()
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     }
   }

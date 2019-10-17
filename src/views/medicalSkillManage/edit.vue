@@ -89,18 +89,18 @@ export default {
   },
   methods: {
     getList() {
-      this.tools.$loading()
+      this.$loading().show()
       this.api.doctorApi.getDoctorSkillInfo({
         doctorArtId: this.$route.query.id
       }).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           if (this.tools.isEmptyObject(data.data.status)) data.data.status = '1'
           data.data.checkState = this.$route.query.checkState
           this.temp = data.data
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     doctorSkillAuthenCheck(state) {
@@ -113,9 +113,9 @@ export default {
           rejectContent: this.temp.rejectContent
         })
       }
-      this.tools.$loading()
+      this.$loading().show()
       this.api.doctorApi.doctorSkillAuthenCheck(params).then(async(data) => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.$message.success('审核成功')
           setTimeout(() => {
@@ -125,7 +125,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData(state) {

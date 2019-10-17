@@ -235,11 +235,11 @@ export default {
       this.dialogFormVisible = true
     },
     authenCheck(state) {
-      this.tools.$loading()
+      this.$loading().show()
       this.temp.checkState = state
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       this.api.doctorApi.authenCheck(params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -248,7 +248,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData(state) {

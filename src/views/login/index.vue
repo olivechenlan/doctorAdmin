@@ -87,9 +87,9 @@ export default {
     handleLogin() {
       this.$refs.dataForm.validate(valid => {
         if (valid) {
-          this.tools.$loading()
+          this.$loading().show()
           this.api.doctorApi.login(this.loginForm).then(data => {
-            this.tools.$loading().hide()
+            this.$loading().hide()
             if (data.responseFlag === '1') {
               this.$store.dispatch('user/toggleUserInfo', Object.assign({}, data.data, { refreshTime: this.dayjs() }))
               this.$router.replace({ path: this.redirect })
@@ -97,7 +97,7 @@ export default {
               this.$message.error(data.responseMessage)
             }
           }).catch((err) => {
-            this.tools.$loading().hide()
+            this.$loading().hide()
           })
         }
       })

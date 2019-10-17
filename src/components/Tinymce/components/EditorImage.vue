@@ -96,7 +96,7 @@ export default {
         if (this.intoType === '1') this.$message.error(`最多只能再上传${this.lastNum}段视频，请重试`)
         return
       }
-      this.tools.$loading()
+      this.$loading().show()
       const result = []
       for (const i in this.file) {
         const src = await this.uploadFile(this.file[i].raw)
@@ -107,7 +107,7 @@ export default {
         intoType: this.intoType
       }
       this.$emit('successCallback', callback)
-      this.tools.$loading().hide()
+      this.$loading().hide()
       this.fileList = []
       this.dialogVisible = false
     },
@@ -123,11 +123,11 @@ export default {
           if (data.code === '1') {
             resolve(data.data.url)
           } else {
-            this.tools.$loading().hide()
+            this.$loading().hide()
             this.$message.error(data.msg)
           }
         }).catch(() => {
-          this.tools.$loading().hide()
+          this.$loading().hide()
         })
       })
     }

@@ -1,9 +1,9 @@
 const uploadFile = (file) => {
   const vm = window.$vue
-  vm.tools.$loading()
+  vm.$loading().show()
   return new Promise((resolve, reject) => {
     vm.api.uploadApi.uploadFile({ file }).then(data => {
-      vm.tools.$loading().hide()
+      vm.$loading().hide()
       if (data.code === '1') {
         resolve(data.data.url)
       } else {
@@ -11,7 +11,7 @@ const uploadFile = (file) => {
         reject()
       }
     }).catch(() => {
-      vm.tools.$loading().hide()
+      vm.$loading().hide()
       reject()
     })
   })

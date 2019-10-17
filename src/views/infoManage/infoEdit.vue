@@ -174,17 +174,17 @@ export default {
       this.temp.intoType = val.intoType
     },
     uploadUrl(url) {
-      this.tools.$loading()
+      this.$loading().show()
       return new Promise((resolve, reject) => {
         this.api.uploadApi.uploadUrl({ url }).then(data => {
           if (data.code === '1') {
             resolve(data.data.url)
           } else {
-            this.tools.$loading().hide()
+            this.$loading().hide()
             this.$message.error(data.msg)
           }
         }).catch(() => {
-          this.tools.$loading().hide()
+          this.$loading().hide()
         })
       })
     },
@@ -219,14 +219,14 @@ export default {
       params.startTime = params.startTime ? this.dayjs(params.startTime).format('YYYY-MM-DDTHH:mm:ss') : ''
       params.endTime = params.endTime ? this.dayjs(params.endTime).format('YYYY-MM-DDTHH:mm:ss') : ''
       this.api.doctorApi[method](params).then(async(data) => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.$router.back()
         } else {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

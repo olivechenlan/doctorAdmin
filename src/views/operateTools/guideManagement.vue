@@ -175,7 +175,7 @@ export default {
       window.open(row.fileUrl, '_blank')
     },
     pathwayEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       delete params['majorType']
       let method = ''
@@ -185,7 +185,7 @@ export default {
       }
       if (this.dialogStatus === 'update') { method = 'guideEdit' }
       this.api.doctorApi[method](params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -194,7 +194,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

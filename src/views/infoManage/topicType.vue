@@ -121,12 +121,12 @@ export default {
       })
     },
     topicDelete(row) {
-      this.tools.$loading()
+      this.$loading().show()
       this.api.doctorApi.topicDelete({
         type: row.type,
         code: row.code
       }).then(async data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.$message.success('删除成功!')
           this.getList(true)
@@ -134,7 +134,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     handleDelete(row) {
@@ -148,7 +148,7 @@ export default {
       })
     },
     circleEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       if (!params.weight) { params.weight = 0 }
       let method = ''
@@ -158,7 +158,7 @@ export default {
         delete params['type']
       }
       this.api.doctorApi[method](params).then(async data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.dialogFormVisible = false
           this.$message.success('操作成功')
@@ -167,7 +167,7 @@ export default {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {

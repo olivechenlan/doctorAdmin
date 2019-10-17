@@ -124,7 +124,7 @@ export default {
       this.temp.orgAreaName = this.areaOptions.find(item => item.code === value).name
     },
     hospitalEdit() {
-      this.tools.$loading()
+      this.$loading().show()
       const params = this.tools.saveValueFromObject(this.temp, this.$options.data().temp)
       let method = ''
       if (this.temp.hospitalId) { method = 'hospitalEdit' } else {
@@ -132,14 +132,14 @@ export default {
         delete params['hospitalId']
       }
       this.api.doctorApi[method](params).then(data => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
         if (data.responseFlag === '1') {
           this.$router.back()
         } else {
           this.$message.error(data.responseMessage)
         }
       }).catch(() => {
-        this.tools.$loading().hide()
+        this.$loading().hide()
       })
     },
     updateData() {
