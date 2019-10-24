@@ -75,8 +75,8 @@ export default {
 <style lang="scss" scoped>
   .components-upload-wrap{
     .upload-input{
-      width: 148px;
-      height: 148px;
+      width: 164px;
+      height: 164px;
       overflow:hidden;
     }
     /deep/.is-disabled + .el-upload--picture-card{

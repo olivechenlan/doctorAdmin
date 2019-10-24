@@ -87,19 +87,11 @@
 
     <pagination v-show="total>0" :total="total" :limit.sync="listQuery.size" :page.sync="listQuery.current" @pagination="getList" />
 
-    <el-dialog width="1200px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
-      <el-form :model="temp" label-width="80px">
+    <el-dialog width="1100px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
+      <el-form :model="temp" label-width="90px">
         <el-row type="flex" class="row-bg" justify="space-between">
-          <el-col :span="11">
-            <el-form-item label="认证图片" required>
-              <upload-image :src="temp.workImgUrl" :is-disabled="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
-            <el-form-item label="身份证正面" required label-width="100px">
-              <upload-image :src="temp.idImgUrl" :is-disabled="true" />
-            </el-form-item>
-          </el-col>
+          <el-col :span="11" />
+          <el-col :span="11" />
         </el-row>
         <el-row type="flex" class="row-bg">
           <el-col :span="6">
@@ -111,16 +103,6 @@
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="手机号码">
-              <el-input v-model="temp.phone" type="tel" disabled placeholder="" />
-            </el-form-item>
-            <el-form-item label="科室" required>
-              <el-cascader v-model="departmentModel" disabled :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
             <el-form-item label="身份证号">
               <el-input v-model="temp.idCard" disabled placeholder="" />
             </el-form-item>
@@ -129,6 +111,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
+            <el-form-item label="手机号码">
+              <el-input v-model="temp.phone" type="tel" disabled placeholder="" />
+            </el-form-item>
+            <el-form-item label="科室" required>
+              <el-cascader v-model="departmentModel" disabled :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" />
+            </el-form-item>
             <el-form-item label="工号">
               <el-input v-model="temp.doctorWorkId" disabled placeholder="" />
             </el-form-item>
@@ -136,13 +124,23 @@
               <el-input v-model="temp.shortPhone" disabled placeholder="" />
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item label="认证图片" required>
+              <upload-image :src="temp.workImgUrl" :is-disabled="true" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="身份证正面" required label-width="100px">
+              <upload-image :src="temp.idImgUrl" :is-disabled="true" />
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-form-item label="驳回理由" prop="checkInfo">
+        <el-form-item v-show="temp.checkState!=='2'" label="驳回理由" prop="checkInfo">
           <el-input v-model="temp.checkInfo" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
 
-      <div v-show="dialogStatus==='update'" slot="footer">
+      <div v-if="dialogStatus==='update'" slot="footer">
         <el-button type="primary" @click="updateData('2')">
           同意
         </el-button>

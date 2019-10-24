@@ -52,37 +52,58 @@ const actions = {
     commit('UPDATE_GUIDE_MAJOR', data)
   },
   getDepartment({ state, commit, dispatch }, params) {
-    if (tools.isEmptyObject(state.departmentOptions)) {
-      doctorApi.getDepartmentList({}).then(data => {
-        if (data.responseFlag === '1') {
-          data.data.forEach(item => {
-            if (!item.subDeptList) item.subDeptList = []
-            for (const i in item.subDeptList) {
-              if (!item.subDeptList[i]) item.subDeptList[i] = []
-            }
-          })
-          dispatch('updateDepartment', data.data)
-        }
-      }).catch(() => {})
-    }
+    return new Promise((resolve, reject) => {
+      if (tools.isEmptyObject(state.departmentOptions)) {
+        doctorApi.getDepartmentList({}).then(data => {
+          if (data.responseFlag === '1') {
+            data.data.forEach(item => {
+              if (!item.subDeptList) item.subDeptList = []
+              for (const i in item.subDeptList) {
+                if (!item.subDeptList[i]) item.subDeptList[i] = []
+              }
+            })
+            dispatch('updateDepartment', data.data)
+          }
+          resolve()
+        }).catch(() => {
+          reject()
+        })
+      } else {
+        resolve()
+      }
+    })
   },
   getTitle({ state, commit, dispatch }, params) {
-    if (tools.isEmptyObject(state.titleOptions)) {
-      doctorApi.getTitleList({}).then(data => {
-        if (data.responseFlag === '1') {
-          dispatch('updateTitle', data.data)
-        }
-      }).catch(() => {})
-    }
+    return new Promise((resolve, reject) => {
+      if (tools.isEmptyObject(state.titleOptions)) {
+        doctorApi.getTitleList({}).then(data => {
+          if (data.responseFlag === '1') {
+            dispatch('updateTitle', data.data)
+          }
+          resolve()
+        }).catch(() => {
+          reject()
+        })
+      } else {
+        resolve()
+      }
+    })
   },
   getHospital({ state, commit, dispatch }, params) {
-    if (tools.isEmptyObject(state.hospitalOptions)) {
-      doctorApi.getHospitalList({}).then(data => {
-        if (data.responseFlag === '1') {
-          dispatch('updateHospital', data.data)
-        }
-      }).catch(() => {})
-    }
+    return new Promise((resolve, reject) => {
+      if (tools.isEmptyObject(state.hospitalOptions)) {
+        doctorApi.getHospitalList({}).then(data => {
+          if (data.responseFlag === '1') {
+            dispatch('updateHospital', data.data)
+          }
+          resolve()
+        }).catch(() => {
+          reject()
+        })
+      } else {
+        resolve()
+      }
+    })
   },
   getTopic({ state, commit, dispatch }, params) {
     if (tools.isEmptyObject(state.topicOptions)) {

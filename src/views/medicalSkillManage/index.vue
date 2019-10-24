@@ -59,7 +59,7 @@
           {{ row.createTime|formatToTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="100" fixed="right">
+      <el-table-column label="操作" align="center" width="100" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.checkState==='0'" type="primary" size="mini" @click="jumpToEdit(row)">
             审核

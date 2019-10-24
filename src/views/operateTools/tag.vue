@@ -11,7 +11,7 @@
       <el-table-column label="序号" type="index" width="80" align="center" />
       <el-table-column label="标签" prop="label" min-width="150" align="center" />
       <el-table-column label="描述" prop="remarks" min-width="200" align="center" />
-      <el-table-column label="操作" width="148" fixed="right" align="center">
+      <el-table-column label="操作" width="148" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑

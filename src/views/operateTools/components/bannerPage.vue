@@ -54,7 +54,7 @@
           {{ row.endTime|formatToTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="90" fixed="right">
+      <el-table-column label="操作" align="center" width="90" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -62,7 +62,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="3%" custom-class="form-container">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="800px" top="2vh" custom-class="form-container">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
         <el-row type="flex" justify="space-between" class="row-bg">
           <el-col :span="11">
@@ -77,6 +77,9 @@
                 <el-option v-for="item in stateOptions" :key="item.code" :label="item.name" :value="item.code" />
               </el-select>
             </el-form-item>
+            <el-form-item label="图片" prop="adImgUrl">
+              <upload-image :src="temp.adImgUrl" @getChange="getFile($event,'adImgUrl')" />
+            </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="链接地址" prop="adLink">
@@ -88,14 +91,11 @@
             <el-form-item label="排序" prop="adWeight">
               <el-input v-model="temp.adWeight" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
             </el-form-item>
+            <el-form-item label="描述" prop="remarks">
+              <el-input v-model="temp.remarks" :autosize="{ minRows: 5, maxRows: 7}" type="textarea" placeholder="" />
+            </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="图片" prop="adImgUrl">
-          <upload-image :src="temp.adImgUrl" @getChange="getFile($event,'adImgUrl')" />
-        </el-form-item>
-        <el-form-item label="描述" prop="remarks">
-          <el-input v-model="temp.remarks" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
-        </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">

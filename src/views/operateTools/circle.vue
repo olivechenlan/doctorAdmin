@@ -46,7 +46,7 @@
           {{ row.createTime|formatToTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="148" fixed="right">
+      <el-table-column label="操作" width="150" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -62,11 +62,11 @@
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
         <el-row type="flex" justify="space-between" class="row-bg">
           <el-col :span="11">
-            <el-form-item label="圈子名称" prop="name">
-              <el-input v-model="temp.name" placeholder="请填写圈子名称" />
-            </el-form-item>
             <el-form-item label="圈子主图" prop="iconUrl">
               <upload-image :src="temp.iconUrl" @getChange="getFile($event,'iconUrl')" />
+            </el-form-item>
+            <el-form-item label="圈子名称" prop="name">
+              <el-input v-model="temp.name" placeholder="请填写圈子名称" />
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -80,12 +80,11 @@
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
               </el-select>
             </el-form-item>
+            <el-form-item label="简介" prop="groupInfo">
+              <el-input v-model="temp.groupInfo" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
+            </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="简介" prop="groupInfo">
-          <el-input v-model="temp.groupInfo" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="" />
-        </el-form-item>
-
       </el-form>
       <div slot="footer">
         <el-button @click="dialogFormVisible = false">

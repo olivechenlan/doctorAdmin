@@ -42,7 +42,7 @@
           {{ row.phone|numDesensitization(3,4) }}
         </template>
       </el-table-column>
-      <el-table-column label="姓名" prop="name" min-width="70" align="center" />
+      <el-table-column label="姓名" prop="name" min-width="60" align="center" />
       <el-table-column label="问诊头像" min-width="100" align="center">
         <template slot-scope="{row}">
           <div class="image-column">
@@ -67,7 +67,7 @@
           {{ row.checkTime|formatToTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150" fixed="right">
+      <el-table-column label="操作" align="center" width="150" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleDialog(row,'update')">
             编辑
@@ -83,55 +83,53 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="80px">
         <el-row type="flex" class="row-bg" :gutter="20">
           <el-col :span="6">
-            <el-form-item label="姓名" prop="name">
-              <el-input v-model="temp.name" placeholder="请填写姓名" disabled />
-            </el-form-item>
-            <el-form-item label="所属医院" prop="hospitalId">
-              <el-select v-model="temp.hospitalId" placeholder="请选择所属医院" disabled>
-                <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
-              </el-select>
-            </el-form-item>
             <el-form-item label="问诊头像" prop="inquiryHead">
               <upload-image :src="temp.inquiryHead" @getChange="getFile($event,'inquiryHead')" />
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
+            <el-form-item label="姓名" prop="name">
+              <el-input v-model="temp.name" placeholder="请填写姓名" disabled />
+            </el-form-item>
             <el-form-item label="手机号码" prop="phone">
               <el-input v-model="temp.phone" disabled placeholder="请填写手机号码" />
-            </el-form-item>
-            <el-form-item label="科室" prop="departmentId">
-              <el-cascader v-model="departmentModel" :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" disabled @change="cascaderChange($event,'departmentId','temp')" />
-            </el-form-item>
-            <el-form-item label="排序" prop="weight">
-              <el-input v-model="temp.weight" placeholder="请填写排序" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="身份证号" prop="idCard">
               <el-input v-model="temp.idCard" placeholder="请填写身份证号码" disabled />
             </el-form-item>
+            <el-form-item label="所属医院" prop="hospitalId">
+              <el-select v-model="temp.hospitalId" placeholder="请选择所属医院" disabled>
+                <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="科室" prop="departmentId">
+              <el-cascader v-model="departmentModel" :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" disabled @change="cascaderChange($event,'departmentId','temp')" />
+            </el-form-item>
             <el-form-item label="职称" prop="zc">
               <el-cascader v-model="titleModel" :props="titleProps" placeholder="请填写职称" :options="titleOptions" disabled @change="cascaderChange($event,'zc','temp')" />
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
             <el-form-item label="工号" prop="doctorWorkId">
               <el-input v-model="temp.doctorWorkId" placeholder="请填写工号" disabled />
             </el-form-item>
-            <el-form-item label="热门医生" prop="isHot">
-              <el-select v-model="temp.isHot" placeholder="请选择是否热门医生">
-                <el-option v-for="item in isHotOptions" :key="item.code" :label="item.name" :value="item.code" />
-              </el-select>
-            </el-form-item>
           </el-col>
-        </el-row>
-        <el-row type="flex" class="row-bg" justify="space-between" :gutter="20">
           <el-col :span="12">
+            <el-row type="flex" class="row-bg" :gutter="20">
+              <el-col :span="12">
+                <el-form-item label="排序" prop="weight">
+                  <el-input v-model="temp.weight" placeholder="请填写排序" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="热门医生" prop="isHot">
+                  <el-select v-model="temp.isHot" placeholder="请选择是否热门医生">
+                    <el-option v-for="item in isHotOptions" :key="item.code" :label="item.name" :value="item.code" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-form-item label="擅长" prop="beGoodAt">
               <el-input v-model="temp.beGoodAt" :autosize="{ minRows: 4, maxRows: 8}" type="textarea" placeholder="" />
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="个人简介" prop="doctorInfo">
               <el-input v-model="temp.doctorInfo" :autosize="{ minRows: 4, maxRows: 8}" type="textarea" placeholder="" />
             </el-form-item>
@@ -207,11 +205,11 @@ export default {
   },
   created() {
   },
-  mounted() {
+  async mounted() {
+    await this.getDepartment()
+    await this.getTitle()
+    await this.getHospital()
     this.getList()
-    this.getDepartment()
-    this.getTitle()
-    this.getHospital()
   },
   methods: {
     getList() {

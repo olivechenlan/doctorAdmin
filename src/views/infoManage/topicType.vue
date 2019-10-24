@@ -23,7 +23,7 @@
       <el-table-column label="排序" prop="weight" min-width="100" align="center" />
       <el-table-column label="文章数" prop="textCount" width="120" align="center" />
       <el-table-column label="备注" prop="remarks" min-width="200" align="center" />
-      <el-table-column label="操作" width="147" fixed="right">
+      <el-table-column label="操作" width="150" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑

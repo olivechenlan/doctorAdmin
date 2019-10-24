@@ -98,7 +98,15 @@ export const constantRoutes = [
         component: () => import('@/views/userManage/medicalUser'),
         name: 'userManage-medicalUser',
         meta: { title: '医护用户信息' }
-      }, {
+      },
+      {
+        path: 'medicalUser/userEdit',
+        component: () => import('@/views/userManage/userEdit'),
+        name: 'userManage-medicalUser-userEdit',
+        meta: { title: '编辑用户信息' },
+        hidden: true
+      },
+      {
         path: 'authentication',
         component: () => import('@/views/userManage/authentication'),
         name: 'userManage-authentication',

@@ -69,6 +69,10 @@ const getUserInfoList = params => {
   return doctorPost('userInfo/getList', params)
 }
 
+const getUserInfoDetail = query => {
+  return doctorPost('userInfo/getUserInfo/' + query, {})
+}
+
 const userInfoEdit = params => {
   return doctorPost('userInfo/edit', params)
 }
@@ -275,6 +279,7 @@ const editInquiryDoctor = params => {
 
 export default {
   getUserInfoList, // 获取用户信息列表
+  getUserInfoDetail, // 获取用户信息详情
   userInfoEdit, // 编辑用户信息
   getDepartmentList, // 获取科室列表
   getTitleList, // 获取职称列表

@@ -55,12 +55,12 @@
         </template>
       </el-table-column>
       <el-table-column label="医院名称" prop="shortName" min-width="120" align="center" />
-      <el-table-column label="医院性质" min-width="100" align="center">
+      <el-table-column label="医院性质" min-width="90" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orgKind|formatTo('getHospitalKind') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="医院类型" min-width="100" align="center">
+      <el-table-column label="医院类型" min-width="90" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orgType|formatTo('getHospitalType') }}</span>
         </template>
@@ -70,14 +70,14 @@
           <span>{{ row.orgLevel|formatTo('getHospitalLevel') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" prop="orgTel" min-width="125" align="center">
+      <el-table-column label="联系方式" prop="orgTel" min-width="110" align="center">
         <template slot-scope="{row}">
           {{ row.orgTel|numDesensitization(3,4) }}
         </template>
       </el-table-column>
-      <el-table-column label="所属区域" prop="orgAreaName" width="100" align="center" />
-      <el-table-column label="地址" prop="orgAddr" min-width="200" align="center" />
-      <el-table-column label="操作" align="center" width="100" fixed="right">
+      <el-table-column label="所属区域" prop="orgAreaName" width="90" align="center" />
+      <el-table-column label="地址" prop="orgAddr" min-width="120" align="center" />
+      <el-table-column label="操作" align="center" width="100" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="jumpToEdit(row)">
             编辑

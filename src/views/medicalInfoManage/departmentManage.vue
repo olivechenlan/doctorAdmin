@@ -55,7 +55,7 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="orderNo" min-width="60" align="center" />
-      <el-table-column label="操作" align="center" width="200" fixed="right">
+      <el-table-column label="操作" align="center" width="200" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
