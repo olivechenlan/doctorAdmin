@@ -3,7 +3,8 @@ import cryptoJs from 'crypto-js'
 import qs from 'qs'
 import dayjs from 'dayjs'
 const promiseAjaxPost = network.promiseAjaxPost
-const host = `${process.env.VUE_APP_BASE_API}/uploadApi/store/`
+const host = `${process.env.VUE_APP_BASE_API}/uploadApi/store/` // 本地
+// const host = '/uploadApi/store/' // 线上
 
 const uploadPost = (api, params = {}, type = 'Json') => {
   const key = 'tsoUeDnGRWxo4cowaZmNq6BJCGFHhWmR'

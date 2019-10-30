@@ -89,17 +89,11 @@
 
     <el-dialog width="1200px" top="3%" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" custom-class="form-container">
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
-        <el-row type="flex" class="row-bg" justify="space-between">
-          <el-col :span="8" />
-          <el-col :span="8" />
-          <el-col :span="8" />
-        </el-row>
         <el-row type="flex" class="row-bg">
           <el-col :span="6">
             <el-form-item label="认证图片" required>
               <upload-image :src="temp.workImgUrl" :is-disabled="true" />
             </el-form-item>
-
             <el-form-item label="所属医院" required>
               <el-select v-model="temp.hospitalId" disabled placeholder="">
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
@@ -110,7 +104,6 @@
             <el-form-item label="身份证正面" required label-width="100px">
               <upload-image :src="temp.idImgUrl" :is-disabled="true" />
             </el-form-item>
-
             <el-form-item label="科室" required>
               <el-cascader v-model="departmentModel" disabled :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" />
             </el-form-item>
@@ -119,7 +112,6 @@
             <el-form-item label="问诊头像" required label-width="100px">
               <upload-image :src="temp.inquiryHead" :is-disabled="true" />
             </el-form-item>
-
             <el-form-item label="职称" required>
               <el-cascader v-model="titleModel" disabled :props="titleProps" placeholder="" :options="titleOptions" />
             </el-form-item>
@@ -151,7 +143,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item v-show="temp.checkState==='2'" label="驳回理由" prop="checkInfo">
+        <el-form-item v-show="temp.checkState!=='2'" label="驳回理由" prop="checkInfo">
           <el-input v-model="temp.checkInfo" :disabled="dialogStatus==='watch'" :autosize="{ minRows: 4, maxRows: 6}" type="textarea" placeholder="" />
         </el-form-item>
       </el-form>
