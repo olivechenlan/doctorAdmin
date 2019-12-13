@@ -115,7 +115,7 @@ export default {
     initData() {
       this.temp = this.store.session('organInfo') || this.$options.data().temp
       !!this.$refs.dataForm && this.$refs.dataForm.resetFields()
-      this.pageTitle = this.tools.isEmptyObject(this.temp.hospitalId) ? '新增资讯' : '编辑资讯'
+      this.pageTitle = this.tools.isEmptyObject(this.temp.hospitalId) ? '新增医疗机构' : '编辑医疗机构'
     },
     getImage(image) {
       this.temp.orgIconUrl = image

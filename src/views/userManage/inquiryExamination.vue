@@ -91,33 +91,33 @@
       <el-form ref="dataForm" :model="temp" label-width="80px" :rules="rules">
         <el-row type="flex" class="row-bg">
           <el-col :span="6">
-            <el-form-item label="认证图片" required>
+            <el-form-item label="认证图片">
               <upload-image :src="temp.workImgUrl" :is-disabled="true" />
             </el-form-item>
-            <el-form-item label="所属医院" required>
+            <el-form-item label="所属医院">
               <el-select v-model="temp.hospitalId" disabled placeholder="">
                 <el-option v-for="item in hospitalOptions" :key="item.hospitalId" :label="item.hospitalName" :value="item.hospitalId" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="身份证正面" required label-width="100px">
+            <el-form-item label="身份证正面" label-width="100px">
               <upload-image :src="temp.idImgUrl" :is-disabled="true" />
             </el-form-item>
-            <el-form-item label="科室" required>
+            <el-form-item label="科室">
               <el-cascader v-model="departmentModel" disabled :props="departmentProps" placeholder="请选择科室" :options="departmentOptions" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="问诊头像" required label-width="100px">
+            <el-form-item label="问诊头像" label-width="100px">
               <upload-image :src="temp.inquiryHead" :is-disabled="true" />
             </el-form-item>
-            <el-form-item label="职称" required>
+            <el-form-item label="职称">
               <el-cascader v-model="titleModel" disabled :props="titleProps" placeholder="" :options="titleOptions" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item required label="姓名">
+            <el-form-item label="姓名">
               <el-input v-model="temp.name" disabled placeholder="" />
             </el-form-item>
             <el-form-item label="手机号码">
@@ -126,7 +126,7 @@
             <el-form-item label="身份证号">
               <el-input v-model="temp.idCard" disabled placeholder="" />
             </el-form-item>
-            <el-form-item label="工号" required prop="doctorWorkId">
+            <el-form-item label="工号" prop="doctorWorkId">
               <el-input v-model="temp.doctorWorkId" disabled placeholder="" />
             </el-form-item>
           </el-col>
@@ -206,8 +206,6 @@ export default {
         checkInfo: ''
       },
       rules: {
-        beGoodAt: [{ required: true, message: '请填写擅长', trigger: 'blur' }],
-        doctorInfo: [{ required: true, message: '请填写个人简介', trigger: 'blur' }],
         checkInfo: [{ required: true, message: '请填写驳回理由', trigger: 'blur' }]
       }
 

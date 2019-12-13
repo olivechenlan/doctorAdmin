@@ -330,11 +330,11 @@ const getSkillCheckState = [
 
 const getInquiry = [
   {
-    name: '已开通',
+    name: '是',
     code: '1'
   },
   {
-    name: '未开通',
+    name: '否',
     code: '0'
   }
 ]

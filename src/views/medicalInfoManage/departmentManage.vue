@@ -16,8 +16,8 @@
           <el-option v-for="item in departmentTypeOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
       </el-form-item>
-      <el-form-item label="问诊科室">
-        <el-select v-model="listQuery.inquiry" placeholder="请选择是否是问诊科室">
+      <el-form-item label="启用工作台">
+        <el-select v-model="listQuery.inquiry" placeholder="请选择是否启用工作台">
           <el-option label="全部" value="" />
           <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
         </el-select>
@@ -49,7 +49,7 @@
           <span>{{ row.useState|formatTo('getDepartmentState') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="问诊科室" min-width="100" align="center">
+      <el-table-column label="启用工作台" min-width="100" align="center">
         <template slot-scope="{row}">
           <span>{{ row.inquiry|formatTo('getInquiry') }}</span>
         </template>
@@ -81,6 +81,11 @@
             <el-form-item label="排序" prop="orderNo">
               <el-input v-model="temp.orderNo" type="number" placeholder="请填写排序" @mousewheel.native.prevent />
             </el-form-item>
+            <el-form-item v-show="temp.type==='1'" label="启用工作台" prop="inquiry">
+              <el-select v-model="temp.inquiry" placeholder="请选择是否启用工作台">
+                <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
+              </el-select>
+            </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item v-show="temp.type==='1'" label="父级科室" prop="parDepartment">
@@ -94,8 +99,8 @@
             <el-form-item label="标准科室代码" prop="departmentCode">
               <el-input v-model="temp.departmentCode" placeholder="请填写标准科室代码" />
             </el-form-item>
-            <el-form-item v-show="temp.type==='0'" label="问诊科室" prop="inquiry">
-              <el-select v-model="temp.inquiry" placeholder="请选择是否问诊科室">
+            <el-form-item v-show="temp.type==='0'" label="启用工作台" prop="inquiry">
+              <el-select v-model="temp.inquiry" placeholder="请选择是否启用工作台">
                 <el-option v-for="item in inquiryOptions" :key="item.code" :label="item.name" :value="item.code" />
               </el-select>
             </el-form-item>
@@ -160,7 +165,7 @@ export default {
         parDepartment: [{ required: true, message: '请选择父级科室', trigger: 'change' }],
         useState: [{ required: true, message: '请选择科室状态', trigger: 'change' }],
         orderNo: [{ validator: weightValidate, triiger: 'blur' }],
-        inquiry: [{ required: true, message: '请选择是否开通问诊', trigger: 'change' }]
+        inquiry: [{ required: true, message: '请选择是否启用工作台', trigger: 'change' }]
       }
     }
   },
